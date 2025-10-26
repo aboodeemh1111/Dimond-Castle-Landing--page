@@ -29,7 +29,7 @@ export default function Navbar() {
   const closeMobileMenu = () => setIsOpen(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 supports-[backdrop-filter]:bg-white/60">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 supports-backdrop-filter:bg-white/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -40,13 +40,13 @@ export default function Navbar() {
           </a>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:block">
-            <ul className="ml-10 flex items-center gap-6 xl:gap-8">
+          <div className="hidden xl:block">
+            <ul className="ml-6 flex items-center gap-4 2xl:gap-6 overflow-x-auto whitespace-nowrap no-scrollbar">
               {navItems.map(({ label, href }) => (
                 <li key={href}>
                   <a
                     href={href}
-                    className="text-gray-700/90 hover:text-gray-900 px-1 py-2 text-sm font-medium transition-colors border-b-2 border-transparent hover:border-gray-900"
+                    className="text-gray-700/90 hover:text-gray-900 px-2 py-2 text-[13px] xl:text-sm font-medium transition-colors border-b-2 border-transparent hover:border-gray-900"
                   >
                     {label}
                   </a>
@@ -56,7 +56,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden">
+          <div className="xl:hidden">
             <button
               type="button"
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500"
@@ -94,7 +94,7 @@ export default function Navbar() {
 
       {/* Mobile Navigation */}
       <div
-        className={`lg:hidden transition-all duration-200 ease-out ${
+        className={`xl:hidden transition-all duration-200 ease-out ${
           isOpen
             ? "opacity-100 translate-y-0"
             : "opacity-0 -translate-y-2 pointer-events-none"
