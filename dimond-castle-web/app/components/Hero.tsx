@@ -1,32 +1,20 @@
 export default function Hero() {
   return (
     <section className="relative w-full h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-      {/* Video Background */}
+      {/* Background (no external assets to avoid 404s) */}
       <div className="absolute inset-0 w-full h-full">
-        <video
-          className="w-full h-full object-cover"
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster="/hero-fallback.jpg"
-        >
-          <source src="/hero-video.mp4" type="video/mp4" />
-          <source src="/hero-video.webm" type="video/webm" />
-          Your browser does not support the video tag.
-        </video>
-        {/* Fallback Image */}
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0"
           style={{
-            backgroundImage: "url('/hero-fallback.jpg')",
+            background:
+              "radial-gradient(1200px 600px at 50% -10%, rgba(255,255,255,0.25), transparent), linear-gradient(180deg, rgba(10,10,10,0.85) 0%, rgba(10,10,10,0.6) 35%, rgba(10,10,10,0.5) 65%, rgba(10,10,10,0.7) 100%)",
           }}
           aria-hidden="true"
         />
       </div>
 
-      {/* Glass Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60 backdrop-blur-[2px]" />
+      {/* Subtle overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50 backdrop-blur-[2px]" />
 
       {/* Gradient Overlay for better text contrast */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
