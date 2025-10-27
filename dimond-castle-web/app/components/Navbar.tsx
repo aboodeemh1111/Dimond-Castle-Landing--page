@@ -9,7 +9,7 @@ const navItems: NavItem[] = [
   { label: "Home", href: "#home" },
   { label: "Story", href: "#introduction-and-story" },
   { label: "Vision", href: "#vision-mission-strategic-objectives" },
-  { label: "Objectives", href: "#corporate-values-objectives" },
+  { label: "Products", href: "#products" },
   { label: "Clients", href: "#vip-clients" },
   { label: "Services", href: "#services" },
   { label: "Contact Us", href: "#contact-us" },
