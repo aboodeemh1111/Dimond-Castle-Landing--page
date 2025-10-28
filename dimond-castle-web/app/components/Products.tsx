@@ -12,8 +12,7 @@ export default function Products() {
         "Long-grain aromatic rice with soft texture and premium quality.",
       origin: "India",
       sizes: ["5kg", "10kg", "25kg"],
-      image:
-        "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
+      image: "/images/basmatiBag.png",
       slug: "white-diamond-basmati",
     },
     {
@@ -22,8 +21,7 @@ export default function Products() {
       description: "Parboiled rice with perfect grains and rich aroma.",
       origin: "Pakistan",
       sizes: ["5kg", "10kg", "25kg", "50kg"],
-      image:
-        "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=800&q=80",
+      image: "/images/basmatiBag.png",
       slug: "white-diamond-sella",
     },
     {
@@ -32,8 +30,7 @@ export default function Products() {
       description: "Soft and fragrant rice, ideal for everyday meals.",
       origin: "Thailand",
       sizes: ["5kg", "10kg", "25kg"],
-      image:
-        "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
+      image: "/images/basmatiBag.png",
       slug: "white-diamond-jasmine",
     },
     {
@@ -43,8 +40,7 @@ export default function Products() {
         "The finest selection for special occasions and gourmet cuisine.",
       origin: "India",
       sizes: ["5kg", "10kg", "25kg"],
-      image:
-        "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=800&q=80",
+      image: "/images/basmatiBag.png",
       slug: "white-diamond-premium",
     },
     {
@@ -53,8 +49,7 @@ export default function Products() {
       description: "Perfectly separated grains with excellent cooking quality.",
       origin: "Thailand",
       sizes: ["5kg", "10kg", "25kg", "50kg"],
-      image:
-        "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
+      image: "/images/basmatiBag.png",
       slug: "white-diamond-long-grain",
     },
     {
@@ -63,8 +58,7 @@ export default function Products() {
       description: "Extra-long grains with superior taste and aroma.",
       origin: "Pakistan",
       sizes: ["5kg", "10kg", "25kg"],
-      image:
-        "https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=800&q=80",
+      image: "/images/basmatiBag.png",
       slug: "white-diamond-super-kernel",
     },
   ];

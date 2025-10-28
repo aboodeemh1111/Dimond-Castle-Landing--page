@@ -56,15 +56,6 @@ export default function Story() {
                 alt="Biryani and rice feast showcasing our premium rice products"
                 className="aspect-4/3 w-full object-cover"
               />
-
-              {/* Corner badge */}
-              <div
-                className={`absolute bottom-4 ${
-                  dir === "rtl" ? "left-4" : "right-4"
-                } rounded-full bg-white/80 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-800 shadow`}
-              >
-                {t("story.badge")}
-              </div>
             </div>
           </div>
 
