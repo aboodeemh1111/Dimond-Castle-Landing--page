@@ -76,7 +76,7 @@ export default function Navbar() {
                   <li key={item.key}>
                     <a
                       href={item.href}
-                      className="text-gray-700/90 hover:text-gray-900 px-2 py-2 text-[13px] xl:text-sm font-medium transition-colors border-b-2 border-transparent hover:border-gray-900"
+                      className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-gray-700/90 transition-all duration-300 border-b-2 border-transparent rounded-md hover:text-primary hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-primary after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300"
                     >
                       {t(item.key)}
                     </a>
@@ -168,7 +168,7 @@ export default function Navbar() {
                 <a
                   href={item.href}
                   onClick={closeMobileMenu}
-                  className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-gray-900 text-sm font-medium"
+                  className="relative group block px-4 py-3 text-gray-700 hover:bg-accent/30 hover:text-primary text-sm font-medium transition-all duration-300 after:content-[''] after:absolute after:left-4 after:bottom-2 after:h-[2px] after:w-0 after:bg-primary group-hover:after:w-10 after:transition-all after:duration-300"
                 >
                   {t(item.key)}
                 </a>
