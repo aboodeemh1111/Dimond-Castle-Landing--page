@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-admin-bg text-admin-text;
+  }
+}
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  @apply min-h-[200px] outline-none;
+}
+
+.ProseMirror > * + * {
+  @apply mt-4;
+}
+
+.ProseMirror h1 {
+  @apply text-3xl font-bold;
+}
+
+.ProseMirror h2 {
+  @apply text-2xl font-bold;
+}
+
+.ProseMirror h3 {
+  @apply text-xl font-bold;
+}
+
+.ProseMirror h4 {
+  @apply text-lg font-bold;
+}
+
+.ProseMirror p {
+  @apply text-base leading-relaxed;
+}
+
+.ProseMirror a {
+  @apply text-admin-primary underline;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  @apply pl-6;
+}
+
+.ProseMirror ul {
+  @apply list-disc;
+}
+
+.ProseMirror ol {
+  @apply list-decimal;
+}
+
+.ProseMirror li {
+  @apply mb-1;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-admin-primary pl-4 italic text-admin-textLight;
+}
+
+.ProseMirror code {
+  @apply bg-gray-100 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.ProseMirror pre {
+  @apply bg-gray-900 text-white p-4 rounded-lg overflow-x-auto;
+}
+
+.ProseMirror pre code {
+  @apply bg-transparent p-0 text-white;
+}
+
+.ProseMirror img {
+  @apply max-w-full h-auto rounded-lg;
+}
+
+/* TipTap Menu Bar */
+.editor-menu-bar {
+  @apply flex flex-wrap gap-2 p-3 bg-gray-50 border border-admin-border rounded-t-lg;
+}
+
+.editor-menu-bar button {
+  @apply px-3 py-1.5 text-sm rounded hover:bg-gray-200 transition-colors;
+}
+
+.editor-menu-bar button.is-active {
+  @apply bg-admin-primary text-white;
+}
+
+.editor-content {
+  @apply border border-admin-border rounded-b-lg p-4;
+}
