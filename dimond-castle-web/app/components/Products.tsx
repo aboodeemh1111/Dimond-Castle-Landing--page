@@ -66,7 +66,7 @@ export default function Products() {
   return (
     <section
       id="products"
-      className="relative py-20 px-6 md:px-12 bg-linear-to-b from-white via-gray-50/30 to-white"
+      className="relative py-20 px-6 md:px-12 bg-linear-to-b from-bg via-accent/20 to-bg"
     >
       {/* Subtle background texture */}
       <div className="absolute inset-0 -z-10 opacity-5" aria-hidden>
@@ -88,12 +88,12 @@ export default function Products() {
         {/* Section Header */}
         <header className="text-center mb-16">
           <h2
-            className="text-4xl md:text-5xl font-bold text-gray-900 mb-4"
+            className="text-4xl md:text-5xl font-bold text-text mb-4"
             style={{ fontFamily: "Georgia, serif" }}
           >
             {t("products.heading")}
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-text/80 max-w-3xl mx-auto">
             {t("products.subtitle")}
           </p>
         </header>
@@ -103,27 +103,27 @@ export default function Products() {
           {products.map((product) => (
             <article
               key={product.id}
-              className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100"
+              className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray/30"
             >
               {/* Product Image */}
-              <div className="relative h-64 overflow-hidden bg-gray-100">
+              <div className="relative h-64 overflow-hidden bg-accent/30">
                 <img
                   src={product.image}
                   alt={product.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               </div>
 
               {/* Product Info */}
               <div className="p-6">
                 <h3
-                  className="text-xl font-semibold text-gray-900 mb-2"
+                  className="text-xl font-semibold text-text mb-2"
                   style={{ fontFamily: "Georgia, serif" }}
                 >
                   {product.name}
                 </h3>
-                <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                <p className="text-text/80 text-sm mb-4 leading-relaxed">
                   {product.description}
                 </p>
 
@@ -137,7 +137,7 @@ export default function Products() {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="w-4 h-4 text-gray-500"
+                    className="w-4 h-4 text-text/70"
                   >
                     <path
                       fillRule="evenodd"
@@ -145,9 +145,9 @@ export default function Products() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="text-sm text-gray-500">
-                    {t("products.origin")}{" "}
-                    <span className="font-medium text-gray-700">
+                  <span className="text-sm text-text/70">
+                    {t("products.origin")} {" "}
+                    <span className="font-medium text-text">
                       {product.origin}
                     </span>
                   </span>
@@ -155,14 +155,14 @@ export default function Products() {
 
                 {/* Packaging Sizes */}
                 <div className="mb-4">
-                  <p className="text-xs text-gray-500 mb-2">
+                  <p className="text-xs text-text/60 mb-2">
                     {t("products.availableSizes")}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {product.sizes.map((size) => (
                       <span
                         key={size}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full"
+                        className="px-3 py-1 bg-accent/40 text-text text-xs font-medium rounded-full"
                       >
                         {size}
                       </span>
@@ -173,7 +173,7 @@ export default function Products() {
                 {/* Learn More Button */}
                 <a
                   href={`/products/${product.slug}`}
-                  className="inline-flex items-center gap-2 text-gray-900 font-medium text-sm hover:gap-3 transition-all duration-300 group/btn"
+                  className="inline-flex items-center gap-2 text-primary font-medium text-sm hover:gap-3 transition-all duration-300 group/btn"
                 >
                   {t("products.learnMore")}
                   <svg
@@ -198,7 +198,7 @@ export default function Products() {
         <div className="text-center">
           <a
             href="/products"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full font-semibold hover:bg-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-brown transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             {t("products.viewAll")}
             <svg

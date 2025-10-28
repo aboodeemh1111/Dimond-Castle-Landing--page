@@ -34,10 +34,10 @@ export default function Story() {
           <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm">
             {t("story.since")}
           </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
+          <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-text">
             {t("story.heading")}
           </h2>
-          <p className="mt-5 text-base sm:text-lg leading-8 text-gray-700">
+          <p className="mt-5 text-base sm:text-lg leading-8 text-text/80">
             {t("story.p1")}
           </p>
         </div>
@@ -46,10 +46,10 @@ export default function Story() {
         <div className="mt-10 grid items-center gap-8 md:gap-10 lg:gap-14 md:grid-cols-2">
           {/* Visual panel */}
           <div className="relative order-1 md:order-0">
-            <div className="relative rounded-3xl overflow-hidden border border-gray-200 shadow-2xl">
+            <div className="relative rounded-3xl overflow-hidden border border-gray/40 shadow-2xl">
               {/* Overlay accents */}
               <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-white/10 to-transparent" />
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-gray-900 via-gray-700 to-gray-500" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-secondary to-brown" />
 
               <img
                 src="/images/story-img.png"
@@ -61,24 +61,24 @@ export default function Story() {
 
           {/* Text panel */}
           <div className="relative">
-            <div className="relative rounded-3xl border border-gray-200/50 bg-white/90 backdrop-blur-md shadow-xl">
+            <div className="relative rounded-3xl border border-gray/40 bg-white/90 backdrop-blur-md shadow-xl">
               <div className="p-8 sm:p-10">
                 <ul className="space-y-7">
                   <li className="flex items-start gap-4">
-                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
-                    <p className="text-gray-700 text-base sm:text-lg leading-8">
+                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-primary to-secondary ring-4 ring-gray/20" />
+                    <p className="text-text/80 text-base sm:text-lg leading-8">
                       {t("story.b1")}
                     </p>
                   </li>
                   <li className="flex items-start gap-4">
-                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
-                    <p className="text-gray-700 text-base sm:text-lg leading-8">
+                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-primary to-secondary ring-4 ring-gray/20" />
+                    <p className="text-text/80 text-base sm:text-lg leading-8">
                       {t("story.b2")}
                     </p>
                   </li>
                   <li className="flex items-start gap-4">
-                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
-                    <p className="text-gray-700 text-base sm:text-lg leading-8">
+                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-primary to-secondary ring-4 ring-gray/20" />
+                    <p className="text-text/80 text-base sm:text-lg leading-8">
                       {t("story.b3")}
                     </p>
                   </li>

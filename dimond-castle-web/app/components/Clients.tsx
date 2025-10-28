@@ -70,7 +70,7 @@ export default function Clients() {
   return (
     <section
       id="vip-clients"
-      className="relative py-20 px-6 md:px-12 bg-amber-50/30"
+      className="relative py-20 px-6 md:px-12 bg-accent/40"
     >
       {/* Decorative background */}
       <div className="absolute inset-0 -z-10 overflow-hidden" aria-hidden>
@@ -85,12 +85,12 @@ export default function Clients() {
         {/* Section Header */}
         <header className="text-center mb-16">
           <h2
-            className="text-4xl md:text-5xl font-bold text-gray-800 mb-4"
+            className="text-4xl md:text-5xl font-bold text-text mb-4"
             style={{ fontFamily: "Georgia, serif" }}
           >
             {t("clients.heading")}
           </h2>
-          <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-text/70 max-w-3xl mx-auto">
             {t("clients.subtitle")}
           </p>
         </header>
@@ -100,7 +100,7 @@ export default function Clients() {
           {clients.map((client) => (
             <figure
               key={client.id}
-              className="group relative flex items-center justify-center h-24 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-500 p-6 border border-gray-100 overflow-hidden"
+              className="group relative flex items-center justify-center h-24 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-500 p-6 border border-gray/30 overflow-hidden"
             >
               {/* Logo Container */}
               <div className="relative w-full h-full flex items-center justify-center">
@@ -121,12 +121,12 @@ export default function Clients() {
 
         {/* Trust Badge */}
         <div className="mt-16 text-center">
-          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-gray-200">
+          <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-gray/30">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-5 h-5 text-amber-600"
+              className="w-5 h-5 text-primary"
             >
               <path
                 fillRule="evenodd"
@@ -134,9 +134,9 @@ export default function Clients() {
                 clipRule="evenodd"
               />
             </svg>
-            <span className="text-sm font-medium text-gray-700">
-              {t("clients.trust")}{" "}
-              <span className="font-bold text-gray-900">100+</span>{" "}
+            <span className="text-sm font-medium text-text/80">
+              {t("clients.trust")} {" "}
+              <span className="font-bold text-text">100+</span> {" "}
               {t("clients.trustTail")}
             </span>
           </div>

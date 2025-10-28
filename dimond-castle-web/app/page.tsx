@@ -6,6 +6,7 @@ import Vision from "./components/Vision";
 import Values from "./components/Values";
 import Products from "./components/Products";
 import Clients from "./components/Clients";
+import Services from "./components/Services";
 import Footer from "./components/Footer";
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
         <Values />
         <Products />
         <Clients />
+        <Services />
         <ContactUs />
         <Footer />
       </main>
