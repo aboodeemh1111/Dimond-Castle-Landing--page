@@ -1,4 +1,9 @@
+"use client";
+
+import { useI18n } from "./I18nProvider";
+
 export default function Clients() {
+  const { t, dir } = useI18n();
   const clients = [
     {
       id: 1,
@@ -63,20 +68,30 @@ export default function Clients() {
   ];
 
   return (
-    <section id="vip-clients" className="relative py-20 px-6 md:px-12 bg-amber-50/30">
+    <section
+      id="vip-clients"
+      className="relative py-20 px-6 md:px-12 bg-amber-50/30"
+    >
       {/* Decorative background */}
       <div className="absolute inset-0 -z-10 overflow-hidden" aria-hidden>
         <div className="absolute left-1/2 top-1/2 h-160 w-160 -translate-x-1/2 -translate-y-1/2 rounded-full bg-linear-to-br from-amber-100/40 via-transparent to-transparent blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto">
+      <div
+        className={`max-w-7xl mx-auto ${
+          dir === "rtl" ? "text-right" : "text-left"
+        }`}
+      >
         {/* Section Header */}
         <header className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4" style={{ fontFamily: "Georgia, serif" }}>
-            Our Valued Clients
+          <h2
+            className="text-4xl md:text-5xl font-bold text-gray-800 mb-4"
+            style={{ fontFamily: "Georgia, serif" }}
+          >
+            {t("clients.heading")}
           </h2>
           <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-            We are proud to serve some of the most respected distributors, retailers, and hospitality brands in the region.
+            {t("clients.subtitle")}
           </p>
         </header>
 
@@ -107,11 +122,22 @@ export default function Clients() {
         {/* Trust Badge */}
         <div className="mt-16 text-center">
           <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-full shadow-sm border border-gray-200">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-amber-600">
-              <path fillRule="evenodd" d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08zm3.094 8.016a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-5 h-5 text-amber-600"
+            >
+              <path
+                fillRule="evenodd"
+                d="M12.516 2.17a.75.75 0 00-1.032 0 11.209 11.209 0 01-7.877 3.08.75.75 0 00-.722.515A12.74 12.74 0 002.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 00.374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 00-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08zm3.094 8.016a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                clipRule="evenodd"
+              />
             </svg>
             <span className="text-sm font-medium text-gray-700">
-              Trusted by <span className="font-bold text-gray-900">100+</span> businesses across Saudi Arabia
+              {t("clients.trust")}{" "}
+              <span className="font-bold text-gray-900">100+</span>{" "}
+              {t("clients.trustTail")}
             </span>
           </div>
         </div>
@@ -119,4 +145,3 @@ export default function Clients() {
     </section>
   );
 }
-

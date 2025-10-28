@@ -1,23 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "./I18nProvider";
 
-type NavChild = { label: string; href: string };
-type NavItem = { label: string; href?: string; children?: NavChild[] };
+type NavItem = { key: string; href: string };
 
-const navItems: NavItem[] = [
-  { label: "Home", href: "#home" },
-  { label: "Story", href: "#introduction-and-story" },
-  { label: "Vision", href: "#vision-mission-strategic-objectives" },
-  { label: "Products", href: "#products" },
-  { label: "Clients", href: "#vip-clients" },
-  { label: "Services", href: "#services" },
-  { label: "Contact Us", href: "#contact-us" },
-  { label: "Blog", href: "#blog" },
+const items: NavItem[] = [
+  { key: "nav.home", href: "#home" },
+  { key: "nav.story", href: "#introduction-and-story" },
+  { key: "nav.vision", href: "#vision-mission-strategic-objectives" },
+  { key: "nav.products", href: "#products" },
+  { key: "nav.clients", href: "#vip-clients" },
+  { key: "nav.services", href: "#services" },
+  { key: "nav.contact", href: "#contact-us" },
+  { key: "nav.blog", href: "#blog" },
 ];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { t, language, toggleLanguage } = useI18n();
 
   const closeMobileMenu = () => {
     setIsOpen(false);
@@ -71,18 +72,45 @@ export default function Navbar() {
             {/* Desktop Navigation */}
             <nav className="hidden md:block overflow-visible">
               <ul className="flex items-center gap-4 2xl:gap-6 overflow-x-auto overflow-y-visible whitespace-nowrap no-scrollbar">
-                {navItems.map((item) => (
-                  <li key={item.label}>
+                {items.map((item) => (
+                  <li key={item.key}>
                     <a
                       href={item.href}
                       className="text-gray-700/90 hover:text-gray-900 px-2 py-2 text-[13px] xl:text-sm font-medium transition-colors border-b-2 border-transparent hover:border-gray-900"
                     >
-                      {item.label}
+                      {t(item.key)}
                     </a>
                   </li>
                 ))}
               </ul>
             </nav>
+          </div>
+
+          {/* Desktop language switcher */}
+          <div className="hidden md:flex items-center gap-3">
+            <button
+              type="button"
+              onClick={toggleLanguage}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/70 border border-gray-200 text-gray-800 hover:text-gray-900 shadow-sm hover:shadow transition-all"
+              aria-label="Toggle language"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="h-4 w-4"
+              >
+                <circle cx="12" cy="12" r="9" strokeWidth="1.5" />
+                <path
+                  d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18"
+                  strokeWidth="1.5"
+                />
+              </svg>
+              <span className="text-sm font-medium">
+                {language === "ar" ? t("lang.en") : t("lang.ar")}
+              </span>
+            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -132,9 +160,9 @@ export default function Navbar() {
       >
         <div className="px-4 sm:px-6 lg:px-8 pb-4">
           <ul className="mt-2 space-y-1 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
-            {navItems.map((item) => (
+            {items.map((item) => (
               <li
-                key={item.label}
+                key={item.key}
                 className="border-b last:border-b-0 border-gray-100"
               >
                 <a
@@ -142,11 +170,40 @@ export default function Navbar() {
                   onClick={closeMobileMenu}
                   className="block px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-gray-900 text-sm font-medium"
                 >
-                  {item.label}
+                  {t(item.key)}
                 </a>
               </li>
             ))}
           </ul>
+
+          {/* Mobile language switcher */}
+          <div className="mt-3 flex justify-end">
+            <button
+              type="button"
+              onClick={() => {
+                toggleLanguage();
+              }}
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/90 border border-gray-200 text-gray-800 hover:text-gray-900 shadow-sm hover:shadow transition-all mr-2"
+              aria-label="Toggle language"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                className="h-4 w-4"
+              >
+                <circle cx="12" cy="12" r="9" strokeWidth="1.5" />
+                <path
+                  d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18"
+                  strokeWidth="1.5"
+                />
+              </svg>
+              <span className="text-sm font-medium">
+                {language === "ar" ? t("lang.en") : t("lang.ar")}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </nav>

@@ -1,4 +1,9 @@
+"use client";
+
+import { useI18n } from "./I18nProvider";
+
 export default function Values() {
+  const { t } = useI18n();
   return (
     <section id="corporate-values-objectives" className="relative py-16 sm:py-24 bg-gray-50">
       {/* Decorative background */}
@@ -8,9 +13,7 @@ export default function Values() {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <header className="max-w-3xl">
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">
-            Corporate Values & Objectives
-          </h2>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900">{t("values.heading")}</h2>
         </header>
 
         <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
@@ -22,13 +25,9 @@ export default function Values() {
                   <path d="M12 2l7 4v6c0 5-3.5 9.5-7 10-3.5-.5-7-5-7-10V6l7-4z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Integrity</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t("values.integrity.title")}</h3>
             </div>
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              We consistently uphold honesty and transparency in all our dealings, conducting our business in line
-              with both the letter and spirit of the law. Our values and principles are the compass that guides every
-              decision and plan.
-            </p>
+            <p className="mt-4 text-gray-600 leading-relaxed">{t("values.integrity.body")}</p>
           </article>
 
           {/* Leadership */}
@@ -39,13 +38,9 @@ export default function Values() {
                   <path d="M12 2a7 7 0 017 7v2h2v7a2 2 0 01-2 2h-4v-6h-6v6H5a2 2 0 01-2-2v-7h2V9a7 7 0 017-7z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Leadership</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t("values.leadership.title")}</h3>
             </div>
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              Every individual in our company is a leader within their area of responsibility. We are committed to
-              achieving pioneering results through a clear vision, strategic investment of our resources, and
-              continuous development to overcome challenges and execute our plans successfully.
-            </p>
+            <p className="mt-4 text-gray-600 leading-relaxed">{t("values.leadership.body")}</p>
           </article>
 
           {/* Ownership */}
@@ -56,13 +51,9 @@ export default function Values() {
                   <path d="M3 12l9-9 9 9-1.5 1.5L12 5.5 4.5 13.5 3 12zM4 14h16v7H4v-7z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Ownership</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t("values.ownership.title")}</h3>
             </div>
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              We take full personal responsibility for our work, constantly improving our systems and supporting
-              others to enhance the company’s performance. We see ourselves as true owners of Qalat Al-Almas,
-              treating its assets as our own and focusing on its long-term success.
-            </p>
+            <p className="mt-4 text-gray-600 leading-relaxed">{t("values.ownership.body")}</p>
           </article>
 
           {/* Passion for Success */}
@@ -73,12 +64,9 @@ export default function Values() {
                   <path d="M12 2l2.39 4.84 5.34.78-3.86 3.76.91 5.32L12 14.77 7.22 16.7l.91-5.32L4.27 7.62l5.34-.78L12 2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Passion for Success</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t("values.passion.title")}</h3>
             </div>
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              We are driven to excel in everything we do and constantly push beyond the status quo. Our passion fuels
-              innovation, market leadership, and excellence across all aspects of our business.
-            </p>
+            <p className="mt-4 text-gray-600 leading-relaxed">{t("values.passion.body")}</p>
           </article>
 
           {/* Trust */}
@@ -89,13 +77,9 @@ export default function Values() {
                   <path d="M12 3l8 4v5c0 4.97-3.58 9.58-8 10-4.42-.42-8-5.03-8-10V7l8-4zm0 6a3 3 0 100 6 3 3 0 000-6z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">Trust</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t("values.trust.title")}</h3>
             </div>
-            <p className="mt-4 text-gray-600 leading-relaxed">
-              We treat our colleagues, customers, and consumers with respect and fairness. Trust empowers our
-              employees to perform at their best and creates a work environment that delivers exceptional results for
-              everyone.
-            </p>
+            <p className="mt-4 text-gray-600 leading-relaxed">{t("values.trust.body")}</p>
           </article>
         </div>
       </div>

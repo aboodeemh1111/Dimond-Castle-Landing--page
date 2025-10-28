@@ -1,6 +1,10 @@
+"use client";
+
 import React from "react";
+import { useI18n } from "./I18nProvider";
 
 export default function Story() {
+  const { t, dir } = useI18n();
   return (
     <section
       id="introduction-and-story"
@@ -17,7 +21,7 @@ export default function Story() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-24 -right-24 h-[28rem] w-[28rem] rounded-full blur-3xl opacity-40"
+        className="pointer-events-none absolute -bottom-24 -right-24 h-112 w-md rounded-full blur-3xl opacity-40"
         style={{
           background:
             "radial-gradient(closest-side, rgba(0,0,0,0.06), transparent 70%)",
@@ -28,23 +32,20 @@ export default function Story() {
         {/* Heading */}
         <div className="max-w-3xl">
           <span className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700 shadow-sm">
-            Since 2015
+            {t("story.since")}
           </span>
           <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-gray-900">
-            Introduction & Story
+            {t("story.heading")}
           </h2>
           <p className="mt-5 text-base sm:text-lg leading-8 text-gray-700">
-            We are a company established in 2015 in the rice sector within the
-            Kingdom of Saudi Arabia, driven by a clear vision to provide
-            high-quality rice products that meet the needs of the local market
-            and exceed consumer expectations.
+            {t("story.p1")}
           </p>
         </div>
 
         {/* Content layout */}
         <div className="mt-10 grid items-center gap-8 md:gap-10 lg:gap-14 md:grid-cols-2">
           {/* Visual panel */}
-          <div className="relative order-1 md:order-none">
+          <div className="relative order-1 md:order-0">
             <div className="relative rounded-3xl overflow-hidden border border-gray-200 shadow-2xl">
               {/* Overlay accents */}
               <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-white/10 to-transparent" />
@@ -53,12 +54,16 @@ export default function Story() {
               <img
                 src="/images/story-img.png"
                 alt="Biryani and rice feast showcasing our premium rice products"
-                className="aspect-[4/3] w-full object-cover"
+                className="aspect-4/3 w-full object-cover"
               />
 
               {/* Corner badge */}
-              <div className="absolute bottom-4 right-4 rounded-full bg-white/80 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-800 shadow">
-                Trusted • KSA
+              <div
+                className={`absolute bottom-4 ${
+                  dir === "rtl" ? "left-4" : "right-4"
+                } rounded-full bg-white/80 backdrop-blur px-3 py-1 text-xs font-semibold text-gray-800 shadow`}
+              >
+                {t("story.badge")}
               </div>
             </div>
           </div>
@@ -69,32 +74,21 @@ export default function Story() {
               <div className="p-8 sm:p-10">
                 <ul className="space-y-7">
                   <li className="flex items-start gap-4">
-                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-gradient-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
+                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
                     <p className="text-gray-700 text-base sm:text-lg leading-8">
-                      Our company was founded on the belief that food is a
-                      fundamental pillar of community life, and on our
-                      commitment to contributing to the enhancement of food
-                      security in the Kingdom by offering reliable and premium
-                      rice.
+                      {t("story.b1")}
                     </p>
                   </li>
                   <li className="flex items-start gap-4">
-                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-gradient-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
+                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
                     <p className="text-gray-700 text-base sm:text-lg leading-8">
-                      Since our inception, we have focused on building strong
-                      partnerships with the world's best suppliers and
-                      establishing an advanced distribution network that ensures
-                      our products reach all regions of the Kingdom efficiently
-                      and with superior quality.
+                      {t("story.b2")}
                     </p>
                   </li>
                   <li className="flex items-start gap-4">
-                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-gradient-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
+                    <span className="mt-1.5 inline-flex h-2 w-2 flex-none rounded-full bg-linear-to-br from-gray-900 to-gray-700 ring-4 ring-gray-100" />
                     <p className="text-gray-700 text-base sm:text-lg leading-8">
-                      Today, we continue to grow confidently and consistently
-                      within this sector, remaining dedicated to being a trusted
-                      company that delivers only the finest rice to consumers
-                      across Saudi Arabia.
+                      {t("story.b3")}
                     </p>
                   </li>
                 </ul>
