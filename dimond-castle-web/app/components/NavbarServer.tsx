@@ -2,11 +2,19 @@ import Navbar from "./Navbar";
 import { apiGet, PublicNavItem } from "../lib/api";
 
 export default async function NavbarServer() {
-  let items: PublicNavItem[] = [];
   try {
-    items = await apiGet<PublicNavItem[]>("/public/nav");
+    const response = await apiGet<PublicNavItem[]>("/public/nav");
+    const items = response
+      .filter((i) => i.visible !== false)
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+      .map((i) => ({ key: i.label, href: i.href }));
+
+    if (items.length > 0) {
+      return <Navbar items={items} />;
+    }
   } catch (_) {
-    // fallback to empty; Navbar will render defaults
+    // ignore and fall back to defaults
   }
-  return <Navbar items={items.map((i) => ({ key: i.label, href: i.href }))} />;
+  // When API is unavailable or empty, render Navbar with default items
+  return <Navbar />;
 }

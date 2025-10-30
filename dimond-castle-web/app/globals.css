@@ -1,27 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand palette (base CSS vars) */
-  --dc-primary: #d4af37; /* gold */
-  --dc-secondary: #2e5e4e; /* green */
+  /* Core palette */
+  --green-500: #2e5e4e; /* primary */
+  --green-600: #244a3e; /* primary hover */
+  --gold-500: #d4af37; /* secondary */
+  --gold-600: #b68f1e; /* secondary hover */
+
   --dc-bg: #f9f7f3; /* cream */
   --dc-white: #ffffff;
   --dc-text: #1e1e1e; /* charcoal */
-  --dc-gray: #cfcfcf; /* soft gray */
+  --dc-gray: #cfcfcf; /* dividers */
   --dc-accent: #e9dfc7; /* warm beige */
-  --dc-brown: #7a5e3a; /* muted brown */
 }
 
 @theme inline {
   /* Expose palette as Tailwind tokens */
-  --color-primary: var(--dc-primary);
-  --color-secondary: var(--dc-secondary);
+  --color-primary: var(--green-500);
+  --color-primary-600: var(--green-600);
+  --color-gold-500: var(--gold-500);
+  --color-gold-600: var(--gold-600);
   --color-bg: var(--dc-bg);
   --color-white: var(--dc-white);
   --color-text: var(--dc-text);
   --color-gray: var(--dc-gray);
   --color-accent: var(--dc-accent);
-  --color-brown: var(--dc-brown);
 
   /* Backwards-compatible tokens used in the app */
   --color-background: var(--dc-bg);
@@ -43,6 +46,12 @@ body {
   background: var(--dc-bg);
   color: var(--dc-text);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Focus ring utility per spec */
+.focus-gold:focus {
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--gold-500);
 }
 
 /* Hide scrollbars (desktop nav) but keep scroll functionality */

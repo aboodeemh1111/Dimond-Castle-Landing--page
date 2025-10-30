@@ -40,30 +40,14 @@ export default function Navbar({
               className="shrink-0 flex items-center gap-2"
               aria-label="Diamond Castle Home"
             >
-              {/* SVG placeholder logo */}
-              <svg
-                className="h-6 w-6 sm:h-7 sm:w-7 text-gray-900"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 2L22 9L12 22L2 9L12 2Z"
-                  fill="currentColor"
-                  fillOpacity="0.12"
-                />
-                <path
-                  d="M12 2L22 9L12 22L2 9L12 2Z"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                />
-                <path
-                  d="M12 2V22M2 9H22"
-                  stroke="currentColor"
-                  strokeWidth="1"
-                  opacity="0.5"
-                />
-              </svg>
+              {/* Brand logo image */}
+              <img
+                src={encodeURI("/images/logo/الالماس-الابيض.png")}
+                alt="White Diamond logo"
+                className="h-7 sm:h-8 w-auto"
+                loading="eager"
+                decoding="async"
+              />
               {/* Brand text (compact) */}
               <span className="text-sm sm:text-base font-semibold tracking-tight text-gray-900">
                 <span className="sm:hidden">DC</span>

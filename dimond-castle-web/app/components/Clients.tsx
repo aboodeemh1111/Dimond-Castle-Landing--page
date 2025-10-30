@@ -60,14 +60,14 @@ export default function Clients() {
           {clients.map((client) => (
             <figure
               key={client.id}
-              className="group relative flex items-center justify-center h-28 md:h-32 lg:h-36 bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 p-6 border border-gray/30 overflow-hidden transform hover:-translate-y-1"
+              className="group relative flex items-center justify-center aspect-square bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 p-3 md:p-4 border border-gray/30 overflow-hidden transform hover:-translate-y-1"
             >
               {/* Logo Container */}
               <div className="relative w-full h-full flex items-center justify-center">
                 <img
                   src={encodeURI(client.logo)}
                   alt={`${client.name} logo`}
-                  className="w-auto max-w-full object-contain max-h-20 md:max-h-24 lg:max-h-28 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:drop-shadow-lg group-hover:-translate-y-0.5 group-hover:saturate-125"
+                  className="w-auto h-[70%] md:h-[75%] lg:h-[80%] object-contain transition-transform duration-700 ease-out group-hover:scale-110 group-hover:drop-shadow-lg group-hover:-translate-y-0.5 group-hover:saturate-125"
                 />
               </div>
 
