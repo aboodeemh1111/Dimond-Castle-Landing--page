@@ -18,11 +18,14 @@ export default function Hero() {
         />
       </div>
 
-      {/* Subtle overlay */}
-      <div className="absolute inset-0 bg-linear-to-b from-black/30 via-black/20 to-black/50 backdrop-blur-[2px]" />
-
-      {/* Gradient Overlay for better text contrast */}
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/30" />
+      {/* Brand gradient overlay */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(46,94,78,0.85), rgba(212,175,55,0.35))",
+        }}
+      />
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -39,13 +42,13 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a
               href="#services"
-              className="px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-brown transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-[var(--green-600)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)]"
             >
               {t("hero.cta.view")}
             </a>
             <a
               href="#about"
-              className="px-8 py-4 border-2 border-white text-white rounded-full font-semibold hover:bg-white/10 transition-all duration-300 backdrop-blur-sm"
+              className="px-8 py-4 border-2 border-[var(--gold-500)] text-[var(--gold-500)] rounded-full font-semibold hover:bg-[color-mix(in_srgb,var(--gold-500)_15%,transparent)] transition-all duration-300 backdrop-blur-sm focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)]"
             >
               {t("hero.cta.learn")}
             </a>
