@@ -29,10 +29,18 @@ export default function MediaPicker({
     onChange("");
   };
 
-  // Generate Cloudinary URL from publicId
-  const getMediaUrl = (publicId: string) => {
-    if (!publicId) return "";
-    return `https://res.cloudinary.com/demo/${type}/upload/w_400/${publicId}`;
+  // Generate preview URL
+  const getMediaUrl = (value: string) => {
+    if (!value) return "";
+    // If API returned absolute URL
+    if (/^https?:\/\//i.test(value)) return value;
+    // If API returned path like /uploads/...
+    if (value.startsWith("/")) {
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+      return `${base}${value}`;
+    }
+    // Fallback for legacy cloudinary-style publicId
+    return `https://res.cloudinary.com/demo/${type}/upload/w_400/${value}`;
   };
 
   return (

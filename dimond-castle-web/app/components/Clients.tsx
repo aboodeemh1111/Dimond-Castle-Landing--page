@@ -5,66 +5,26 @@ import { useI18n } from "./I18nProvider";
 export default function Clients() {
   const { t, dir } = useI18n();
   const clients = [
-    {
-      id: 1,
-      name: "Almarai",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 2,
-      name: "Panda Retail Company",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 3,
-      name: "Tamimi Markets",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 4,
-      name: "Carrefour Saudi Arabia",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 5,
-      name: "Hyper Panda",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 6,
-      name: "Danube",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 7,
-      name: "Lulu Hypermarket",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 8,
-      name: "BinDawood Group",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 9,
-      name: "Al Othaim Markets",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 10,
-      name: "Farm Superstores",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 11,
-      name: "Manuel Market",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
-    {
-      id: 12,
-      name: "Nesto Hypermarket",
-      logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-    },
+    { id: 1, name: "MS Logistics", logo: "/images/partners/MS.png" },
+    { id: 2, name: "SAUDI MEDICAL SYSTEM", logo: "/images/partners/SVR.png" },
+    { id: 3, name: "اعمال المرافق Business Facilities", logo: "/images/partners/اعمال-المرافق.png" },
+    { id: 4, name: "الباسم", logo: "/images/partners/الباسم.png" },
+    { id: 5, name: "البيت الرومنسي", logo: "/images/partners/البيت-الرومنسي.png" },
+    { id: 6, name: "Gulf Catering Food Factory", logo: "/images/partners/الخليج.png" },
+    { id: 7, name: "Atheeb Catering", logo: "/images/partners/الذيب.png" },
+    { id: 8, name: "أسواق الرشيد", logo: "/images/partners/الرشيد.png" },
+    { id: 9, name: "الريم", logo: "/images/partners/الريم.png" },
+    { id: 10, name: "الصالة الاقتصادية", logo: "/images/partners/الصالة-الاقتصادية.png" },
+    { id: 11, name: "النبلاء", logo: "/images/partners/النبلاء.png" },
+    { id: 12, name: "إمداد", logo: "/images/partners/امداد.png" },
+    { id: 13, name: "أوج", logo: "/images/partners/اوج.png" },
+    { id: 14, name: "بيت الشاورما Shawarma House", logo: "/images/partners/بيت-الشاورما.png" },
+    { id: 15, name: "شركة فهد الرشيد", logo: "/images/partners/شركة-فهد.png" },
+    { id: 16, name: "شرما للاستثمار", logo: "/images/partners/شرما.png" },
+    { id: 17, name: "أسواق ضواحي الرمال", logo: "/images/partners/ضواحي-الرمال.png" },
+    { id: 18, name: "GANNAS شركة قناص العربية", logo: "/images/partners/قناص.png" },
+    { id: 19, name: "متاجر المستهلك", logo: "/images/partners/متاجر-المستهلك.png" },
+    { id: 20, name: "HOZOON هزون", logo: "/images/partners/هزون.png" },
   ];
 
   return (
@@ -96,18 +56,18 @@ export default function Clients() {
         </header>
 
         {/* Client Logo Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 md:gap-10">
           {clients.map((client) => (
             <figure
               key={client.id}
-              className="group relative flex items-center justify-center h-24 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-500 p-6 border border-gray/30 overflow-hidden"
+              className="group relative flex items-center justify-center h-28 md:h-32 lg:h-36 bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 p-6 border border-gray/30 overflow-hidden transform hover:-translate-y-1"
             >
               {/* Logo Container */}
               <div className="relative w-full h-full flex items-center justify-center">
                 <img
-                  src={client.logo}
+                  src={encodeURI(client.logo)}
                   alt={`${client.name} logo`}
-                  className="max-h-16 w-auto object-contain grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-105"
+                  className="w-auto max-w-full object-contain max-h-20 md:max-h-24 lg:max-h-28 grayscale group-hover:grayscale-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:drop-shadow-lg group-hover:-translate-y-0.5"
                 />
               </div>
 

@@ -81,9 +81,8 @@ export default function LoginPage() {
           <p className="text-sm text-blue-700 font-medium mb-2">
             Demo Credentials:
           </p>
-          <p className="text-xs text-blue-600">
-            Any email and password will work (mock API)
-          </p>
+          <p className="text-xs text-blue-600">Email: admin@example.com</p>
+          <p className="text-xs text-blue-600">Password: admin123</p>
         </div>
       </Card>
     </div>

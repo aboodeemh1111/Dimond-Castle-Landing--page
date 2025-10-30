@@ -50,12 +50,13 @@ export default function MediaUploadModal({
       await api.getMediaSignature();
       setUploadProgress(40);
 
-      // Step 2: Upload to Cloudinary (mocked)
+      // Step 2: Upload to API
       const media = await api.uploadMedia(selectedFile);
       setUploadProgress(100);
 
-      // Step 3: Return publicId to parent
-      onUploadComplete(media.publicId, media.secureUrl || "");
+      // Step 3: Return URL to parent
+      // API returns { url, _id, ... }
+      onUploadComplete(media.url || "", media.url || "");
 
       // Reset and close
       setTimeout(() => {

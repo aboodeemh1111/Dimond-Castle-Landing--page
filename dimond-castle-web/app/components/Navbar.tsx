@@ -5,7 +5,7 @@ import { useI18n } from "./I18nProvider";
 
 type NavItem = { key: string; href: string };
 
-const items: NavItem[] = [
+const defaultItems: NavItem[] = [
   { key: "nav.home", href: "#home" },
   { key: "nav.story", href: "#introduction-and-story" },
   { key: "nav.vision", href: "#vision-mission-strategic-objectives" },
@@ -16,7 +16,11 @@ const items: NavItem[] = [
   { key: "nav.blog", href: "#blog" },
 ];
 
-export default function Navbar() {
+export default function Navbar({
+  items = defaultItems,
+}: {
+  items?: NavItem[];
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const { t, language, toggleLanguage } = useI18n();
 

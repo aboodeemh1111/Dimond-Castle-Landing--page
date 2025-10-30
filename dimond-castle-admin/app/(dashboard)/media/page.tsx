@@ -60,7 +60,7 @@ export default function MediaPage() {
 
     try {
       setIsDeleting(true);
-      await api.deleteMedia(deleteModal.media.publicId);
+      await api.deleteMedia(deleteModal.media._id);
       setDeleteModal({ isOpen: false, media: null });
       fetchMedia();
     } catch (error) {
@@ -72,7 +72,10 @@ export default function MediaPage() {
   };
 
   const getMediaUrl = (media: MediaDoc) => {
-    return `https://res.cloudinary.com/demo/${media.resourceType}/upload/${media.publicId}`;
+    if (media.url) return media.url;
+    const base = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+    if (media.publicId?.startsWith("/")) return `${base}${media.publicId}`;
+    return media.publicId;
   };
 
   return (
@@ -159,14 +162,14 @@ export default function MediaPage() {
               <div className="p-4 space-y-3">
                 <div>
                   <p className="text-sm font-medium text-admin-text truncate">
-                    {item.publicId.split("/").pop()}
+                    {(item.publicId || item._id).toString().split("/").pop()}
                   </p>
                   <p className="text-xs text-admin-textLight">
                     {item.width} × {item.height} •{" "}
                     {Math.round((item.bytes || 0) / 1024)} KB
                   </p>
                   <p className="text-xs text-admin-textLight break-all mt-1">
-                    {item.publicId}
+                    {getMediaUrl(item)}
                   </p>
                 </div>
 

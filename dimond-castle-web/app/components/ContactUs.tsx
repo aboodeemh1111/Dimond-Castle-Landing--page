@@ -38,29 +38,17 @@ export default function ContactUs() {
     }
     setStatus({ type: "submitting" });
     try {
-      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error(
-          "EmailJS env vars missing. Set NEXT_PUBLIC_EMAILJS_SERVICE_ID, NEXT_PUBLIC_EMAILJS_TEMPLATE_ID, NEXT_PUBLIC_EMAILJS_PUBLIC_KEY."
-        );
-      }
-
-      const res = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
+      const API_BASE =
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+      const res = await fetch(`${API_BASE}/contacts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          service_id: serviceId,
-          template_id: templateId,
-          user_id: publicKey,
-          template_params: {
-            from_name: form.name,
-            from_email: form.email,
-            subject: form.subject,
-            message: form.message,
-          },
+          name: form.name,
+          email: form.email,
+          message: form.subject
+            ? `${form.subject}\n\n${form.message}`
+            : form.message,
         }),
       });
 
@@ -93,7 +81,10 @@ export default function ContactUs() {
           <form onSubmit={sendEmail} className="mt-10 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Name
                 </label>
                 <input
@@ -109,7 +100,10 @@ export default function ContactUs() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   Email
                 </label>
                 <input
@@ -126,7 +120,10 @@ export default function ContactUs() {
             </div>
 
             <div>
-              <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="subject"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Subject
               </label>
               <input
@@ -141,7 +138,10 @@ export default function ContactUs() {
             </div>
 
             <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="message"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Message
               </label>
               <textarea
@@ -185,4 +185,3 @@ export default function ContactUs() {
     </section>
   );
 }
-
