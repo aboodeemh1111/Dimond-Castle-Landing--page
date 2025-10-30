@@ -67,7 +67,7 @@ export default function Clients() {
                 <img
                   src={encodeURI(client.logo)}
                   alt={`${client.name} logo`}
-                  className="w-auto max-w-full object-contain max-h-20 md:max-h-24 lg:max-h-28 grayscale group-hover:grayscale-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:drop-shadow-lg group-hover:-translate-y-0.5"
+                  className="w-auto max-w-full object-contain max-h-20 md:max-h-24 lg:max-h-28 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:drop-shadow-lg group-hover:-translate-y-0.5 group-hover:saturate-125"
                 />
               </div>
 
