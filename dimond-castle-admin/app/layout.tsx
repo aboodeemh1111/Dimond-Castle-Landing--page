@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "./components/Navbar";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "Dimond Castle Admin",
@@ -17,6 +18,16 @@ export default function RootLayout({
       <body>
         <Navbar />
         {children}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: "#0f172a",
+              color: "#fefce8",
+              borderRadius: "0.75rem",
+            },
+          }}
+        />
       </body>
     </html>
   );
