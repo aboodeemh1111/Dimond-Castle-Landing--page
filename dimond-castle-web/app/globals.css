@@ -54,6 +54,89 @@ body {
   box-shadow: 0 0 0 2px var(--gold-500);
 }
 
+/* Gold glow on text hover for navbar links */
+.glow-gold {
+  transition: color 200ms ease, text-shadow 200ms ease;
+}
+.glow-gold:hover {
+  color: var(--gold-500) !important;
+  text-shadow: 0 0 6px rgba(212, 175, 55, 0.6), 0 0 12px rgba(212, 175, 55, 0.4);
+}
+
+/* Liquid glass buttons */
+.btn-glass,
+.btn-glass--gold {
+  position: relative;
+  overflow: hidden;
+  border-radius: 9999px; /* full */
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 8px 20px rgba(0, 0, 0, 0.12);
+  transition: background 220ms ease, transform 200ms ease, box-shadow 220ms ease;
+}
+
+.btn-glass {
+  color: #ffffff;
+  border-color: color-mix(in srgb, var(--green-600) 70%, white 30%);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--green-500) 60%, transparent),
+      color-mix(in srgb, var(--green-600) 70%, transparent)
+    );
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+.btn-glass:hover {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--green-500) 70%, transparent),
+      color-mix(in srgb, var(--green-600) 80%, transparent)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.btn-glass--gold {
+  color: var(--dc-text);
+  border-color: color-mix(in srgb, var(--gold-600) 70%, white 30%);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--gold-500) 40%, transparent),
+      color-mix(in srgb, var(--gold-600) 55%, transparent)
+    );
+}
+.btn-glass--gold:hover {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--gold-500) 55%, transparent),
+      color-mix(in srgb, var(--gold-600) 70%, transparent)
+    );
+}
+
+.btn-glass::after,
+.btn-glass--gold::after {
+  content: "";
+  position: absolute;
+  top: -120%;
+  left: -20%;
+  width: 40%;
+  height: 300%;
+  background: radial-gradient(60% 60% at 50% 50%, rgba(255, 255, 255, 0.6), transparent 60%);
+  transform: rotate(25deg);
+  transition: left 520ms ease;
+}
+.btn-glass:hover::after,
+.btn-glass--gold:hover::after {
+  left: 120%;
+}
+
 /* Hide scrollbars (desktop nav) but keep scroll functionality */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
@@ -68,3 +151,12 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
+/* Admin utility aliases */
+.bg-cream { background-color: var(--dc-bg); }
+.text-textDark { color: var(--dc-text); }
+.bg-brand-green-600 { background-color: var(--green-600); }
+.bg-brand-green-500 { background-color: var(--green-500); }
+.bg-brand-gold-500 { background-color: var(--gold-500); }
+.bg-brand-gold-600 { background-color: var(--gold-600); }
+.text-brand-gold-500 { color: var(--gold-500); }
+.border-brand-green-600 { border-color: var(--green-600); }

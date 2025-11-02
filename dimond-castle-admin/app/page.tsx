@@ -1,18 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/lib/store";
-
-export default function HomeRedirect() {
-  const router = useRouter();
-  const accessToken = useAuthStore((s) => s.accessToken);
-
-  useEffect(() => {
-    router.replace(accessToken ? "/dashboard" : "/login");
-  }, [accessToken, router]);
-
-  return null;
+export default function Home() {
+  redirect("/dashboard");
 }
-
-

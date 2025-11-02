@@ -5,17 +5,14 @@ import { useI18n } from "./I18nProvider";
 export default function Footer() {
   const { t } = useI18n();
   return (
-    <footer id="footer" className="relative mt-20">
-      {/* Background gradient + subtle pattern */}
-      <div
-        className="absolute inset-0 -z-10 bg-linear-to-t from-gray-100 via-white to-white"
-        aria-hidden
-      >
+    <footer id="footer" className="relative mt-20 bg-[var(--green-600)] text-white">
+      {/* Subtle pattern */}
+      <div className="absolute inset-0 -z-10 opacity-10" aria-hidden>
         <div
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 2px 2px, rgba(0,0,0,0.2) 1px, transparent 0)",
+              "radial-gradient(circle at 2px 2px, rgba(255,255,255,0.4) 1px, transparent 0)",
             backgroundSize: "24px 24px",
           }}
         />
@@ -23,14 +20,14 @@ export default function Footer() {
 
       <section className="py-12 sm:py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="glass-morphism bg-white/60 border border-white/40 shadow-xl rounded-3xl px-6 sm:px-10 py-8 sm:py-10">
+          <div className="glass-morphism bg-white/10 border border-white/20 shadow-xl rounded-3xl px-6 sm:px-10 py-8 sm:py-10">
             {/* Top content */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 items-start">
               {/* Brand */}
               <div>
                 <div className="flex items-center gap-3">
                   <svg
-                    className="h-7 w-7 text-gray-900"
+                    className="h-7 w-7 text-white"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -52,31 +49,31 @@ export default function Footer() {
                       opacity="0.5"
                     />
                   </svg>
-                  <p className="text-lg font-semibold tracking-tight text-gray-900">
+                  <p className="text-lg font-semibold tracking-tight text-white">
                     {t("footer.brand")}
                   </p>
                 </div>
-                <p className="mt-3 text-sm text-gray-600 max-w-xs">
+                <p className="mt-3 text-sm text-white/80 max-w-xs">
                   {t("footer.tagline")}
                 </p>
               </div>
 
               {/* Reach us directly */}
               <div>
-                <h3 className="text-base font-semibold text-gray-900">
+                <h3 className="text-base font-semibold text-white">
                   {t("footer.reach")}
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-white/80 mt-1">
                   {t("footer.reachSub")}
                 </p>
                 <ul className="mt-4 space-y-3">
                   <li>
                     <a
                       href="mailto:info@alsanadgroup.com"
-                      className="group inline-flex items-center gap-3 text-gray-800 hover:text-gray-900"
+                      className="group inline-flex items-center gap-3 text-white hover:text-white"
                       aria-label="Email info@alsanadgroup.com"
                     >
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/70 border border-gray-200 shadow-sm group-hover:shadow transition-all">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 border border-white/30 shadow-sm group-hover:shadow transition-all">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
@@ -96,10 +93,10 @@ export default function Footer() {
                   <li>
                     <a
                       href="tel:+966503992995"
-                      className="group inline-flex items-center gap-3 text-gray-800 hover:text-gray-900"
+                      className="group inline-flex items-center gap-3 text-white hover:text-white"
                       aria-label="Call +966503992995"
                     >
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/70 border border-gray-200 shadow-sm group-hover:shadow transition-all">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 border border-white/30 shadow-sm group-hover:shadow transition-all">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
@@ -121,10 +118,10 @@ export default function Footer() {
 
               {/* Socials */}
               <div>
-                <h3 className="text-base font-semibold text-gray-900">
+                <h3 className="text-base font-semibold text-white">
                   {t("footer.social")}
                 </h3>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-white/80 mt-1">
                   {t("footer.socialSub")}
                 </p>
                 <div className="mt-4 flex items-center gap-3">
@@ -133,7 +130,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="X (Twitter) @wh_1diamond"
-                    className="group inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/70 border border-gray-200 shadow-sm hover:shadow transition-all text-gray-800 hover:text-gray-900"
+                    className="group inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/20 border border-white/30 shadow-sm hover:shadow transition-all text-white"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -150,7 +147,7 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram @wh_1diamond"
-                    className="group inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/70 border border-gray-200 shadow-sm hover:shadow transition-all text-gray-800 hover:text-gray-900"
+                    className="group inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/20 border border-white/30 shadow-sm hover:shadow transition-all text-white"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -170,13 +167,13 @@ export default function Footer() {
             <div className="my-8 border-t border-white/60" />
 
             {/* Bottom bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-600">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/80">
               <p>
                 © {new Date().getFullYear()} Diamond Castle Trading Company.{" "}
                 {t("footer.copyright")}
               </p>
               <div className="flex items-center gap-4">
-                <a href="#home" className="hover:text-gray-900">
+                <a href="#home" className="hover:underline">
                   {t("footer.backToTop")}
                 </a>
               </div>

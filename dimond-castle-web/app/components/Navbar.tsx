@@ -29,7 +29,7 @@ export default function Navbar({
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 supports-backdrop-filter:bg-white/60">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[var(--dc-gray)] supports-backdrop-filter:bg-white/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           {/* Logo and Navigation grouped on the left */}
@@ -38,7 +38,7 @@ export default function Navbar({
             <a
               href="#home"
               className="shrink-0 flex items-center gap-2"
-              aria-label="Diamond Castle Home"
+              aria-label={t("nav.aria.home")}
             >
               {/* Brand logo image */}
               <img
@@ -50,10 +50,8 @@ export default function Navbar({
               />
               {/* Brand text (compact) */}
               <span className="text-sm sm:text-base font-semibold tracking-tight text-gray-900">
-                <span className="sm:hidden">DC</span>
-                <span className="hidden sm:inline">
-                  Diamond <span className="text-gray-500">Castle</span>
-                </span>
+                <span className="sm:hidden">{t("brand.short")}</span>
+                <span className="hidden sm:inline">{t("brand.full")}</span>
               </span>
             </a>
 
@@ -64,7 +62,7 @@ export default function Navbar({
                   <li key={item.key}>
                     <a
                       href={item.href}
-                      className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-gray-700/90 transition-all duration-300 border-b-2 border-transparent rounded-md hover:text-primary hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-primary after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300"
+                      className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 hover:underline underline-offset-4 decoration-[var(--gold-500)] after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300 glow-gold"
                     >
                       {t(item.key)}
                     </a>
@@ -79,7 +77,7 @@ export default function Navbar({
             <button
               type="button"
               onClick={toggleLanguage}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/70 border border-gray-200 text-gray-800 hover:text-gray-900 shadow-sm hover:shadow transition-all"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/70 border border-[var(--dc-gray)] text-gray-800 hover:text-gray-900 shadow-sm hover:shadow transition-all focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)]"
               aria-label="Toggle language"
             >
               <svg
@@ -106,7 +104,7 @@ export default function Navbar({
             <button
               type="button"
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500"
-              aria-label="Toggle main menu"
+              aria-label={t("nav.aria.toggle")}
               aria-expanded={isOpen}
               onClick={() => setIsOpen((prev) => !prev)}
             >
@@ -147,7 +145,7 @@ export default function Navbar({
         }`}
       >
         <div className="px-4 sm:px-6 lg:px-8 pb-4">
-          <ul className="mt-2 space-y-1 rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <ul className="mt-2 space-y-1 rounded-lg border border-[var(--dc-gray)] bg-white shadow-sm overflow-hidden">
             {items.map((item) => (
               <li
                 key={item.key}
@@ -156,7 +154,7 @@ export default function Navbar({
                 <a
                   href={item.href}
                   onClick={closeMobileMenu}
-                  className="relative group block px-4 py-3 text-gray-700 hover:bg-accent/30 hover:text-primary text-sm font-medium transition-all duration-300 after:content-[''] after:absolute after:left-4 after:bottom-2 after:h-[2px] after:w-0 after:bg-primary group-hover:after:w-10 after:transition-all after:duration-300"
+                  className="relative group block px-4 py-3 text-gray-700 hover:bg-accent/30 text-sm font-medium transition-all duration-300 hover:underline underline-offset-4 after:content-[''] after:absolute after:left-4 after:bottom-2 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] group-hover:after:w-10 after:transition-all after:duration-300 glow-gold"
                 >
                   {t(item.key)}
                 </a>

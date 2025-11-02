@@ -1,13 +1,25 @@
 "use client";
 
+import Image from "next/image";
+
+import heroBackground from "@/public/images/hero/hero1.png";
+
 import { useI18n } from "./I18nProvider";
 
 export default function Hero() {
   const { t } = useI18n();
   return (
     <section className="relative w-full h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-      {/* Background (no external assets to avoid 404s) */}
+      {/* Background */}
       <div className="absolute inset-0 w-full h-full">
+        <Image
+          src={heroBackground}
+          alt={t("hero.imageAlt")}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
         <div
           className="absolute inset-0"
           style={{
@@ -42,13 +54,13 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <a
               href="#services"
-              className="px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-[var(--green-600)] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)]"
+              className="px-8 py-4 rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)] btn-glass"
             >
               {t("hero.cta.view")}
             </a>
             <a
               href="#about"
-              className="px-8 py-4 border-2 border-[var(--gold-500)] text-[var(--gold-500)] rounded-full font-semibold hover:bg-[color-mix(in_srgb,var(--gold-500)_15%,transparent)] transition-all duration-300 backdrop-blur-sm focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)]"
+              className="px-8 py-4 rounded-full font-semibold transition-all duration-300 backdrop-blur-sm focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)] btn-glass--gold"
             >
               {t("hero.cta.learn")}
             </a>

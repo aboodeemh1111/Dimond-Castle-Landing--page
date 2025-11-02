@@ -9,7 +9,10 @@ type FormState = {
   message: string;
 };
 
+import { useI18n } from "./I18nProvider";
+
 export default function ContactUs() {
+  const { t } = useI18n();
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -33,7 +36,7 @@ export default function ContactUs() {
   const sendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
-      setStatus({ type: "error", message: "Please fill required fields." });
+      setStatus({ type: "error", message: t("contact.fillRequired") });
       return;
     }
     setStatus({ type: "submitting" });
@@ -57,12 +60,12 @@ export default function ContactUs() {
         throw new Error(text || `Request failed: ${res.status}`);
       }
 
-      setStatus({ type: "success", message: "Message sent successfully." });
+      setStatus({ type: "success", message: t("contact.success") });
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err: any) {
       setStatus({
         type: "error",
-        message: err?.message || "Failed to send message.",
+        message: err?.message || t("contact.failed"),
       });
     }
   };
@@ -72,10 +75,10 @@ export default function ContactUs() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center">
-            Contact Us
+            {t("contact.heading")}
           </h2>
           <p className="mt-3 text-center text-gray-600">
-            Send us a message and we’ll get back to you.
+            {t("contact.sub")}
           </p>
 
           <form onSubmit={sendEmail} className="mt-10 space-y-6">
@@ -85,7 +88,7 @@ export default function ContactUs() {
                   htmlFor="name"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Name
+                  {t("contact.name")}
                 </label>
                 <input
                   id="name"
@@ -95,7 +98,7 @@ export default function ContactUs() {
                   value={form.name}
                   onChange={onChange}
                   className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
-                  placeholder="Your full name"
+                  placeholder={t("contact.placeholder.name")}
                 />
               </div>
 
@@ -104,7 +107,7 @@ export default function ContactUs() {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Email
+                  {t("contact.email")}
                 </label>
                 <input
                   id="email"
@@ -114,7 +117,7 @@ export default function ContactUs() {
                   value={form.email}
                   onChange={onChange}
                   className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
-                  placeholder="you@example.com"
+                  placeholder={t("contact.placeholder.email")}
                 />
               </div>
             </div>
@@ -123,8 +126,8 @@ export default function ContactUs() {
               <label
                 htmlFor="subject"
                 className="block text-sm font-medium text-gray-700"
-              >
-                Subject
+                >
+                {t("contact.subject")}
               </label>
               <input
                 id="subject"
@@ -132,8 +135,8 @@ export default function ContactUs() {
                 type="text"
                 value={form.subject}
                 onChange={onChange}
-                className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
-                placeholder="How can we help?"
+                className="mt-2 block w-full rounded-md border border-[var(--dc-gray)] bg-white px-3 py-2 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold-500)] focus:outline-offset-2"
+                placeholder={t("contact.placeholder.subject")}
               />
             </div>
 
@@ -141,8 +144,8 @@ export default function ContactUs() {
               <label
                 htmlFor="message"
                 className="block text-sm font-medium text-gray-700"
-              >
-                Message
+                >
+                {t("contact.message")}
               </label>
               <textarea
                 id="message"
@@ -152,20 +155,18 @@ export default function ContactUs() {
                 value={form.message}
                 onChange={onChange}
                 className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
-                placeholder="Write your message here..."
+                placeholder={t("contact.placeholder.message")}
               />
             </div>
 
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-500">
-                We’ll never share your details.
-              </p>
+              <p className="text-sm text-gray-500">{t("contact.privacy")}</p>
               <button
                 type="submit"
                 disabled={status.type === "submitting"}
-                className="inline-flex items-center justify-center rounded-full bg-gray-900 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-black/90 disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60 focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)] btn-glass"
               >
-                {status.type === "submitting" ? "Sending..." : "Send Message"}
+                {status.type === "submitting" ? t("contact.sending") : t("contact.send")}
               </button>
             </div>
 

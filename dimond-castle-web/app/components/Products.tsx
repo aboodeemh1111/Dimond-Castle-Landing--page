@@ -7,56 +7,76 @@ export default function Products() {
   const products = [
     {
       id: 1,
-      name: "White Diamond Basmati",
-      description:
+      nameEn: "White Diamond Basmati",
+      nameAr: "الالماس الابيض بسمتي",
+      descriptionEn:
         "Long-grain aromatic rice with soft texture and premium quality.",
-      origin: "India",
+      descriptionAr:
+        "أرز طويل الحبة عطري بنعومة وجودة فائقة.",
+      originEn: "India",
+      originAr: "الهند",
       sizes: ["5kg", "10kg", "25kg"],
       image: "/images/basmatiBag.png",
       slug: "white-diamond-basmati",
     },
     {
       id: 2,
-      name: "White Diamond Sella",
-      description: "Parboiled rice with perfect grains and rich aroma.",
-      origin: "Pakistan",
+      nameEn: "White Diamond Sella",
+      nameAr: "الالماس الابيض سيلا",
+      descriptionEn: "Parboiled rice with perfect grains and rich aroma.",
+      descriptionAr: "أرز مُعالج بالبخار بحبات متماسكة ورائحة مميزة.",
+      originEn: "Pakistan",
+      originAr: "باكستان",
       sizes: ["5kg", "10kg", "25kg", "50kg"],
       image: "/images/basmatiBag.png",
       slug: "white-diamond-sella",
     },
     {
       id: 3,
-      name: "White Diamond Jasmine",
-      description: "Soft and fragrant rice, ideal for everyday meals.",
-      origin: "Thailand",
+      nameEn: "White Diamond Jasmine",
+      nameAr: "الالماس الابيض ياسمين",
+      descriptionEn: "Soft and fragrant rice, ideal for everyday meals.",
+      descriptionAr: "أرز ناعم وعطِر، مثالي للوجبات اليومية.",
+      originEn: "Thailand",
+      originAr: "تايلاند",
       sizes: ["5kg", "10kg", "25kg"],
       image: "/images/basmatiBag.png",
       slug: "white-diamond-jasmine",
     },
     {
       id: 4,
-      name: "White Diamond Premium",
-      description:
+      nameEn: "White Diamond Premium",
+      nameAr: "الالماس الابيض بريميوم",
+      descriptionEn:
         "The finest selection for special occasions and gourmet cuisine.",
-      origin: "India",
+      descriptionAr:
+        "اختيار فاخر للمناسبات الخاصة والمأكولات الراقية.",
+      originEn: "India",
+      originAr: "الهند",
       sizes: ["5kg", "10kg", "25kg"],
       image: "/images/basmatiBag.png",
       slug: "white-diamond-premium",
     },
     {
       id: 5,
-      name: "White Diamond Long Grain",
-      description: "Perfectly separated grains with excellent cooking quality.",
-      origin: "Thailand",
+      nameEn: "White Diamond Long Grain",
+      nameAr: "الالماس الابيض طويل الحبة",
+      descriptionEn: "Perfectly separated grains with excellent cooking quality.",
+      descriptionAr: "حبات منفصلة تمامًا بجودة طهي ممتازة.",
+      originEn: "Thailand",
+      originAr: "تايلاند",
       sizes: ["5kg", "10kg", "25kg", "50kg"],
       image: "/images/basmatiBag.png",
       slug: "white-diamond-long-grain",
     },
     {
       id: 6,
-      name: "White Diamond Super Kernel",
-      description: "Extra-long grains with superior taste and aroma.",
-      origin: "Pakistan",
+      nameEn: "White Diamond Super Kernel",
+      nameAr: "الالماس الابيض سوبر كرنل",
+      descriptionEn: "Extra-long grains with superior taste and aroma.",
+      descriptionAr: "حبات طويلة جدًا بطعم ورائحة مميزة.",
+      originEn: "Pakistan",
+      originAr: "باكستان",
       sizes: ["5kg", "10kg", "25kg"],
       image: "/images/basmatiBag.png",
       slug: "white-diamond-super-kernel",
@@ -103,7 +123,7 @@ export default function Products() {
           {products.map((product) => (
             <article
               key={product.id}
-              className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray/30"
+              className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[var(--dc-gray)]/80"
             >
               {/* Product Image */}
               <div className="relative h-64 overflow-hidden bg-accent/30">
@@ -121,10 +141,10 @@ export default function Products() {
                   className="text-xl font-semibold text-text mb-2"
                   style={{ fontFamily: "Georgia, serif" }}
                 >
-                  {product.name}
+                  {dir === "rtl" ? product.nameAr : product.nameEn}
                 </h3>
                 <p className="text-text/80 text-sm mb-4 leading-relaxed">
-                  {product.description}
+                  {dir === "rtl" ? product.descriptionAr : product.descriptionEn}
                 </p>
 
                 {/* Origin */}
@@ -145,10 +165,10 @@ export default function Products() {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span className="text-sm text-text/70">
+                    <span className="text-sm text-text/70">
                     {t("products.origin")} {" "}
                     <span className="font-medium text-text">
-                      {product.origin}
+                      {dir === "rtl" ? product.originAr : product.originEn}
                     </span>
                   </span>
                 </div>
@@ -173,7 +193,7 @@ export default function Products() {
                 {/* Learn More Button */}
                 <a
                   href={`/products/${product.slug}`}
-                  className="inline-flex items-center gap-2 text-primary font-medium text-sm hover:gap-3 transition-all duration-300 group/btn"
+                  className="inline-flex items-center gap-2 text-[var(--green-500)] font-medium text-sm hover:gap-3 hover:underline underline-offset-4 transition-all duration-300 group/btn focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)]"
                 >
                   {t("products.learnMore")}
                   <svg
@@ -198,7 +218,7 @@ export default function Products() {
         <div className="text-center">
           <a
             href="/products"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-brown transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="inline-flex items-center gap-2 px-8 py-4 text-white rounded-full font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)] btn-glass"
           >
             {t("products.viewAll")}
             <svg

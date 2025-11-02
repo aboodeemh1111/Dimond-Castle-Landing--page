@@ -53,7 +53,7 @@ export default function Story() {
 
               <img
                 src="/images/story-img.png"
-                alt="Biryani and rice feast showcasing our premium rice products"
+                alt={t("story.imageAlt")}
                 className="aspect-4/3 w-full object-cover"
               />
             </div>
