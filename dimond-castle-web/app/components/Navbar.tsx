@@ -176,10 +176,10 @@ export default function Navbar({
 
       {/* Mobile Navigation */}
       <div
-        className={`md:hidden transition-all duration-200 ease-out ${
+        className={`md:hidden transition-all duration-200 ease-out overflow-hidden ${
           isOpen
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-2 pointer-events-none"
+            ? "max-h-[80vh] opacity-100 translate-y-0"
+            : "max-h-0 opacity-0 -translate-y-2 pointer-events-none"
         }`}
       >
         <div className="px-4 sm:px-6 lg:px-8 pb-4">
