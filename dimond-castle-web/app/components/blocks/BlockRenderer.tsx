@@ -7,12 +7,17 @@ export default function BlockRenderer({ blocks, locale }: { blocks: Block[]; loc
       {blocks.map((block, index) => {
         switch (block.type) {
           case "heading": {
-            const Tag = `h${block.level}` as keyof JSX.IntrinsicElements;
-            return (
-              <Tag key={`${block.type}-${index}`} className="font-semibold text-slate-900 mt-8">
-                {block.text}
-              </Tag>
-            );
+            const key = `${block.type}-${index}`;
+            const className = "font-semibold text-slate-900 mt-8";
+            if (block.level === 1) {
+              return <h1 key={key} className={className}>{block.text}</h1>;
+            } else if (block.level === 2) {
+              return <h2 key={key} className={className}>{block.text}</h2>;
+            } else if (block.level === 3) {
+              return <h3 key={key} className={className}>{block.text}</h3>;
+            } else {
+              return <h4 key={key} className={className}>{block.text}</h4>;
+            }
           }
           case "paragraph":
             return (
