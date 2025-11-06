@@ -111,7 +111,15 @@ export async function isPageSlugUnique(slug: string, excludeId?: string) {
 }
 
 export async function createPage(partial?: Partial<Page>) {
-  return api.post<Page>(`/api/pages`, partial || {})
+  const defaults: Partial<Page> = {
+    slug: `/page-${Math.random().toString(36).slice(2,10)}`,
+    status: 'draft',
+    template: 'default',
+    en: { title: 'Untitled' },
+    ar: { title: 'بدون عنوان' },
+    sections: [],
+  }
+  return api.post<Page>(`/api/pages`, { ...defaults, ...(partial || {}) })
 }
 
 export async function updatePage(id: string, updates: Partial<Page>) {

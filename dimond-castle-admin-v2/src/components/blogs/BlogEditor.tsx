@@ -34,8 +34,8 @@ export function BlogEditor({ initial }: EditorProps) {
           slug: `post-${Math.random().toString(36).slice(2,10)}`,
           status: 'draft',
           tags: [],
-          en: { title: "", excerpt: "", blocks: [] },
-          ar: { title: "", excerpt: "", blocks: [] },
+          en: { title: "Untitled", excerpt: "", blocks: [] },
+          ar: { title: "بدون عنوان", excerpt: "", blocks: [] },
         })
         setPost(created)
         router.replace(`/admin/blogs/${(created as any)._id || (created as any).id}`)
@@ -67,11 +67,7 @@ export function BlogEditor({ initial }: EditorProps) {
     return () => { active = false }
   }, [post?.slug])
 
-  const statusBadge = (
-    <Badge variant={post.status === "published" ? "default" : "secondary"}>
-      {post.status === "published" ? "Published" : "Draft"}
-    </Badge>
-  )
+  // statusBadge moved below after post existence check
 
   function setLocaleContent(locale: "en" | "ar", data: Partial<LocaleContent>) {
     setPost((p) => ({ ...p, [locale]: { ...p[locale], ...data } as LocaleContent }))
@@ -97,6 +93,7 @@ export function BlogEditor({ initial }: EditorProps) {
   }
 
   function onPublishToggle() {
+    if (!post) return
     if (post.status === "draft") {
       const errs = validateCanPublish(post)
       if (errs.length) {
@@ -132,6 +129,12 @@ export function BlogEditor({ initial }: EditorProps) {
   }
 
   if (!post) return null
+
+  const statusBadge = (
+    <Badge variant={post.status === "published" ? "default" : "secondary"}>
+      {post.status === "published" ? "Published" : "Draft"}
+    </Badge>
+  )
 
   const lastSaved = useMemo(() => new Date(post.updatedAt).toLocaleString(), [post.updatedAt])
 
