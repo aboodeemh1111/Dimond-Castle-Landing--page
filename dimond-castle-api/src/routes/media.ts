@@ -9,12 +9,18 @@ const router = Router()
 // Count assets (images + videos)
 router.get('/count', async (_req, res, next) => {
   try {
+    if (!cloudinary.config().cloud_name) {
+      return res.json({ count: 0 })
+    }
     const result = await cloudinary.search
       .expression('resource_type:image OR resource_type:video')
       .max_results(1)
       .execute()
     res.json({ count: result.total_count || 0 })
-  } catch (e) { next(e) }
+  } catch (e) {
+    // Return 0 if Cloudinary is not configured
+    res.json({ count: 0 })
+  }
 })
 
 // Get signed upload parameters
