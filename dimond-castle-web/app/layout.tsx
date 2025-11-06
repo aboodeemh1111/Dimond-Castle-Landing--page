@@ -1,6 +1,8 @@
 import React from "react";
 import "./globals.css";
 import I18nProvider from "./components/I18nProvider";
+import ThemeProvider from "./components/ThemeProvider";
+import ThemeFonts from "./components/ThemeFonts";
 
 export default function RootLayout({
   children,
@@ -9,8 +11,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeFonts />
+      </head>
       <body suppressHydrationWarning>
-        <I18nProvider>{children}</I18nProvider>
+        <ThemeProvider>
+          <I18nProvider>{children}</I18nProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

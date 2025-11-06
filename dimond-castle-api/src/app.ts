@@ -8,6 +8,7 @@ import { env } from './config/env'
 import blogsRouter from './routes/blogs'
 import pagesRouter from './routes/pages'
 import mediaRouter from './routes/media'
+import themeRouter from './routes/theme'
 
 const app = express()
 
@@ -30,6 +31,7 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }))
 app.use('/api/blogs', blogsRouter)
 app.use('/api/pages', pagesRouter)
 app.use('/api/media', mediaRouter)
+app.use('/api/theme', themeRouter)
 
 // Not found handler
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
