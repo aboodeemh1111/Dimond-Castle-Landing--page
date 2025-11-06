@@ -22,7 +22,7 @@ export type AdminFooterItem =
   | { label: { en: string; ar: string }; href: string; icon: React.ComponentType<{ className?: string }>; external?: boolean };
 
 export const adminNav: AdminNavItem[] = [
-  { label: { en: "Dashboard", ar: "لوحة التحكم" }, href: "/dashboard", icon: LayoutDashboard },
+  { label: { en: "Dashboard", ar: "لوحة التحكم" }, href: "/admin/dashboard", icon: LayoutDashboard },
   { label: { en: "Blogs", ar: "المدونة" }, href: "/admin/blogs", icon: Newspaper },
   { label: { en: "Pages", ar: "الصفحات" }, href: "/admin/pages", icon: FileText },
   { label: { en: "Navigation", ar: "القائمة" }, href: "/admin/navigation", icon: MenuIcon },

@@ -4,6 +4,17 @@ import { PageCreateSchema, PageUpdateSchema } from '../validation/pages'
 
 const router = Router()
 
+// Count endpoint
+router.get('/count', async (req, res, next) => {
+  try {
+    const { status } = req.query as any
+    const query: any = {}
+    if (status && (status === 'draft' || status === 'published')) query.status = status
+    const total = await Page.countDocuments(query)
+    res.json({ count: total })
+  } catch (err) { next(err) }
+})
+
 // List pages with search and filters
 router.get('/', async (req, res, next) => {
   try {

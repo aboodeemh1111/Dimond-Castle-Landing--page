@@ -6,6 +6,17 @@ import Page from '../models/Page'
 
 const router = Router()
 
+// Count assets (images + videos)
+router.get('/count', async (_req, res, next) => {
+  try {
+    const result = await cloudinary.search
+      .expression('resource_type:image OR resource_type:video')
+      .max_results(1)
+      .execute()
+    res.json({ count: result.total_count || 0 })
+  } catch (e) { next(e) }
+})
+
 // Get signed upload parameters
 router.post('/signature', async (req, res, next) => {
   try {

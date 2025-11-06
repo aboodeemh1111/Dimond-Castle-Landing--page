@@ -4,6 +4,17 @@ import { BlogCreateSchema, BlogUpdateSchema } from '../validation/blogs'
 
 const router = Router()
 
+// Count endpoint
+router.get('/count', async (req, res, next) => {
+  try {
+    const { status } = req.query as any
+    const where: any = {}
+    if (status && ['draft','published'].includes(status)) where.status = status
+    const total = await BlogPost.countDocuments(where)
+    res.json({ count: total })
+  } catch (e) { next(e) }
+})
+
 // List with filters
 router.get('/', async (req, res, next) => {
   try {

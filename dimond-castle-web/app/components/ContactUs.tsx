@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type FormState = {
   name: string;
@@ -12,7 +12,22 @@ type FormState = {
 import { useI18n } from "./I18nProvider";
 
 export default function ContactUs() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  type ContactSettings = {
+    titleEN?: string;
+    titleAR?: string;
+    subtitleEN?: string;
+    subtitleAR?: string;
+    businessHours?: string[];
+    phoneNumbers?: string[];
+    whatsappNumbers?: string[];
+    emails?: string[];
+    addressesEN?: string[];
+    addressesAR?: string[];
+    googleMapEmbedUrl?: string;
+    socialLinks?: Partial<Record<string, string>>;
+  };
+  const [settings, setSettings] = useState<ContactSettings | null>(null);
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -41,9 +56,8 @@ export default function ContactUs() {
     }
     setStatus({ type: "submitting" });
     try {
-      const API_BASE =
-        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
-      const res = await fetch(`${API_BASE}/contacts`, {
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+      const res = await fetch(`${API_BASE}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -70,16 +84,83 @@ export default function ContactUs() {
     }
   };
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+        const res = await fetch(`${API_BASE}/api/contact/settings`, { cache: "no-store" });
+        if (res.ok) setSettings(await res.json());
+      } catch {}
+    })();
+  }, []);
+
+  const title = settings ? (language === "ar" ? settings.titleAR || t("contact.heading") : settings.titleEN || t("contact.heading")) : t("contact.heading");
+  const subtitle = settings ? (language === "ar" ? settings.subtitleAR || t("contact.sub") : settings.subtitleEN || t("contact.sub")) : t("contact.sub");
+
   return (
     <section id="contact-us" className="py-16 sm:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center">
-            {t("contact.heading")}
+            {title}
           </h2>
           <p className="mt-3 text-center text-gray-600">
-            {t("contact.sub")}
+            {subtitle}
           </p>
+
+          {/* Contact details */}
+          {settings && (
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-gray-700">
+              {(settings.phoneNumbers?.length || settings.whatsappNumbers?.length) && (
+                <div>
+                  <div className="font-semibold mb-1">{t("contact.phone")}</div>
+                  <ul className="space-y-1">
+                    {settings.phoneNumbers?.map((p, i) => (
+                      <li key={`ph-${i}`}><a href={`tel:${p}`}>{p}</a></li>
+                    ))}
+                    {settings.whatsappNumbers?.map((w, i) => (
+                      <li key={`wa-${i}`}><a href={`https://wa.me/${w.replace(/\D/g, '')}`} target="_blank" rel="noopener">WhatsApp: {w}</a></li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {settings.emails?.length ? (
+                <div>
+                  <div className="font-semibold mb-1">{t("contact.email")}</div>
+                  <ul className="space-y-1">
+                    {settings.emails.map((em, i) => (
+                      <li key={`em-${i}`}><a href={`mailto:${em}`}>{em}</a></li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              {(settings.addressesEN?.length || settings.addressesAR?.length) && (
+                <div className="sm:col-span-2">
+                  <div className="font-semibold mb-1">{t("contact.address")}</div>
+                  <ul className="space-y-1">
+                    {(language === "ar" ? settings.addressesAR : settings.addressesEN)?.map((a, i) => (
+                      <li key={`ad-${i}`}>{a}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {settings.businessHours?.length ? (
+                <div className="sm:col-span-2">
+                  <div className="font-semibold mb-1">{t("contact.hours")}</div>
+                  <ul className="space-y-1">
+                    {settings.businessHours.map((h, i) => (<li key={`bh-${i}`}>{h}</li>))}
+                  </ul>
+                </div>
+              ) : null}
+              {settings.googleMapEmbedUrl ? (
+                <div className="sm:col-span-2">
+                  <div className="aspect-video w-full">
+                    <iframe className="w-full h-full rounded border" src={settings.googleMapEmbedUrl} loading="lazy" />
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          )}
 
           <form onSubmit={sendEmail} className="mt-10 space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

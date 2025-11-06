@@ -90,6 +90,23 @@ router.get('/messages', async (req, res, next) => {
   }
 })
 
+// Admin: messages count (optional range like 7d)
+router.get('/messages/count', async (req, res, next) => {
+  try {
+    const { range } = req.query as any
+    const filter: any = {}
+    if (range && typeof range === 'string' && /^(\d+)d$/.test(range)) {
+      const days = Number(range.replace('d',''))
+      const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+      filter.submittedAt = { $gte: since }
+    }
+    const count = await ContactMessage.countDocuments(filter)
+    res.json({ count })
+  } catch (err) {
+    next(err)
+  }
+})
+
 // Admin: update message flags
 router.patch('/messages/:id', async (req, res, next) => {
   try {
