@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MediaPickerDialog } from "./MediaPickerDialog";
+import MediaPickerModal from "@/components/media/MediaPickerModal";
 import { ArrowDown, ArrowUp, Image as ImageIcon, Minus, Plus, Type, Video, Link2, List, ListOrdered, Quote, Copy } from "lucide-react";
 
 export function BlockEditor({
@@ -120,8 +121,11 @@ export function BlockEditor({
                 <div className="flex items-center gap-2">
                   <Input placeholder="Cloudinary public_id" value={block.publicId} onChange={(e) => updateBlock(i, { ...block, publicId: e.target.value })} />
                   <MediaPickerDialog onSelect={(pid) => updateBlock(i, { ...block, publicId: pid })}>
-                    <Button variant="outline">Pick</Button>
+                    <Button variant="outline">Paste ID</Button>
                   </MediaPickerDialog>
+                  <MediaPickerModal onSelect={(pid) => updateBlock(i, { ...block, publicId: pid })}>
+                    <Button variant="outline">Browse</Button>
+                  </MediaPickerModal>
                 </div>
                 <Input placeholder="Alt text" value={block.alt || ''} onChange={(e) => updateBlock(i, { ...block, alt: e.target.value })} />
                 <Input placeholder="Caption (optional)" value={block.caption || ''} onChange={(e) => updateBlock(i, { ...block, caption: e.target.value })} />
@@ -132,8 +136,11 @@ export function BlockEditor({
                 <div className="flex items-center gap-2">
                   <Input placeholder="Cloudinary video public_id" value={block.publicId} onChange={(e) => updateBlock(i, { ...block, publicId: e.target.value })} />
                   <MediaPickerDialog onSelect={(pid) => updateBlock(i, { ...block, publicId: pid })}>
-                    <Button variant="outline">Pick</Button>
+                    <Button variant="outline">Paste ID</Button>
                   </MediaPickerDialog>
+                  <MediaPickerModal onSelect={(pid) => updateBlock(i, { ...block, publicId: pid })}>
+                    <Button variant="outline">Browse</Button>
+                  </MediaPickerModal>
                 </div>
                 <Input placeholder="Caption (optional)" value={block.caption || ''} onChange={(e) => updateBlock(i, { ...block, caption: e.target.value })} />
               </div>

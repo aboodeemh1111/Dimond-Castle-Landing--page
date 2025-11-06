@@ -53,4 +53,11 @@ export async function deleteMedia(publicId: string) {
   return api.delete(`/api/media/${encodeURIComponent(publicId)}`);
 }
 
+export async function getUsage(publicId: string): Promise<{
+  blog: { coverCount: number; blocksCount: number; total: number; posts: Array<{ _id: string; slug: string; en?: { title?: string } }> };
+  pages: { total: number };
+}> {
+  return api.get(`/api/media/usage?publicId=${encodeURIComponent(publicId)}`);
+}
+
 

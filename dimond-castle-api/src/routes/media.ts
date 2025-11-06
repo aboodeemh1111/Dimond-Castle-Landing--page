@@ -1,6 +1,8 @@
 import { Router } from 'express'
 import { cloudinary } from '../config/cloudinary'
 import { env } from '../config/env'
+import BlogPost from '../models/BlogPost'
+import Page from '../models/Page'
 
 const router = Router()
 
@@ -18,14 +20,69 @@ router.post('/signature', async (req, res, next) => {
     if (eager) paramsToSign.eager = eager
     if (tags) paramsToSign.tags = tags
 
-    const signature = cloudinary.utils.api_sign_request(paramsToSign, env.CLOUDINARY_API_SECRET)
+    // Extract cloud name from config (supports both CLOUDINARY_URL and explicit vars)
+    let cloudName = env.CLOUDINARY_CLOUD_NAME
+    let apiKey = env.CLOUDINARY_API_KEY
+    let apiSecret = env.CLOUDINARY_API_SECRET
+
+    if (!cloudName && env.CLOUDINARY_URL) {
+      // Parse cloudinary://API_KEY:API_SECRET@CLOUD_NAME
+      const match = env.CLOUDINARY_URL.match(/cloudinary:\/\/([^:]+):([^@]+)@(.+)/)
+      if (match) {
+        apiKey = match[1]
+        apiSecret = match[2]
+        cloudName = match[3]
+      }
+    }
+
+    const signature = cloudinary.utils.api_sign_request(paramsToSign, apiSecret)
     res.json({
       timestamp,
       signature,
-      apiKey: env.CLOUDINARY_API_KEY,
-      cloudName: env.CLOUDINARY_CLOUD_NAME,
+      apiKey,
+      cloudName,
       folder,
       resource_type,
+    })
+  } catch (e) { next(e) }
+})
+
+// Usage check for a given public_id
+router.get('/usage', async (req, res, next) => {
+  try {
+    const { publicId } = req.query as any
+    if (!publicId) return res.status(400).json({ error: 'publicId is required' })
+
+    const coverCount = await BlogPost.countDocuments({ coverPublicId: publicId })
+    const blocksCount = await BlogPost.countDocuments({
+      $or: [
+        { 'en.blocks': { $elemMatch: { publicId } } },
+        { 'ar.blocks': { $elemMatch: { publicId } } },
+        { 'en.blocks': { $elemMatch: { posterId: publicId } } },
+        { 'ar.blocks': { $elemMatch: { posterId: publicId } } },
+      ],
+    })
+    const posts = await BlogPost.find({
+      $or: [
+        { coverPublicId: publicId },
+        { 'en.blocks': { $elemMatch: { publicId } } },
+        { 'ar.blocks': { $elemMatch: { publicId } } },
+        { 'en.blocks': { $elemMatch: { posterId: publicId } } },
+        { 'ar.blocks': { $elemMatch: { posterId: publicId } } },
+      ],
+    }).select({ _id: 1, slug: 1, 'en.title': 1 }).limit(50)
+
+    // Basic pages usage check: look for ogImageId fields
+    const pagesCount = await Page.countDocuments({
+      $or: [
+        { 'en.seo.ogImageId': publicId },
+        { 'ar.seo.ogImageId': publicId },
+      ],
+    })
+
+    res.json({
+      blog: { coverCount, blocksCount, total: Math.max(coverCount, 0) + Math.max(blocksCount, 0), posts },
+      pages: { total: pagesCount },
     })
   } catch (e) { next(e) }
 })
