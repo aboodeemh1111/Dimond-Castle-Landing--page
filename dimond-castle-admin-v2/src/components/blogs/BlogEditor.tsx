@@ -15,7 +15,9 @@ import { Badge } from "@/components/ui/badge";
 import { BlockEditor } from "./BlockEditor";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ImageIcon } from "lucide-react";
+import MediaPickerModal from "@/components/media/MediaPickerModal";
+import { getCloudinaryImageUrl } from "@/lib/cloudinary";
 
 type EditorProps = {
   initial?: BlogPost
@@ -239,8 +241,32 @@ export function BlogEditor({ initial }: EditorProps) {
                 <div className="text-sm text-muted-foreground">{post.status}</div>
               </div>
               <div className="space-y-2">
-                <Label>Cover image public_id</Label>
-                <Input value={post.coverPublicId || ''} onChange={(e) => updateField('coverPublicId', e.target.value)} />
+                <Label>Cover image</Label>
+                <div className="flex gap-2">
+                  <Input 
+                    value={post.coverPublicId || ''} 
+                    onChange={(e) => updateField('coverPublicId', e.target.value)}
+                    placeholder="Cloudinary public_id"
+                  />
+                  <MediaPickerModal
+                    onSelect={(publicId) => updateField('coverPublicId', publicId)}
+                    title="Select cover image"
+                  >
+                    <Button variant="outline" size="icon">
+                      <ImageIcon className="h-4 w-4" />
+                    </Button>
+                  </MediaPickerModal>
+                </div>
+                {post.coverPublicId && (
+                  <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={getCloudinaryImageUrl(post.coverPublicId, 'f_auto,q_auto,w_400')}
+                      alt="Cover preview"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
               </div>
               <div className="space-y-2">
                 <Label>Tags (comma separated)</Label>

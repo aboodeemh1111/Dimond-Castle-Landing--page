@@ -15,9 +15,10 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowUp, LayoutTemplate, Minus, Plus } from "lucide-react";
+import { ArrowDown, ArrowUp, LayoutTemplate, Minus, Plus, ImageIcon } from "lucide-react";
 import type { Block } from "@/lib/blog-store";
 import { BlockEditor } from "@/components/blogs/BlockEditor";
+import MediaPickerModal from "@/components/media/MediaPickerModal";
 
 type EditorProps = { initial?: Page }
 
@@ -289,8 +290,32 @@ export function PageEditor({ initial }: EditorProps) {
               <Input value={page.en.seo?.title || ''} onChange={(e) => updateField('en', { ...page.en, seo: { ...(page.en.seo || {}), title: e.target.value } })} />
               <Label>Meta description</Label>
               <Textarea rows={3} value={page.en.seo?.description || ''} onChange={(e) => updateField('en', { ...page.en, seo: { ...(page.en.seo || {}), description: e.target.value } })} />
-              <Label>OG image public_id</Label>
-              <Input value={page.en.seo?.ogImageId || ''} onChange={(e) => updateField('en', { ...page.en, seo: { ...(page.en.seo || {}), ogImageId: e.target.value } })} />
+              <Label>OG image</Label>
+              <div className="flex gap-2">
+                <Input 
+                  value={page.en.seo?.ogImageId || ''} 
+                  onChange={(e) => updateField('en', { ...page.en, seo: { ...(page.en.seo || {}), ogImageId: e.target.value } })}
+                  placeholder="Cloudinary public_id"
+                />
+                <MediaPickerModal
+                  onSelect={(publicId) => updateField('en', { ...page.en, seo: { ...(page.en.seo || {}), ogImageId: publicId } })}
+                  title="Select OG image"
+                >
+                  <Button variant="outline" size="icon">
+                    <ImageIcon className="h-4 w-4" />
+                  </Button>
+                </MediaPickerModal>
+              </div>
+              {page.en.seo?.ogImageId && (
+                <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_400/${page.en.seo.ogImageId}.jpg`}
+                    alt="OG image preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -301,8 +326,32 @@ export function PageEditor({ initial }: EditorProps) {
               <Input value={page.ar.seo?.title || ''} onChange={(e) => updateField('ar', { ...page.ar, seo: { ...(page.ar.seo || {}), title: e.target.value } })} />
               <Label>Meta description</Label>
               <Textarea rows={3} value={page.ar.seo?.description || ''} onChange={(e) => updateField('ar', { ...page.ar, seo: { ...(page.ar.seo || {}), description: e.target.value } })} />
-              <Label>OG image public_id</Label>
-              <Input value={page.ar.seo?.ogImageId || ''} onChange={(e) => updateField('ar', { ...page.ar, seo: { ...(page.ar.seo || {}), ogImageId: e.target.value } })} />
+              <Label>OG image</Label>
+              <div className="flex gap-2">
+                <Input 
+                  value={page.ar.seo?.ogImageId || ''} 
+                  onChange={(e) => updateField('ar', { ...page.ar, seo: { ...(page.ar.seo || {}), ogImageId: e.target.value } })}
+                  placeholder="Cloudinary public_id"
+                />
+                <MediaPickerModal
+                  onSelect={(publicId) => updateField('ar', { ...page.ar, seo: { ...(page.ar.seo || {}), ogImageId: publicId } })}
+                  title="Select OG image"
+                >
+                  <Button variant="outline" size="icon">
+                    <ImageIcon className="h-4 w-4" />
+                  </Button>
+                </MediaPickerModal>
+              </div>
+              {page.ar.seo?.ogImageId && (
+                <div className="relative aspect-video w-full overflow-hidden rounded-md border bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_400/${page.ar.seo.ogImageId}.jpg`}
+                    alt="OG image preview"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -324,8 +373,22 @@ function SectionFields({ section, locale, onChange }: { section: Section; locale
         <Input value={data.heading || ''} onChange={(e) => set({ heading: e.target.value })} />
         <Label>Subheading</Label>
         <Textarea rows={3} value={data.subheading || ''} onChange={(e) => set({ subheading: e.target.value })} />
-        <Label>Background public_id</Label>
-        <Input value={data.bgPublicId || ''} onChange={(e) => set({ bgPublicId: e.target.value })} />
+        <Label>Background image</Label>
+        <div className="flex gap-2">
+          <Input 
+            value={data.bgPublicId || ''} 
+            onChange={(e) => set({ bgPublicId: e.target.value })}
+            placeholder="Cloudinary public_id"
+          />
+          <MediaPickerModal
+            onSelect={(publicId) => set({ bgPublicId: publicId })}
+            title="Select background image"
+          >
+            <Button variant="outline" size="icon">
+              <ImageIcon className="h-4 w-4" />
+            </Button>
+          </MediaPickerModal>
+        </div>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <div>
             <Label>CTA label</Label>
@@ -353,8 +416,22 @@ function SectionFields({ section, locale, onChange }: { section: Section; locale
         <Input value={data.title || ''} onChange={(e) => set({ title: e.target.value })} />
         <Label>Text</Label>
         <Textarea rows={6} value={data.text || ''} onChange={(e) => set({ text: e.target.value })} />
-        <Label>Image public_id</Label>
-        <Input value={data.imagePublicId || ''} onChange={(e) => set({ imagePublicId: e.target.value })} />
+        <Label>Image</Label>
+        <div className="flex gap-2">
+          <Input 
+            value={data.imagePublicId || ''} 
+            onChange={(e) => set({ imagePublicId: e.target.value })}
+            placeholder="Cloudinary public_id"
+          />
+          <MediaPickerModal
+            onSelect={(publicId) => set({ imagePublicId: publicId })}
+            title="Select image"
+          >
+            <Button variant="outline" size="icon">
+              <ImageIcon className="h-4 w-4" />
+            </Button>
+          </MediaPickerModal>
+        </div>
       </div>
     )
   }
@@ -419,8 +496,22 @@ function SectionFields({ section, locale, onChange }: { section: Section; locale
                   <Input value={it.name || ''} onChange={(e) => { const items = data.items.slice(); items[idx] = { ...it, name: e.target.value }; set({ items }) }} />
                 </div>
                 <div>
-                  <Label>Image public_id</Label>
-                  <Input value={it.imagePublicId || ''} onChange={(e) => { const items = data.items.slice(); items[idx] = { ...it, imagePublicId: e.target.value }; set({ items }) }} />
+                  <Label>Image</Label>
+                  <div className="flex gap-2">
+                    <Input 
+                      value={it.imagePublicId || ''} 
+                      onChange={(e) => { const items = data.items.slice(); items[idx] = { ...it, imagePublicId: e.target.value }; set({ items }) }}
+                      placeholder="Cloudinary public_id"
+                    />
+                    <MediaPickerModal
+                      onSelect={(publicId) => { const items = data.items.slice(); items[idx] = { ...it, imagePublicId: publicId }; set({ items }) }}
+                      title="Select image"
+                    >
+                      <Button variant="outline" size="icon">
+                        <ImageIcon className="h-4 w-4" />
+                      </Button>
+                    </MediaPickerModal>
+                  </div>
                 </div>
               </div>
               <Label>Text</Label>

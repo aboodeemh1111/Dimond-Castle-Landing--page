@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import Link from "next/link";
 import Image from "next/image";
 import { getPublishedBlogs } from "../lib/public-blogs";
+import { getCloudinaryImageUrl } from "../lib/cloudinary";
 
 export const revalidate = 0; // Disable caching for now (use 300 in production)
 
@@ -43,11 +44,12 @@ export default async function BlogIndexPage() {
                 {post.coverPublicId ? (
                   <div className="relative h-56 w-full overflow-hidden bg-slate-100">
                     <Image
-                      src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_600/${post.coverPublicId}.jpg`}
+                      src={getCloudinaryImageUrl(post.coverPublicId, 'f_auto,q_auto,w_600')}
                       alt={post.en.title}
                       fill
                       className="object-cover transition-transform group-hover:scale-105"
                       sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                      unoptimized
                     />
                   </div>
                 ) : (

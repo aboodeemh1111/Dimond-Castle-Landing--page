@@ -2,6 +2,7 @@ import NavbarServer from "../../components/NavbarServer";
 import Footer from "../../components/Footer";
 import { getBlogBySlug, type BlogPost } from "../../lib/public-blogs";
 import Image from "next/image";
+import { getCloudinaryImageUrl, getCloudinaryVideoUrl } from "../../lib/cloudinary";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -40,12 +41,13 @@ export default async function BlogPostPage({ params }: PageProps) {
           {post.coverPublicId && (
             <div className="relative h-[300px] sm:h-[400px] w-full overflow-hidden rounded-3xl shadow-xl">
               <Image
-                src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_1200/${post.coverPublicId}.jpg`}
+                src={getCloudinaryImageUrl(post.coverPublicId, 'f_auto,q_auto,w_1200')}
                 alt={post.en.title}
                 fill
                 className="object-cover"
                 sizes="(min-width: 1024px) 1024px, 100vw"
                 priority
+                unoptimized
               />
             </div>
           )}
@@ -120,15 +122,17 @@ function BlogBlocks({ blocks }: { blocks: BlogPost["en"]["blocks"] }) {
             );
 
           case "image":
+            if (!block.publicId) return null;
             return (
               <figure key={i} className="my-8">
                 <div className="relative h-[400px] w-full overflow-hidden rounded-2xl shadow-lg">
                   <Image
-                    src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_1200/${block.publicId}.jpg`}
+                    src={getCloudinaryImageUrl(block.publicId, 'f_auto,q_auto,w_1200')}
                     alt={block.alt || ""}
                     fill
                     className="object-cover"
                     sizes="(min-width: 1024px) 896px, 100vw"
+                    unoptimized
                   />
                 </div>
                 {block.caption && (
@@ -140,19 +144,21 @@ function BlogBlocks({ blocks }: { blocks: BlogPost["en"]["blocks"] }) {
             );
 
           case "video":
+            if (!block.publicId) return null;
             return (
               <div key={i} className="my-8">
+                {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
                 <video
                   controls
                   className="w-full rounded-2xl shadow-lg"
                   poster={
                     block.posterId
-                      ? `https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/${block.posterId}.jpg`
+                      ? getCloudinaryImageUrl(block.posterId, 'f_auto,q_auto')
                       : undefined
                   }
                 >
                   <source
-                    src={`https://res.cloudinary.com/demo/video/upload/f_auto,q_auto/${block.publicId}.mp4`}
+                    src={getCloudinaryVideoUrl(block.publicId)}
                     type="video/mp4"
                   />
                   Your browser does not support the video tag.
