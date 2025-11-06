@@ -3,6 +3,9 @@ export type Block =
   | { type: 'paragraph'; text: string }
   | { type: 'image'; publicId: string; alt?: string; caption?: string }
   | { type: 'video'; publicId: string; caption?: string; posterId?: string }
+  | { type: 'link'; label: string; url: string }
+  | { type: 'list'; ordered: boolean; items: string[] }
+  | { type: 'quote'; text: string; cite?: string }
   | { type: 'divider' }
 
 export type LocaleContent = {

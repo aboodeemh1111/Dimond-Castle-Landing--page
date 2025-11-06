@@ -41,6 +41,24 @@ function PostContent({ blocks }: { blocks: any[] }) {
             <source src={`https://res.cloudinary.com/demo/video/upload/${b.publicId}.mp4`} />
           </video>
         )
+        if (b.type === 'link') return (
+          <p key={i}>
+            <a className="text-emerald-600 underline" href={b.url} target="_blank" rel="noopener noreferrer">{b.label || b.url}</a>
+          </p>
+        )
+        if (b.type === 'list') return (
+          b.ordered ? (
+            <ol key={i} className="list-decimal pl-6 space-y-1">{b.items?.map((it: string, idx: number) => <li key={idx}>{it}</li>)}</ol>
+          ) : (
+            <ul key={i} className="list-disc pl-6 space-y-1">{b.items?.map((it: string, idx: number) => <li key={idx}>{it}</li>)}</ul>
+          )
+        )
+        if (b.type === 'quote') return (
+          <blockquote key={i} className="border-l-4 border-muted-foreground/30 pl-4 italic text-muted-foreground">
+            {b.text}
+            {b.cite && <footer className="mt-1 text-xs not-italic">— {b.cite}</footer>}
+          </blockquote>
+        )
         return null
       })}
     </div>
