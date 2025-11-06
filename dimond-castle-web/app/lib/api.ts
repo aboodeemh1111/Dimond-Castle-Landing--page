@@ -1,6 +1,6 @@
 // Prefer relative API calls in the browser during development (Next.js rewrites will proxy to the API)
 const API_BASE = (() => {
-  const envBase = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const envBase = process.env.NEXT_PUBLIC_API_URL;
   if (typeof window !== "undefined") {
     // In the browser: if no explicit base URL, use relative to leverage dev proxy
     return envBase || "";

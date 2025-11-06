@@ -56,7 +56,7 @@ export default function ContactUs() {
     }
     setStatus({ type: "submitting" });
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
       const res = await fetch(`${API_BASE}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -87,7 +87,7 @@ export default function ContactUs() {
   useEffect(() => {
     (async () => {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
+        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
         const res = await fetch(`${API_BASE}/api/contact/settings`, { cache: "no-store" });
         if (res.ok) setSettings(await res.json());
       } catch {}
