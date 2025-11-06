@@ -64,8 +64,10 @@ function PostContent({ blocks }: { blocks: any[] }) {
     <div className="space-y-6">
       {blocks.map((b, i) => {
         if (b.type === 'heading') {
-          const HeadingTag = `h${b.level || 2}` as keyof JSX.IntrinsicElements;
-          return <HeadingTag key={i} className="text-2xl font-bold mt-8 mb-4">{b.text}</HeadingTag>
+          const Heading = b.level === 3 ? 'h3' : 'h2'
+          return (
+            <Heading key={i} className="text-2xl font-bold mt-8 mb-4">{b.text}</Heading>
+          )
         }
         
         if (b.type === 'paragraph') {
