@@ -130,14 +130,20 @@ function BlogBlocks({ blocks, language }: { blocks: BlogPost["en"]["blocks"]; la
       {blocks.map((block, i) => {
         switch (block.type) {
           case "heading":
-            const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
-            return (
-              <HeadingTag
+            return block.level === 2 ? (
+              <h2
                 key={i}
                 className="text-3xl font-bold text-slate-900 mt-12 mb-4"
               >
                 {block.text}
-              </HeadingTag>
+              </h2>
+            ) : (
+              <h3
+                key={i}
+                className="text-3xl font-bold text-slate-900 mt-12 mb-4"
+              >
+                {block.text}
+              </h3>
             );
 
           case "paragraph":
