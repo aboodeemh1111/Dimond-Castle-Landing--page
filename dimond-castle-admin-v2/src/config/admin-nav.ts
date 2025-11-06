@@ -29,7 +29,7 @@ export const adminNav: AdminNavItem[] = [
   { label: { en: "Media", ar: "الوسائط" }, href: "/admin/media", icon: ImageIcon },
   { label: { en: "Theme", ar: "السمة" }, href: "/admin/theme", icon: Palette },
   { label: { en: "Settings", ar: "الإعدادات" }, href: "/admin/settings", icon: SettingsIcon },
-  { label: { en: "Contacts", ar: "الرسائل" }, href: "/admin/contacts", icon: Inbox },
+  { label: { en: "Contacts", ar: "الرسائل" }, href: "/admin/contact", icon: Inbox },
 ];
 
 export const adminFooter: AdminFooterItem[] = [

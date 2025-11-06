@@ -10,6 +10,7 @@ import pagesRouter from './routes/pages'
 import mediaRouter from './routes/media'
 import themeRouter from './routes/theme'
 import navigationRouter from './routes/navigation'
+import contactRouter from './routes/contact'
 
 const app = express()
 
@@ -34,6 +35,7 @@ app.use('/api/pages', pagesRouter)
 app.use('/api/media', mediaRouter)
 app.use('/api/theme', themeRouter)
 app.use('/api/navigation', navigationRouter)
+app.use('/api/contact', contactRouter)
 
 // Not found handler
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
