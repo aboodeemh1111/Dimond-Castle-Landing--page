@@ -1,40 +1,66 @@
+"use client";
+
 import NavbarServer from "../../components/NavbarServer";
 import Footer from "../../components/Footer";
 import { getBlogBySlug, type BlogPost } from "../../lib/public-blogs";
 import Image from "next/image";
 import { getCloudinaryImageUrl, getCloudinaryVideoUrl } from "../../lib/cloudinary";
+import { useI18n } from "../../components/I18nProvider";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
-type PageProps = { params: Promise<{ slug: string }> };
+export default function BlogPostPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const { language, dir } = useI18n();
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export const revalidate = 0; // Disable caching for development
+  useEffect(() => {
+    async function fetchPost() {
+      setLoading(true);
+      try {
+        const data = await getBlogBySlug(slug);
+        setPost(data);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPost();
+  }, [slug]);
 
-export async function generateMetadata({ params }: PageProps) {
-  const { slug } = await params;
-  const post = await getBlogBySlug(slug);
-  if (!post) return { title: "Not found" };
-  const title = post.en.seo?.title || post.en.title;
-  const description = post.en.seo?.description || post.en.excerpt || undefined;
-  return { title, description };
-}
-
-export default async function BlogPostPage({ params }: PageProps) {
-  const { slug } = await params;
-  const post = await getBlogBySlug(slug);
-  if (!post) {
+  if (loading) {
     return (
       <>
         <NavbarServer />
         <main className="mx-auto min-h-[50vh] max-w-5xl px-4 py-20 text-center">
-          <h1 className="text-3xl font-semibold text-slate-900">Post not found</h1>
+          <div className="text-lg text-slate-600">Loading...</div>
         </main>
         <Footer />
       </>
     );
   }
+
+  if (!post) {
+    return (
+      <>
+        <NavbarServer />
+        <main className="mx-auto min-h-[50vh] max-w-5xl px-4 py-20 text-center">
+          <h1 className="text-3xl font-semibold text-slate-900">
+            {language === "ar" ? "المقال غير موجود" : "Post not found"}
+          </h1>
+        </main>
+        <Footer />
+      </>
+    );
+  }
+
+  const content = post[language];
+
   return (
     <>
       <NavbarServer />
-      <main className="mx-auto max-w-4xl px-4 py-16 sm:py-20">
+      <main className="mx-auto max-w-4xl px-4 py-16 sm:py-20" dir={dir}>
         {/* Hero Header */}
         <header className="mb-12 space-y-6">
           {/* Cover Image */}
@@ -42,7 +68,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <div className="relative h-[300px] sm:h-[400px] w-full overflow-hidden rounded-3xl shadow-xl">
               <Image
                 src={getCloudinaryImageUrl(post.coverPublicId, 'f_auto,q_auto,w_1200')}
-                alt={post.en.title}
+                alt={content.title}
                 fill
                 className="object-cover"
                 sizes="(min-width: 1024px) 1024px, 100vw"
@@ -55,18 +81,18 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Title & Meta */}
           <div className="space-y-4 text-center">
             <h1 className="text-4xl sm:text-5xl font-bold text-slate-900 leading-tight">
-              {post.en.title}
+              {content.title}
             </h1>
-            {post.en.excerpt && (
+            {content.excerpt && (
               <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-                {post.en.excerpt}
+                {content.excerpt}
               </p>
             )}
             <div className="flex items-center justify-center gap-4 text-sm text-slate-500">
               {post.author && <span className="font-medium">{post.author}</span>}
               <span>•</span>
               <time dateTime={post.updatedAt}>
-                {new Date(post.updatedAt).toLocaleDateString("en-US", {
+                {new Date(post.updatedAt).toLocaleDateString(language === "ar" ? "ar-SA" : "en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -90,7 +116,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         {/* Article Content */}
         <article className="prose prose-lg prose-slate max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-700 prose-p:leading-relaxed prose-a:text-emerald-600 prose-a:no-underline hover:prose-a:underline prose-strong:text-slate-900 prose-img:rounded-2xl prose-img:shadow-lg">
-          <BlogBlocks blocks={post.en.blocks} />
+          <BlogBlocks blocks={content.blocks} language={language} />
         </article>
       </main>
       <Footer />
@@ -98,7 +124,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   );
 }
 
-function BlogBlocks({ blocks }: { blocks: BlogPost["en"]["blocks"] }) {
+function BlogBlocks({ blocks, language }: { blocks: BlogPost["en"]["blocks"]; language: "en" | "ar" }) {
   return (
     <div className="space-y-8">
       {blocks.map((block, i) => {
@@ -161,7 +187,9 @@ function BlogBlocks({ blocks }: { blocks: BlogPost["en"]["blocks"] }) {
                     src={getCloudinaryVideoUrl(block.publicId)}
                     type="video/mp4"
                   />
-                  Your browser does not support the video tag.
+                  {language === "ar" 
+                    ? "متصفحك لا يدعم تشغيل الفيديو."
+                    : "Your browser does not support the video tag."}
                 </video>
                 {block.caption && (
                   <p className="mt-3 text-center text-sm text-slate-500 italic">
@@ -253,5 +281,3 @@ function BlogBlocks({ blocks }: { blocks: BlogPost["en"]["blocks"] }) {
     </div>
   );
 }
-
-
