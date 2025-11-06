@@ -91,18 +91,24 @@ function BlockRenderer({ block, locale }: { block: Block; locale: 'en' | 'ar' })
 
   switch (block.type) {
     case 'heading':
-      const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements
       const headingClasses = {
         1: 'text-4xl md:text-5xl lg:text-6xl font-bold',
         2: 'text-3xl md:text-4xl font-bold',
         3: 'text-2xl md:text-3xl font-semibold',
         4: 'text-xl md:text-2xl font-semibold',
       }
-      return (
-        <HeadingTag className={headingClasses[block.level]}>
-          {(block as any)[text] || ''}
-        </HeadingTag>
-      )
+      const headingText = (block as any)[text] || ''
+      const headingClass = headingClasses[block.level]
+      
+      if (block.level === 1) {
+        return <h1 className={headingClass}>{headingText}</h1>
+      } else if (block.level === 2) {
+        return <h2 className={headingClass}>{headingText}</h2>
+      } else if (block.level === 3) {
+        return <h3 className={headingClass}>{headingText}</h3>
+      } else {
+        return <h4 className={headingClass}>{headingText}</h4>
+      }
 
     case 'paragraph':
       return (
