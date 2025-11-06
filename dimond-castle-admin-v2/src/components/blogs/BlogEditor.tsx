@@ -73,7 +73,13 @@ export function BlogEditor({ initial }: EditorProps) {
   const lastSaved = useMemo(() => post ? new Date(post.updatedAt).toLocaleString() : '', [post?.updatedAt])
 
   function setLocaleContent(locale: "en" | "ar", data: Partial<LocaleContent>) {
-    setPost((p) => ({ ...p, [locale]: { ...p[locale], ...data } as LocaleContent }))
+    setPost((prev) => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        [locale]: { ...(prev as any)[locale], ...data } as LocaleContent,
+      } as BlogPost
+    })
     setDirty(true)
   }
 
