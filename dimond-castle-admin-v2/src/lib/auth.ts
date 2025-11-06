@@ -1,0 +1,18 @@
+export function setToken(token: string) {
+  if (typeof window !== 'undefined') localStorage.setItem('admin_token', token)
+}
+
+export function getToken(): string | null {
+  if (typeof window === 'undefined') return null
+  return localStorage.getItem('admin_token')
+}
+
+export function clearToken() {
+  if (typeof window !== 'undefined') localStorage.removeItem('admin_token')
+}
+
+export function isAuthenticated(): boolean {
+  return !!getToken()
+}
+
+

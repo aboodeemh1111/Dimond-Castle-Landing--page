@@ -196,7 +196,7 @@ export default function PagesListPage() {
                             <DropdownMenuItem onClick={() => router.push(`/admin/pages/${page._id}`)}>
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => window.open(page.slug, '_blank')}>
+                            <DropdownMenuItem onClick={() => router.push(`/admin/pages/preview/${page._id}`)}>
                               Preview
                             </DropdownMenuItem>
                             <DropdownMenuItem

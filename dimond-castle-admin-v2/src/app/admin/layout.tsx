@@ -1,13 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { Header } from "@/components/dashboard/Header";
+import { clearToken, isAuthenticated } from "@/lib/auth";
+import { useRouter } from "next/navigation";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const locale: "en" | "ar" = "en";
+
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      router.replace("/login");
+    }
+  }, [router]);
+
+  const onLogout = () => {
+    clearToken();
+    router.replace("/login");
+  };
 
   return (
     <div className={cn("min-h-screen bg-background", collapsed ? "md:pl-16" : "md:pl-64")}>
@@ -16,6 +30,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         collapsed={collapsed}
         onToggleCollapsed={() => setCollapsed((c) => !c)}
         locale={locale}
+        onLogout={onLogout}
       />
       <div className="flex w-full flex-col">
         <Header locale={locale} />

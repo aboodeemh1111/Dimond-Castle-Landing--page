@@ -1,18 +1,37 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getPage } from "@/lib/page-store";
 import type { Section } from "@/lib/page-store";
 import type { Block } from "@/lib/blog-store";
+import { getCloudinaryImageUrl, getCloudinaryVideoUrl } from "@/lib/cloudinary";
 
 export default function PreviewPage() {
   const params = useParams<{ id: string }>()
-  const page = typeof window !== 'undefined' ? getPage(params.id) : undefined
-  if (!page) return null
+  const [page, setPage] = useState<any | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        if (!params?.id) return
+        const data = await getPage(params.id)
+        if (mounted) setPage(data)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    })()
+    return () => { mounted = false }
+  }, [params?.id])
+
+  if (loading) return <div className="p-6 text-sm text-muted-foreground">Loading…</div>
+  if (!page) return <div className="p-6 text-sm text-muted-foreground">Page not found.</div>
   return (
     <div className="mx-auto max-w-4xl space-y-10">
-      <h1 className="text-3xl font-bold">{page.en.title}</h1>
-      {page.sections.map((s, i) => (
+      <h1 className="text-3xl font-bold">{page.en?.title}</h1>
+      {(page.sections || []).map((s: Section, i: number) => (
         <SectionPreview key={i} section={s} />
       ))}
       <div className="text-sm text-muted-foreground">Slug: {page.slug} • Template: {page.template}</div>
@@ -26,7 +45,8 @@ function SectionPreview({ section }: { section: Section }) {
     return (
       <section className="relative overflow-hidden rounded-md border">
         {d.bgPublicId && (
-          <img className="h-56 w-full object-cover" src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/${d.bgPublicId}.jpg`} alt="" />
+          // eslint-disable-next-line @next/next/no-img-element
+          <img className="h-56 w-full object-cover" src={getCloudinaryImageUrl(d.bgPublicId, 'f_auto,q_auto,w_1200')} alt="" />
         )}
         <div className="p-6">
           <h2 className="text-2xl font-semibold">{d.heading}</h2>
@@ -52,7 +72,8 @@ function SectionPreview({ section }: { section: Section }) {
         {d.subtitle && <p className="text-muted-foreground">{d.subtitle}</p>}
         <div className="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-6">
           {(d.logos || []).map((id, i) => (
-            <img key={i} className="h-10 object-contain" src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/${id}.png`} alt="logo" />
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={i} className="h-10 object-contain" src={getCloudinaryImageUrl(id, 'f_auto,q_auto,w_400')} alt="logo" />
           ))}
         </div>
       </section>
@@ -137,13 +158,15 @@ function PostContent({ blocks }: { blocks: any[] }) {
         if (b.type === 'divider') return <div key={i} className="my-4 h-px bg-border" />
         if (b.type === 'image') return (
           <figure key={i}>
-            <img src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/${b.publicId}.jpg`} alt={b.alt || ''} className="rounded" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={getCloudinaryImageUrl(b.publicId, 'f_auto,q_auto,w_1200')} alt={b.alt || ''} className="rounded" />
             {b.caption && <figcaption className="text-sm text-muted-foreground">{b.caption}</figcaption>}
           </figure>
         )
         if (b.type === 'video') return (
+          // eslint-disable-next-line jsx-a11y/media-has-caption
           <video key={i} controls className="w-full rounded">
-            <source src={`https://res.cloudinary.com/demo/video/upload/${b.publicId}.mp4`} />
+            <source src={getCloudinaryVideoUrl(b.publicId)} />
           </video>
         )
         if (b.type === 'link') return (<p key={i}><a className="text-emerald-600 underline" href={b.url} target="_blank" rel="noopener noreferrer">{b.label || b.url}</a></p>)

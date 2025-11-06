@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MediaPickerDialog } from "./MediaPickerDialog";
-import MediaPickerModal from "@/components/media/MediaPickerModal";
+import { MediaPickerModal } from "@/components/media/MediaPickerModal";
 import { ArrowDown, ArrowUp, Image as ImageIcon, Minus, Plus, Type, Video, Link2, List, ListOrdered, Quote, Copy } from "lucide-react";
 
 export function BlockEditor({

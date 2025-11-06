@@ -16,7 +16,7 @@ import { BlockEditor } from "./BlockEditor";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ImageIcon } from "lucide-react";
-import MediaPickerModal from "@/components/media/MediaPickerModal";
+import { MediaPickerModal } from "@/components/media/MediaPickerModal";
 import { getCloudinaryImageUrl } from "@/lib/cloudinary";
 
 type EditorProps = {

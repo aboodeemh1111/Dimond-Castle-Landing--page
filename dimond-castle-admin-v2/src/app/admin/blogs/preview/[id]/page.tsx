@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getPost } from "@/lib/blog-store";
 import { getCloudinaryImageUrl, getCloudinaryVideoUrl } from "@/lib/cloudinary";
@@ -7,8 +8,25 @@ import Image from "next/image";
 
 export default function PreviewBlogPage() {
   const params = useParams<{ id: string }>()
-  const post = typeof window !== 'undefined' ? getPost(params.id) : undefined
-  if (!post) return null
+  const [post, setPost] = useState<any | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      try {
+        if (!params?.id) return
+        const data = await getPost(params.id)
+        if (mounted) setPost(data)
+      } finally {
+        if (mounted) setLoading(false)
+      }
+    })()
+    return () => { mounted = false }
+  }, [params?.id])
+
+  if (loading) return <div className="p-6 text-sm text-muted-foreground">Loading…</div>
+  if (!post) return <div className="p-6 text-sm text-muted-foreground">Post not found.</div>
   return (
     <article className="mx-auto max-w-4xl px-4 py-8">
       {/* Cover Image */}
@@ -16,7 +34,7 @@ export default function PreviewBlogPage() {
         <div className="relative mb-8 h-[300px] w-full overflow-hidden rounded-2xl shadow-lg">
           <Image
             src={getCloudinaryImageUrl(post.coverPublicId, 'f_auto,q_auto,w_1200')}
-            alt={post.en.title}
+            alt={post.en?.title || ''}
             fill
             className="object-cover"
             sizes="(min-width: 1024px) 1024px, 100vw"
@@ -24,19 +42,19 @@ export default function PreviewBlogPage() {
         </div>
       )}
       
-      <h1 className="mb-4 text-4xl font-bold">{post.en.title}</h1>
-      {post.en.excerpt && (
-        <p className="mb-6 text-lg text-muted-foreground">{post.en.excerpt}</p>
+      <h1 className="mb-4 text-4xl font-bold">{post.en?.title}</h1>
+      {post.en?.excerpt && (
+        <p className="mb-6 text-lg text-muted-foreground">{post.en?.excerpt}</p>
       )}
       <div className="my-6 h-px bg-border" />
-      <PostContent blocks={post.en.blocks} />
+      <PostContent blocks={post.en?.blocks || []} />
       <div className="my-10 h-px bg-border" />
-      <h2 className="mb-4 text-3xl font-semibold">{post.ar.title}</h2>
-      {post.ar.excerpt && (
-        <p className="mb-6 text-lg text-muted-foreground" dir="rtl">{post.ar.excerpt}</p>
+      <h2 className="mb-4 text-3xl font-semibold">{post.ar?.title}</h2>
+      {post.ar?.excerpt && (
+        <p className="mb-6 text-lg text-muted-foreground" dir="rtl">{post.ar?.excerpt}</p>
       )}
       <div className="my-6 h-px bg-border" />
-      <div dir="rtl"><PostContent blocks={post.ar.blocks} /></div>
+      <div dir="rtl"><PostContent blocks={post.ar?.blocks || []} /></div>
     </article>
   )
 }

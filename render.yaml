@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: dimond-castle-api
+    env: node
+    plan: free
+    rootDir: dimond-castle-api
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: ADMIN_USER
+        value: diamond
+      - key: ADMIN_PASS
+        value: pass123123
+      - key: JWT_SECRET
+        generateValue: true
+

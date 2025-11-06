@@ -13,6 +13,7 @@ import navigationRouter from './routes/navigation'
 import contactRouter from './routes/contact'
 import activityRouter from './routes/activity'
 import settingsRouter from './routes/settings'
+import authRouter from './routes/auth'
 
 const app = express()
 
@@ -40,6 +41,7 @@ app.use('/api/navigation', navigationRouter)
 app.use('/api/contact', contactRouter)
 app.use('/api/activity', activityRouter)
 app.use('/api/settings', settingsRouter)
+app.use('/api/auth', authRouter)
 
 // Not found handler
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
