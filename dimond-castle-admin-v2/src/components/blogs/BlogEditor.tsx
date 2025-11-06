@@ -88,7 +88,14 @@ export function BlogEditor({ initial }: EditorProps) {
   }
 
   function updateField<K extends keyof BlogPost>(key: K, value: BlogPost[K]) {
-    setPost((p) => ({ ...p, [key]: value, updatedAt: new Date().toISOString() }))
+    setPost((prev) => {
+      if (!prev) return prev
+      return {
+        ...prev,
+        [key]: value,
+        updatedAt: new Date().toISOString(),
+      } as BlogPost
+    })
     setDirty(true)
   }
 
