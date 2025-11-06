@@ -2,14 +2,26 @@ import NavbarServer from "../components/NavbarServer";
 import Footer from "../components/Footer";
 import BlockRenderer from "../components/blocks/BlockRenderer";
 import { getPublicPageBySlug, type PublicPage } from "../lib/public-pages";
+import { getPageBySlug, type Page } from "../lib/pages-api";
+import { PageRenderer } from "../components/PageRenderer";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
-const RESERVED = new Set(["admin", "login"]);
+const RESERVED = new Set(["admin", "login", "blog", "blogs"]);
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   if (RESERVED.has(slug)) return {};
+  
+  // Try new page builder first
+  const builderPage = await getPageBySlug(`/${slug}`);
+  if (builderPage) {
+    const title = builderPage.en.seo?.title || builderPage.en.title;
+    const description = builderPage.en.seo?.description || undefined;
+    return { title, description };
+  }
+  
+  // Fallback to old system
   const page = await getPublicPageBySlug(slug);
   if (!page) return { title: "Not found" };
   const title = page.en.seo?.title || page.en.title;
@@ -20,6 +32,20 @@ export async function generateMetadata({ params }: PageProps) {
 export default async function SitePage({ params }: PageProps) {
   const { slug } = await params;
   if (RESERVED.has(slug)) return null;
+  
+  // Try new page builder first
+  const builderPage = await getPageBySlug(`/${slug}`);
+  if (builderPage) {
+    return (
+      <>
+        <NavbarServer />
+        <PageRenderer page={builderPage} locale="en" />
+        <Footer />
+      </>
+    );
+  }
+  
+  // Fallback to old system
   const page: PublicPage | null = await getPublicPageBySlug(slug);
   if (!page) {
     return (

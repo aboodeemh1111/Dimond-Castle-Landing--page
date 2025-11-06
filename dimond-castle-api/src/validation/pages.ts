@@ -1,71 +1,172 @@
 import { z } from 'zod'
-import { BlockSchema } from './blogs'
 
-export const SectionKeyEnum = z.enum([
-  'hero','introStory','vipClients','sectors','services','transportSteps','contact','richText'
+// Responsive value schema
+const responsiveValue = <T extends z.ZodTypeAny>(valueSchema: T) =>
+  z
+    .object({
+      base: valueSchema.optional(),
+      sm: valueSchema.optional(),
+      md: valueSchema.optional(),
+      lg: valueSchema.optional(),
+      xl: valueSchema.optional(),
+    })
+    .optional()
+
+// SEO schema
+const seoSchema = z.object({
+  title: z.string().max(60).optional(),
+  description: z.string().max(160).optional(),
+  ogImage: z.string().optional(),
+})
+
+// Section style schema
+const sectionStyleSchema = z.object({
+  background: z.enum(['white', 'cream', 'green', 'gold', 'dark']).optional(),
+  container: z.enum(['narrow', 'normal', 'wide', 'full']).optional(),
+  paddingTop: responsiveValue(z.enum(['none', 'xs', 'sm', 'md', 'lg', 'xl'])),
+  paddingBottom: responsiveValue(z.enum(['none', 'xs', 'sm', 'md', 'lg', 'xl'])),
+  dividerTop: z.boolean().optional(),
+  dividerBottom: z.boolean().optional(),
+})
+
+// Block schemas
+const baseBlock = z.object({
+  type: z.string(),
+})
+
+const headingBlock = baseBlock.extend({
+  type: z.literal('heading'),
+  level: z.number().int().min(1).max(4),
+  textEN: z.string().optional(),
+  textAR: z.string().optional(),
+})
+
+const paragraphBlock = baseBlock.extend({
+  type: z.literal('paragraph'),
+  textEN: z.string().optional(),
+  textAR: z.string().optional(),
+})
+
+const imageBlock = baseBlock.extend({
+  type: z.literal('image'),
+  publicId: z.string(),
+  altEN: z.string().optional(),
+  altAR: z.string().optional(),
+  captionEN: z.string().optional(),
+  captionAR: z.string().optional(),
+})
+
+const videoBlock = baseBlock.extend({
+  type: z.literal('video'),
+  publicId: z.string(),
+  captionEN: z.string().optional(),
+  captionAR: z.string().optional(),
+  posterId: z.string().optional(),
+})
+
+const listBlock = baseBlock.extend({
+  type: z.literal('list'),
+  ordered: z.boolean().optional(),
+  itemsEN: z.array(z.string()).optional(),
+  itemsAR: z.array(z.string()).optional(),
+})
+
+const quoteBlock = baseBlock.extend({
+  type: z.literal('quote'),
+  textEN: z.string().optional(),
+  textAR: z.string().optional(),
+  citeEN: z.string().optional(),
+  citeAR: z.string().optional(),
+})
+
+const buttonBlock = baseBlock.extend({
+  type: z.literal('button'),
+  labelEN: z.string(),
+  labelAR: z.string(),
+  href: z.string(),
+  style: z.enum(['primary', 'secondary']).optional(),
+})
+
+const iconFeatureBlock = baseBlock.extend({
+  type: z.literal('icon-feature'),
+  titleEN: z.string(),
+  titleAR: z.string(),
+  textEN: z.string().optional(),
+  textAR: z.string().optional(),
+  icon: z.string().optional(),
+})
+
+const embedBlock = baseBlock.extend({
+  type: z.literal('embed'),
+  provider: z.enum(['youtube', 'vimeo', 'map', 'iframe']),
+  url: z.string().optional(),
+  html: z.string().optional(),
+})
+
+const dividerBlock = baseBlock.extend({
+  type: z.literal('divider'),
+})
+
+const blockSchema = z.discriminatedUnion('type', [
+  headingBlock,
+  paragraphBlock,
+  imageBlock,
+  videoBlock,
+  listBlock,
+  quoteBlock,
+  buttonBlock,
+  iconFeatureBlock,
+  embedBlock,
+  dividerBlock,
 ])
 
-const hero = z.object({
-  key: z.literal('hero'),
-  en: z.object({ heading: z.string(), subheading: z.string().optional(), bgPublicId: z.string().optional(), ctaLabel: z.string().optional(), ctaHref: z.string().optional(), align: z.enum(['left','center','right']).optional(), overlay: z.boolean().optional() }),
-  ar: z.object({ heading: z.string(), subheading: z.string().optional(), bgPublicId: z.string().optional(), ctaLabel: z.string().optional(), ctaHref: z.string().optional(), align: z.enum(['left','center','right']).optional(), overlay: z.boolean().optional() }),
+// Grid column schema
+const gridColSchema = z.object({
+  span: responsiveValue(z.number().int().min(1).max(12)),
+  align: z.enum(['left', 'center', 'right']).optional(),
+  vAlign: z.enum(['start', 'center', 'end']).optional(),
+  visibility: responsiveValue(z.enum(['show', 'hide'])),
+  blocks: z.array(blockSchema).default([]),
 })
 
-const introStory = z.object({
-  key: z.literal('introStory'),
-  en: z.object({ title: z.string(), text: z.string(), imagePublicId: z.string().optional() }),
-  ar: z.object({ title: z.string(), text: z.string(), imagePublicId: z.string().optional() }),
+// Row schema
+const rowSchema = z.object({
+  gap: responsiveValue(z.enum(['none', 'xs', 'sm', 'md', 'lg', 'xl'])),
+  columns: z.array(gridColSchema).min(1).max(6),
 })
 
-const vipClients = z.object({
-  key: z.literal('vipClients'),
-  en: z.object({ title: z.string(), subtitle: z.string().optional(), logos: z.array(z.string()), layout: z.enum(['grid','auto']).optional() }),
-  ar: z.object({ title: z.string(), subtitle: z.string().optional(), logos: z.array(z.string()), layout: z.enum(['grid','auto']).optional() }),
+// Section schema
+const sectionSchema = z.object({
+  key: z.string(),
+  label: z.string().optional(),
+  style: sectionStyleSchema.optional(),
+  rows: z.array(rowSchema).optional(),
+  blocks: z.array(blockSchema).optional(),
+  ar: z.record(z.string(), z.any()).optional(),
+  en: z.record(z.string(), z.any()).optional(),
+  props: z.record(z.string(), z.any()).optional(),
 })
 
-const sectors = z.object({
-  key: z.literal('sectors'),
-  en: z.object({ title: z.string(), items: z.array(z.object({ name: z.string(), description: z.string().optional(), icon: z.string().optional() })) }),
-  ar: z.object({ title: z.string(), items: z.array(z.object({ name: z.string(), description: z.string().optional(), icon: z.string().optional() })) }),
+// Locale content schema
+const localeContentSchema = z.object({
+  title: z.string().min(1),
+  seo: seoSchema.optional(),
+  sections: z.array(sectionSchema).default([]),
 })
 
-const services = z.object({
-  key: z.literal('services'),
-  en: z.object({ title: z.string(), description: z.string().optional(), items: z.array(z.object({ name: z.string(), text: z.string().optional(), imagePublicId: z.string().optional() })) }),
-  ar: z.object({ title: z.string(), description: z.string().optional(), items: z.array(z.object({ name: z.string(), text: z.string().optional(), imagePublicId: z.string().optional() })) }),
-})
-
-const transportSteps = z.object({
-  key: z.literal('transportSteps'),
-  en: z.object({ title: z.string(), steps: z.array(z.object({ number: z.number().int().optional(), title: z.string(), description: z.string().optional(), mediaPublicId: z.string().optional() })) }),
-  ar: z.object({ title: z.string(), steps: z.array(z.object({ number: z.number().int().optional(), title: z.string(), description: z.string().optional(), mediaPublicId: z.string().optional() })) }),
-})
-
-const contact = z.object({
-  key: z.literal('contact'),
-  en: z.object({ title: z.string(), subtitle: z.string().optional(), buttonLabel: z.string().optional(), buttonHref: z.string().optional(), mapEmbed: z.string().optional() }),
-  ar: z.object({ title: z.string(), subtitle: z.string().optional(), buttonLabel: z.string().optional(), buttonHref: z.string().optional(), mapEmbed: z.string().optional() }),
-})
-
-const richText = z.object({
-  key: z.literal('richText'),
-  en: z.object({ blocks: z.array(BlockSchema) }),
-  ar: z.object({ blocks: z.array(BlockSchema) }),
-})
-
-export const SectionSchema = z.discriminatedUnion('key', [hero,introStory,vipClients,sectors,services,transportSteps,contact,richText])
-
-const lang = z.object({ title: z.string(), seo: z.object({ title: z.string().optional(), description: z.string().optional(), ogImageId: z.string().optional() }).optional() })
-
+// Page create schema
 export const PageCreateSchema = z.object({
-  slug: z.string().regex(/^\//),
-  status: z.enum(['draft','published']).default('draft'),
-  template: z.enum(['default','landing','blank']).default('default'),
-  en: lang,
-  ar: lang,
-  sections: z.array(SectionSchema),
+  slug: z.string().regex(/^\/[a-z0-9-\/]*$/, 'Slug must start with / and contain only lowercase letters, numbers, hyphens, and slashes'),
+  status: z.enum(['draft', 'published']).default('draft'),
+  template: z.enum(['default', 'landing', 'blank']).default('default'),
+  en: localeContentSchema,
+  ar: localeContentSchema,
 })
 
-export const PageUpdateSchema = PageCreateSchema.partial().extend({ slug: z.string().regex(/^\//).optional() })
+// Page update schema
+export const PageUpdateSchema = PageCreateSchema.partial().extend({
+  slug: z.string().regex(/^\/[a-z0-9-\/]*$/).optional(),
+})
 
-
+export type PageInput = z.infer<typeof PageCreateSchema>
+export type PageUpdate = z.infer<typeof PageUpdateSchema>
