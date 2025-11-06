@@ -42,9 +42,11 @@ export default function Hero() {
       {/* Hero Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="glass-morphism bg-white/10 backdrop-blur-md rounded-2xl p-8 md:p-12 max-w-4xl mx-auto border border-white/20 shadow-2xl">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight">
-            {t("hero.title.leading")}{" "}
-            <span className="bg-linear-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
+            <span className="block text-[var(--color-accent)]">
+              {t("hero.title.leading")}
+            </span>
+            <span className="block text-white mt-2">
               {t("hero.title.trailing")}
             </span>
           </h1>
