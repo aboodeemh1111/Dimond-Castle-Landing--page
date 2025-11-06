@@ -22,4 +22,12 @@ services:
         value: pass123123
       - key: JWT_SECRET
         generateValue: true
-
+      - key: CLOUDINARY_URL
+        sync: false
+      # OR use individual Cloudinary vars:
+      # - key: CLOUDINARY_CLOUD_NAME
+      #   sync: false
+      # - key: CLOUDINARY_API_KEY
+      #   sync: false
+      # - key: CLOUDINARY_API_SECRET
+      #   sync: false
