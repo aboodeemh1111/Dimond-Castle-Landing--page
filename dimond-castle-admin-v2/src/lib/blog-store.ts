@@ -3,7 +3,7 @@ import { api } from "./api"
 export type Block =
   | { type: 'heading'; level: 2 | 3; text: string }
   | { type: 'paragraph'; text: string }
-  | { type: 'image'; publicId: string; alt?: string; caption?: string }
+  | { type: 'image'; publicId: string; alt?: string; caption?: string; widthPercent?: number; heightPx?: number }
   | { type: 'video'; publicId: string; caption?: string; posterId?: string }
   | { type: 'link'; label: string; url: string }
   | { type: 'list'; ordered: boolean; items: string[] }

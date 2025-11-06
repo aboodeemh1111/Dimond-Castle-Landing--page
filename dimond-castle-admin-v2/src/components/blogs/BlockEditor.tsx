@@ -5,6 +5,7 @@ import type { Block } from "@/lib/blog-store";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MediaPickerDialog } from "./MediaPickerDialog";
@@ -129,6 +130,38 @@ export function BlockEditor({
                 </div>
                 <Input placeholder="Alt text" value={block.alt || ''} onChange={(e) => updateBlock(i, { ...block, alt: e.target.value })} />
                 <Input placeholder="Caption (optional)" value={block.caption || ''} onChange={(e) => updateBlock(i, { ...block, caption: e.target.value })} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor={`img-width-${i}`}>Width (%)</Label>
+                    <Input
+                      id={`img-width-${i}`}
+                      type="number"
+                      min={10}
+                      max={100}
+                      placeholder="e.g. 100"
+                      value={typeof block.widthPercent === 'number' ? String(block.widthPercent) : ''}
+                      onChange={(e) => {
+                        const v = e.target.value === '' ? undefined : Math.max(10, Math.min(100, Number(e.target.value)))
+                        updateBlock(i, { ...block, widthPercent: v as any })
+                      }}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor={`img-height-${i}`}>Height (px)</Label>
+                    <Input
+                      id={`img-height-${i}`}
+                      type="number"
+                      min={100}
+                      max={1600}
+                      placeholder="default 400"
+                      value={typeof block.heightPx === 'number' ? String(block.heightPx) : ''}
+                      onChange={(e) => {
+                        const v = e.target.value === '' ? undefined : Math.max(100, Math.min(1600, Number(e.target.value)))
+                        updateBlock(i, { ...block, heightPx: v as any })
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             )}
             {block.type === 'video' && (

@@ -3,13 +3,14 @@ import Footer from "../components/Footer";
 import BlockRenderer from "../components/blocks/BlockRenderer";
 import { getPublicPageBySlug, type PublicPage } from "../lib/public-pages";
 
-type PageProps = { params: { slug: string } };
+type PageProps = { params: Promise<{ slug: string }> };
 
 const RESERVED = new Set(["admin", "login"]);
 
 export async function generateMetadata({ params }: PageProps) {
-  if (RESERVED.has(params.slug)) return {};
-  const page = await getPublicPageBySlug(params.slug);
+  const { slug } = await params;
+  if (RESERVED.has(slug)) return {};
+  const page = await getPublicPageBySlug(slug);
   if (!page) return { title: "Not found" };
   const title = page.en.seo?.title || page.en.title;
   const description = page.en.seo?.description || page.en.excerpt || undefined;
@@ -17,8 +18,9 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function SitePage({ params }: PageProps) {
-  if (RESERVED.has(params.slug)) return null;
-  const page: PublicPage | null = await getPublicPageBySlug(params.slug);
+  const { slug } = await params;
+  if (RESERVED.has(slug)) return null;
+  const page: PublicPage | null = await getPublicPageBySlug(slug);
   if (!page) {
     return (
       <>

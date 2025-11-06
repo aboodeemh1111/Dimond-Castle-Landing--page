@@ -151,15 +151,23 @@ function BlogBlocks({ blocks, language }: { blocks: BlogPost["en"]["blocks"]; la
             if (!block.publicId) return null;
             return (
               <figure key={i} className="my-8">
-                <div className="relative h-[400px] w-full overflow-hidden rounded-2xl shadow-lg">
-                  <Image
-                    src={getCloudinaryImageUrl(block.publicId, 'f_auto,q_auto,w_1200')}
-                    alt={block.alt || ""}
-                    fill
-                    className="object-cover"
-                    sizes="(min-width: 1024px) 896px, 100vw"
-                    unoptimized
-                  />
+                <div
+                  className="mx-auto"
+                  style={{ width: `${typeof (block as any).widthPercent === 'number' ? (block as any).widthPercent : 100}%` }}
+                >
+                  <div
+                    className="relative w-full overflow-hidden rounded-2xl shadow-lg"
+                    style={{ height: `${typeof (block as any).heightPx === 'number' ? (block as any).heightPx : 400}px` }}
+                  >
+                    <Image
+                      src={getCloudinaryImageUrl(block.publicId, 'f_auto,q_auto,w_1200')}
+                      alt={block.alt || ""}
+                      fill
+                      className="object-contain object-center"
+                      sizes="(min-width: 1024px) 896px, 100vw"
+                      unoptimized
+                    />
+                  </div>
                 </div>
                 {block.caption && (
                   <figcaption className="mt-3 text-center text-sm text-slate-500 italic">
