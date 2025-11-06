@@ -15,8 +15,6 @@ type Props = {
 }
 
 export function ContactInfoForm({ value, onChange }: Props) {
-  const [openPicker, setOpenPicker] = useState(false)
-
   // local ensure not-null
   useEffect(() => {
     if (!value) {
@@ -124,19 +122,17 @@ export function ContactInfoForm({ value, onChange }: Props) {
       <section className="space-y-3">
         <h3 className="font-semibold">Hero Visual</h3>
         <div className="flex items-center gap-3">
-          <Button type="button" variant="outline" onClick={() => setOpenPicker(true)}>
-            {value.contactPageHeroImageId ? 'Change image' : 'Select image'}
-          </Button>
+          <MediaPickerDialog
+            onSelect={(publicId) => {
+              set({ contactPageHeroImageId: publicId })
+            }}
+          >
+            <Button type="button" variant="outline">
+              {value.contactPageHeroImageId ? 'Change image' : 'Select image'}
+            </Button>
+          </MediaPickerDialog>
           {value.contactPageHeroImageId && <span className="text-sm text-muted-foreground truncate">{value.contactPageHeroImageId}</span>}
         </div>
-        <MediaPickerDialog
-          open={openPicker}
-          onOpenChange={setOpenPicker}
-          onSelect={(asset) => {
-            set({ contactPageHeroImageId: asset.public_id })
-            setOpenPicker(false)
-          }}
-        />
       </section>
     </div>
   )
