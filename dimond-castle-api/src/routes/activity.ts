@@ -18,8 +18,8 @@ router.get('/recent', async (req, res, next) => {
 
     type Item = { type: 'blog' | 'page' | 'theme' | 'navigation'; title: string; updatedAt: string }
     const items: Item[] = []
-    items.push(...blogs.map((b: any) => ({ type: 'blog', title: b.en?.title || 'Untitled', updatedAt: b.updatedAt })))
-    items.push(...pages.map((p: any) => ({ type: 'page', title: p.en?.title || 'Untitled', updatedAt: p.updatedAt })))
+    items.push(...blogs.map((b: any) => ({ type: 'blog' as const, title: b.en?.title || 'Untitled', updatedAt: b.updatedAt })))
+    items.push(...pages.map((p: any) => ({ type: 'page' as const, title: p.en?.title || 'Untitled', updatedAt: p.updatedAt })))
     if (theme) items.push({ type: 'theme', title: 'Theme', updatedAt: (theme as any).updatedAt })
     if (nav && nav[0]) items.push({ type: 'navigation', title: `Navigation: ${(nav[0] as any).name}`, updatedAt: (nav[0] as any).updatedAt })
 

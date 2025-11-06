@@ -33,10 +33,6 @@ const NavigationSchema = new Schema(
   { timestamps: true }
 )
 
-export type NavigationDocument = ReturnType<typeof models.Navigation> extends infer T
-  ? T
-  : any
-
 export default models.Navigation || model('Navigation', NavigationSchema)
 
 

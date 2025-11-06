@@ -27,12 +27,6 @@ const BlogPostSchema = new Schema(
   { timestamps: true }
 )
 
-export type BlogPostDocument = ReturnType<typeof models.BlogPost> extends infer T
-  ? T extends Types.Subdocument
-    ? T
-    : any
-  : any
-
 export default models.BlogPost || model('BlogPost', BlogPostSchema)
 
 
