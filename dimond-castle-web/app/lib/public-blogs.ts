@@ -21,6 +21,11 @@ export type BlogPost = {
   _id: string;
   slug: string;
   status: "draft" | "published";
+  coverPublicId?: string;
+  tags?: string[];
+  author?: string;
+  publishAt?: string;
+  createdAt: string;
   updatedAt: string;
   en: BlogLocalized;
   ar: BlogLocalized;
