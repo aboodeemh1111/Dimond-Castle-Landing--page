@@ -67,7 +67,8 @@ export function BlogEditor({ initial }: EditorProps) {
     return () => { active = false }
   }, [post?.slug])
 
-  // statusBadge moved below after post existence check
+  // Hooks must come before early returns
+  const lastSaved = useMemo(() => post ? new Date(post.updatedAt).toLocaleString() : '', [post?.updatedAt])
 
   function setLocaleContent(locale: "en" | "ar", data: Partial<LocaleContent>) {
     setPost((p) => ({ ...p, [locale]: { ...p[locale], ...data } as LocaleContent }))
@@ -122,6 +123,7 @@ export function BlogEditor({ initial }: EditorProps) {
   }
 
   function onSlugSuggest() {
+    if (!post) return
     const s = slugify(post.en.title || "")
     if (!s) return
     // uniqueness check handled asynchronously below
@@ -135,8 +137,6 @@ export function BlogEditor({ initial }: EditorProps) {
       {post.status === "published" ? "Published" : "Draft"}
     </Badge>
   )
-
-  const lastSaved = useMemo(() => new Date(post.updatedAt).toLocaleString(), [post.updatedAt])
 
   return (
     <div className="space-y-4">

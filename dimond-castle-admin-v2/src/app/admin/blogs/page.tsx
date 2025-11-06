@@ -79,25 +79,28 @@ export default function BlogsListPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((p) => (
-                <tr key={p.id} className="border-t">
-                  <td className="px-3 py-2">
-                    <div className="font-medium">{p.en.title || "(Untitled)"}</div>
-                    {p.ar.title && <div className="text-xs text-muted-foreground">AR available</div>}
-                  </td>
-                  <td className="px-3 py-2">
-                    <Badge variant={p.status === 'published' ? 'default' : 'secondary'}>{p.status}</Badge>
-                  </td>
-                  <td className="px-3 py-2">{new Date(p.updatedAt).toLocaleString()}</td>
-                  <td className="px-3 py-2">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button size="sm" variant="outline" onClick={() => router.push(`/admin/blogs/${p.id}`)}>Edit</Button>
-                      <Button size="sm" variant="outline" onClick={() => router.push(`/admin/blogs/preview/${p.id}`)}>Preview</Button>
-                      <Button size="sm" variant="destructive" onClick={() => onDelete(p.id)}>Delete</Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {filtered.map((p, idx) => {
+                const id = p._id || p.id || `temp-${idx}`
+                return (
+                  <tr key={id} className="border-t">
+                    <td className="px-3 py-2">
+                      <div className="font-medium">{p.en.title || "(Untitled)"}</div>
+                      {p.ar.title && <div className="text-xs text-muted-foreground">AR available</div>}
+                    </td>
+                    <td className="px-3 py-2">
+                      <Badge variant={p.status === 'published' ? 'default' : 'secondary'}>{p.status}</Badge>
+                    </td>
+                    <td className="px-3 py-2">{new Date(p.updatedAt).toLocaleString()}</td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button size="sm" variant="outline" onClick={() => router.push(`/admin/blogs/${id}`)}>Edit</Button>
+                        <Button size="sm" variant="outline" onClick={() => router.push(`/admin/blogs/preview/${id}`)}>Preview</Button>
+                        <Button size="sm" variant="destructive" onClick={() => onDelete(id)}>Delete</Button>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
