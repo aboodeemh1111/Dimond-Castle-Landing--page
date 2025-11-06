@@ -1,34 +1,125 @@
 import NavbarServer from "../components/NavbarServer";
 import Footer from "../components/Footer";
 import Link from "next/link";
+import Image from "next/image";
 import { getPublishedBlogs } from "../lib/public-blogs";
 
-export const revalidate = 300;
+export const revalidate = 0; // Disable caching for now (use 300 in production)
 
 export default async function BlogIndexPage() {
   const posts = await getPublishedBlogs();
   return (
     <>
       <NavbarServer />
-      <main className="mx-auto max-w-5xl px-4 py-12">
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl font-semibold text-slate-900">Blog</h1>
-          <p className="mt-2 text-slate-600">Latest updates from Dimond Castle</p>
+      <main className="mx-auto max-w-7xl px-4 py-16 sm:py-20">
+        {/* Hero Header */}
+        <header className="mb-16 text-center">
+          <h1 className="text-5xl sm:text-6xl font-bold text-slate-900 mb-4">
+            Blog
+          </h1>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+            Latest insights, updates, and stories from Dimond Castle
+          </p>
         </header>
+
+        {/* Blog Posts Grid */}
         {posts.length === 0 ? (
-          <div className="grid place-items-center rounded-md border py-16 text-slate-600">No posts yet.</div>
+          <div className="grid place-items-center rounded-3xl border-2 border-dashed border-slate-200 py-24 text-center">
+            <div className="space-y-4">
+              <div className="text-6xl">📝</div>
+              <h3 className="text-2xl font-semibold text-slate-900">No posts yet</h3>
+              <p className="text-slate-600">Check back soon for our latest updates!</p>
+            </div>
+          </div>
         ) : (
-          <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {posts.map((p) => (
-              <li key={p._id} className="rounded-lg border p-5 hover:shadow-sm">
-                <Link href={`/blog/${p.slug}`} className="block">
-                  <h2 className="text-xl font-semibold text-slate-900">{p.en.title}</h2>
-                  {p.en.excerpt && <p className="mt-2 line-clamp-3 text-slate-600">{p.en.excerpt}</p>}
-                  <div className="mt-3 text-sm text-slate-500">{new Date(p.updatedAt).toLocaleDateString()}</div>
-                </Link>
-              </li>
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {posts.map((post) => (
+              <Link
+                key={post._id}
+                href={`/blog/${post.slug}`}
+                className="group block overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-xl hover:-translate-y-1"
+              >
+                {/* Cover Image */}
+                {post.coverPublicId ? (
+                  <div className="relative h-56 w-full overflow-hidden bg-slate-100">
+                    <Image
+                      src={`https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_600/${post.coverPublicId}.jpg`}
+                      alt={post.en.title}
+                      fill
+                      className="object-cover transition-transform group-hover:scale-105"
+                      sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-56 w-full bg-gradient-to-br from-emerald-400 to-emerald-600" />
+                )}
+
+                {/* Content */}
+                <div className="p-6 space-y-3">
+                  {/* Tags */}
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {post.tags.slice(0, 3).map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Title */}
+                  <h2 className="text-2xl font-bold text-slate-900 line-clamp-2 group-hover:text-emerald-600 transition-colors">
+                    {post.en.title}
+                  </h2>
+
+                  {/* Excerpt */}
+                  {post.en.excerpt && (
+                    <p className="text-slate-600 line-clamp-3 leading-relaxed">
+                      {post.en.excerpt}
+                    </p>
+                  )}
+
+                  {/* Meta */}
+                  <div className="flex items-center gap-3 pt-3 text-sm text-slate-500 border-t border-slate-100">
+                    {post.author && (
+                      <span className="font-medium">{post.author}</span>
+                    )}
+                    {post.author && <span>•</span>}
+                    <time dateTime={post.updatedAt}>
+                      {new Date(post.updatedAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </time>
+                  </div>
+
+                  {/* Read More */}
+                  <div className="pt-2">
+                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-600 group-hover:gap-3 transition-all">
+                      Read more
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </Link>
             ))}
-          </ul>
+          </div>
         )}
       </main>
       <Footer />

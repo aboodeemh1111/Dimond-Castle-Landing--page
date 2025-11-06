@@ -4,8 +4,7 @@ const API_BASE =
 export async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
-    cache: "force-cache",
-    next: { revalidate: 300 },
+    cache: "no-store", // Disable caching for development
   });
   if (!res.ok) throw new Error(await res.text());
   return (await res.json()) as T;

@@ -6,14 +6,14 @@ import { useI18n } from "./I18nProvider";
 type NavItem = { key: string; href: string };
 
 const defaultItems: NavItem[] = [
-  { key: "nav.home", href: "#home" },
-  { key: "nav.story", href: "#introduction-and-story" },
-  { key: "nav.vision", href: "#vision-mission-strategic-objectives" },
-  { key: "nav.products", href: "#products" },
-  { key: "nav.clients", href: "#vip-clients" },
-  { key: "nav.services", href: "#services" },
-  { key: "nav.contact", href: "#contact-us" },
-  { key: "nav.blog", href: "#blog" },
+  { key: "nav.home", href: "/" },
+  { key: "nav.story", href: "/#introduction-and-story" },
+  { key: "nav.vision", href: "/#vision-mission-strategic-objectives" },
+  { key: "nav.products", href: "/#products" },
+  { key: "nav.clients", href: "/#vip-clients" },
+  { key: "nav.services", href: "/#services" },
+  { key: "nav.contact", href: "/#contact-us" },
+  { key: "nav.blog", href: "/blog" },
 ];
 
 export default function Navbar({
