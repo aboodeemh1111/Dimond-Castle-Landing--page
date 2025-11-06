@@ -12,15 +12,12 @@ import mediaRouter from './routes/media'
 const app = express()
 
 app.use(helmet())
+// CORS configuration - allow all origins in development
 app.use(cors({
-  origin: (origin, cb) => {
-    if (!origin) return cb(null, true)
-    if (env.CLIENT_ORIGIN === '*') return cb(null, true)
-    const allowed = env.CLIENT_ORIGIN.split(',').map((s) => s.trim())
-    if (allowed.includes(origin)) return cb(null, true)
-    return cb(new Error('Not allowed by CORS'))
-  },
+  origin: true, // Allow all origins
   credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }))
 app.use(express.json({ limit: '2mb' }))
 app.use(express.urlencoded({ extended: true }))
