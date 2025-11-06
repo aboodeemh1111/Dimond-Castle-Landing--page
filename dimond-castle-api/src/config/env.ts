@@ -7,11 +7,20 @@ export const env = {
   PORT: Number(process.env.PORT || 4000),
   MONGODB_URI: process.env.MONGODB_URI || '',
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || '*',
+  CLOUDINARY_URL: process.env.CLOUDINARY_URL || '',
+  CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
+  CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
+  CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || '',
 }
 
 if (!env.MONGODB_URI) {
   // eslint-disable-next-line no-console
   console.warn('[env] MONGODB_URI is not set. API will fail to connect to DB.')
+}
+
+if (!env.CLOUDINARY_URL && (!env.CLOUDINARY_CLOUD_NAME || !env.CLOUDINARY_API_KEY || !env.CLOUDINARY_API_SECRET)) {
+  // eslint-disable-next-line no-console
+  console.warn('[env] Cloudinary credentials are not set. Media endpoints will not work.')
 }
 
 

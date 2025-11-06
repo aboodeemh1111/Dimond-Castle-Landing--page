@@ -7,6 +7,7 @@ import rateLimit from 'express-rate-limit'
 import { env } from './config/env'
 import blogsRouter from './routes/blogs'
 import pagesRouter from './routes/pages'
+import mediaRouter from './routes/media'
 
 const app = express()
 
@@ -31,6 +32,7 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }))
 
 app.use('/api/blogs', blogsRouter)
 app.use('/api/pages', pagesRouter)
+app.use('/api/media', mediaRouter)
 
 // Not found handler
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
