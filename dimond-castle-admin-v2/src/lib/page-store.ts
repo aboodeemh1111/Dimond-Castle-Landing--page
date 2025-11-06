@@ -1,4 +1,5 @@
 import type { Block } from "./blog-store"
+import { api } from "./api"
 
 export type SectionKey =
   | 'hero'
@@ -82,80 +83,43 @@ export type Page = {
   sections: Section[]
 }
 
-const STORAGE_KEY = 'dc_admin_pages'
-
-export function generateId() {
-  return Math.random().toString(36).slice(2, 10)
+export async function listPages(params?: { q?: string; status?: string; page?: number; limit?: number }) {
+  const qs = new URLSearchParams()
+  if (params?.q) qs.set('q', params.q)
+  if (params?.status) qs.set('status', params.status)
+  if (params?.page) qs.set('page', String(params.page))
+  if (params?.limit) qs.set('limit', String(params.limit))
+  const data = await api.get<{ items: Page[] }>(`/api/pages${qs.toString() ? `?${qs.toString()}` : ''}`)
+  return data.items
 }
 
-function nowIso() {
-  return new Date().toISOString()
+export async function getPage(id: string) {
+  return api.get<Page>(`/api/pages/${id}`)
 }
 
-function readAll(): Page[] {
-  if (typeof window === 'undefined') return []
+export async function getPageBySlug(slug: string) {
+  return api.get<Page>(`/api/pages/slug?slug=${encodeURIComponent(slug)}`)
+}
+
+export async function isPageSlugUnique(slug: string, excludeId?: string) {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as Page[]) : []
+    const existing = await api.get<Page>(`/api/pages/slug?slug=${encodeURIComponent(slug)}`)
+    return excludeId ? existing.id === excludeId : false
   } catch {
-    return []
+    return true
   }
 }
 
-function writeAll(pages: Page[]) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(pages))
+export async function createPage(partial?: Partial<Page>) {
+  return api.post<Page>(`/api/pages`, partial || {})
 }
 
-export function listPages(): Page[] {
-  return readAll().sort((a, b) => (b.updatedAt > a.updatedAt ? 1 : -1))
+export async function updatePage(id: string, updates: Partial<Page>) {
+  return api.put<Page>(`/api/pages/${id}`, updates)
 }
 
-export function getPage(id: string): Page | undefined {
-  return readAll().find((p) => p.id === id)
-}
-
-export function getPageBySlug(slug: string): Page | undefined {
-  return readAll().find((p) => p.slug === slug)
-}
-
-export function isPageSlugUnique(slug: string, excludeId?: string) {
-  const pages = readAll()
-  return !pages.some((p) => p.slug === slug && p.id !== excludeId)
-}
-
-export function createPage(partial?: Partial<Page>): Page {
-  const id = generateId()
-  const base: Page = {
-    id,
-    slug: `/page-${id}`,
-    status: 'draft',
-    template: 'default',
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-    en: { title: '' },
-    ar: { title: '' },
-    sections: [],
-    ...partial,
-  }
-  const all = readAll()
-  all.push(base)
-  writeAll(all)
-  return base
-}
-
-export function updatePage(id: string, updates: Partial<Page>): Page | undefined {
-  const all = readAll()
-  const idx = all.findIndex((p) => p.id === id)
-  if (idx === -1) return undefined
-  const updated: Page = { ...all[idx], ...updates, updatedAt: nowIso() }
-  all[idx] = updated
-  writeAll(all)
-  return updated
-}
-
-export function deletePage(id: string) {
-  writeAll(readAll().filter((p) => p.id !== id))
+export async function deletePage(id: string) {
+  await api.delete(`/api/pages/${id}`)
 }
 
 

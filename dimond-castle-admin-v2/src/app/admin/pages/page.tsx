@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { listPages, deletePage } from "@/lib/page-store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,16 @@ export default function PagesListPage() {
   const router = useRouter()
   const [query, setQuery] = useState("")
   const [status, setStatus] = useState<"all" | "draft" | "published">("all")
-  const pages = listPages()
+  const [pages, setPages] = useState<any[]>([])
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      const items = await listPages()
+      if (mounted) setPages(items)
+    })()
+    return () => { mounted = false }
+  }, [])
 
   const filtered = useMemo(() => {
     return pages.filter((p) => {
@@ -24,10 +33,11 @@ export default function PagesListPage() {
     })
   }, [pages, query, status])
 
-  function onDelete(id: string) {
-    deletePage(id)
+  async function onDelete(id: string) {
+    await deletePage(id)
     toast.success("Deleted")
-    router.refresh()
+    const items = await listPages()
+    setPages(items)
   }
 
   return (
@@ -71,16 +81,16 @@ export default function PagesListPage() {
             </thead>
             <tbody>
               {filtered.map((p) => (
-                <tr key={p.id} className="border-t">
+                <tr key={(p as any)._id || p.id} className="border-t">
                   <td className="px-3 py-2">{p.en.title || "(Untitled)"}</td>
                   <td className="px-3 py-2">{p.slug}</td>
                   <td className="px-3 py-2"><Badge variant={p.status === 'published' ? 'default' : 'secondary'}>{p.status}</Badge></td>
                   <td className="px-3 py-2">{new Date(p.updatedAt).toLocaleString()}</td>
                   <td className="px-3 py-2">
                     <div className="flex items-center justify-end gap-2">
-                      <Button size="sm" variant="outline" onClick={() => router.push(`/admin/pages/${p.id}`)}>Edit</Button>
-                      <Button size="sm" variant="outline" onClick={() => router.push(`/admin/pages/preview/${p.id}`)}>Preview</Button>
-                      <Button size="sm" variant="destructive" onClick={() => onDelete(p.id)}>Delete</Button>
+                      <Button size="sm" variant="outline" onClick={() => router.push(`/admin/pages/${(p as any)._id || p.id}`)}>Edit</Button>
+                      <Button size="sm" variant="outline" onClick={() => router.push(`/admin/pages/preview/${(p as any)._id || p.id}`)}>Preview</Button>
+                      <Button size="sm" variant="destructive" onClick={() => onDelete((p as any)._id || p.id)}>Delete</Button>
                     </div>
                   </td>
                 </tr>

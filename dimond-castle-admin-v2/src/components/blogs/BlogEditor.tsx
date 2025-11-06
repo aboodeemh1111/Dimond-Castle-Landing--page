@@ -23,34 +23,49 @@ type EditorProps = {
 
 export function BlogEditor({ initial }: EditorProps) {
   const router = useRouter()
-  const [post, setPost] = useState<BlogPost>(
-    initial ??
-      createPost({
-        en: { title: "", excerpt: "", blocks: [] },
-        ar: { title: "", excerpt: "", blocks: [] },
-      })
-  )
+  const [post, setPost] = useState<BlogPost | null>(initial ?? null)
   const [dirty, setDirty] = useState(false)
+  const [slugInUse, setSlugInUse] = useState(false)
 
   useEffect(() => {
     if (!initial) {
-      // redirect to the new id route if we just created
-      router.replace(`/admin/blogs/${post.id}`)
+      ;(async () => {
+        const created = await createPost({
+          slug: `post-${Math.random().toString(36).slice(2,10)}`,
+          status: 'draft',
+          tags: [],
+          en: { title: "", excerpt: "", blocks: [] },
+          ar: { title: "", excerpt: "", blocks: [] },
+        })
+        setPost(created)
+        router.replace(`/admin/blogs/${(created as any)._id || (created as any).id}`)
+      })()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
+    if (!post) return
     if (dirty) {
-      const t = setTimeout(() => {
-        updatePost(post.id, post)
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      const t = setTimeout(async () => {
+        const updated = await updatePost((post as any)._id || (post as any).id, post)
+        setPost(updated)
         toast.success("Saved")
         setDirty(false)
       }, 800)
       return () => clearTimeout(t)
     }
   }, [dirty, post])
+
+  useEffect(() => {
+    let active = true
+    if (!post) return
+    ;(async () => {
+      const unique = await isSlugUnique(post.slug, (post as any)._id || (post as any).id)
+      if (active) setSlugInUse(!unique)
+    })()
+    return () => { active = false }
+  }, [post?.slug])
 
   const statusBadge = (
     <Badge variant={post.status === "published" ? "default" : "secondary"}>
@@ -96,13 +111,15 @@ export function BlogEditor({ initial }: EditorProps) {
     }
   }
 
-  function onSave() {
-    updatePost(post.id, post)
+  async function onSave() {
+    if (!post) return
+    await updatePost((post as any)._id || (post as any).id, post)
     toast.success("Saved")
   }
 
-  function onDelete() {
-    deletePost(post.id)
+  async function onDelete() {
+    if (!post) return
+    await deletePost((post as any)._id || (post as any).id)
     toast.success("Deleted")
     router.push("/admin/blogs")
   }
@@ -110,11 +127,11 @@ export function BlogEditor({ initial }: EditorProps) {
   function onSlugSuggest() {
     const s = slugify(post.en.title || "")
     if (!s) return
-    if (!isSlugUnique(s, post.id)) {
-      toast.error("Slug already exists. Edit it to make unique.")
-    }
+    // uniqueness check handled asynchronously below
     updateField("slug", s)
   }
+
+  if (!post) return null
 
   const lastSaved = useMemo(() => new Date(post.updatedAt).toLocaleString(), [post.updatedAt])
 
@@ -210,7 +227,7 @@ export function BlogEditor({ initial }: EditorProps) {
                   <Input value={post.slug} onChange={(e) => updateField('slug', e.target.value)} />
                   <Button variant="outline" onClick={onSlugSuggest}>Suggest</Button>
                 </div>
-                {!isSlugUnique(post.slug, post.id) && (
+                {slugInUse && (
                   <div className="flex items-center gap-2 text-xs text-red-500"><AlertTriangle className="h-3 w-3" /> Slug already in use</div>
                 )}
               </div>

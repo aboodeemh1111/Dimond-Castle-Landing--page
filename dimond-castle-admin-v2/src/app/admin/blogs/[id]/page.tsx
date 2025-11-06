@@ -8,23 +8,26 @@ import { getPost } from "@/lib/blog-store";
 export default function EditBlogPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
-  const [ready, setReady] = useState(false)
-  const [notFound, setNotFound] = useState(false)
-
-  const post = typeof window !== 'undefined' ? getPost(params.id) : undefined
+  const [loading, setLoading] = useState(true)
+  const [post, setPost] = useState<any | null>(null)
 
   useEffect(() => {
-    setReady(true)
-    if (!post) setNotFound(true)
-  }, [])
+    let active = true
+    ;(async () => {
+      try {
+        const doc = await getPost(params.id)
+        if (active) setPost(doc)
+      } catch {
+        if (active) router.replace('/admin/blogs')
+      } finally {
+        if (active) setLoading(false)
+      }
+    })()
+    return () => { active = false }
+  }, [params.id, router])
 
-  if (!ready) return null
-  if (notFound) {
-    router.replace('/admin/blogs')
-    return null
-  }
-
-  return <BlogEditor initial={post!} />
+  if (loading || !post) return null
+  return <BlogEditor initial={post} />
 }
 
 

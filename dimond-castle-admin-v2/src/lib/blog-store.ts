@@ -1,3 +1,5 @@
+import { api } from "./api"
+
 export type Block =
   | { type: 'heading'; level: 2 | 3; text: string }
   | { type: 'paragraph'; text: string }
@@ -29,80 +31,45 @@ export type BlogPost = {
   ar: LocaleContent
 }
 
-const STORAGE_KEY = 'dc_admin_posts'
+// API-backed implementation
 
-function nowIso() {
-  return new Date().toISOString()
+export async function listPosts(params?: { q?: string; status?: string; page?: number; limit?: number }) {
+  const qs = new URLSearchParams()
+  if (params?.q) qs.set('q', params.q)
+  if (params?.status) qs.set('status', params.status)
+  if (params?.page) qs.set('page', String(params.page))
+  if (params?.limit) qs.set('limit', String(params.limit))
+  const data = await api.get<{ items: BlogPost[] }>(`/api/blogs${qs.toString() ? `?${qs.toString()}` : ''}`)
+  return data.items
 }
 
-function readAll(): BlogPost[] {
-  if (typeof window === 'undefined') return []
+export async function getPost(id: string) {
+  return api.get<BlogPost>(`/api/blogs/${id}`)
+}
+
+export async function getPostBySlug(slug: string) {
+  return api.get<BlogPost>(`/api/blogs/slug/${slug}`)
+}
+
+export async function isSlugUnique(slug: string, excludeId?: string) {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as BlogPost[]) : []
+    const existing = await api.get<BlogPost>(`/api/blogs/slug/${slug}`)
+    return excludeId ? existing.id === excludeId : false
   } catch {
-    return []
+    return true
   }
 }
 
-function writeAll(posts: BlogPost[]) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(posts))
+export async function createPost(payload: Partial<BlogPost>) {
+  return api.post<BlogPost>(`/api/blogs`, payload)
 }
 
-export function listPosts(): BlogPost[] {
-  return readAll().sort((a, b) => (b.updatedAt > a.updatedAt ? 1 : -1))
+export async function updatePost(id: string, updates: Partial<BlogPost>) {
+  return api.put<BlogPost>(`/api/blogs/${id}`, updates)
 }
 
-export function getPost(id: string): BlogPost | undefined {
-  return readAll().find((p) => p.id === id)
-}
-
-export function getPostBySlug(slug: string): BlogPost | undefined {
-  return readAll().find((p) => p.slug === slug)
-}
-
-export function isSlugUnique(slug: string, excludeId?: string) {
-  const posts = readAll()
-  return !posts.some((p) => p.slug === slug && p.id !== excludeId)
-}
-
-export function generateId() {
-  return Math.random().toString(36).slice(2, 10)
-}
-
-export function createPost(partial?: Partial<BlogPost>): BlogPost {
-  const id = generateId()
-  const base: BlogPost = {
-    id,
-    slug: `post-${id}`,
-    status: 'draft',
-    tags: [],
-    createdAt: nowIso(),
-    updatedAt: nowIso(),
-    en: { title: '', excerpt: '', blocks: [] },
-    ar: { title: '', excerpt: '', blocks: [] },
-    ...partial,
-  }
-  const all = readAll()
-  all.push(base)
-  writeAll(all)
-  return base
-}
-
-export function updatePost(id: string, updates: Partial<BlogPost>): BlogPost | undefined {
-  const all = readAll()
-  const idx = all.findIndex((p) => p.id === id)
-  if (idx === -1) return undefined
-  const updated: BlogPost = { ...all[idx], ...updates, updatedAt: nowIso() }
-  all[idx] = updated
-  writeAll(all)
-  return updated
-}
-
-export function deletePost(id: string) {
-  const all = readAll().filter((p) => p.id !== id)
-  writeAll(all)
+export async function deletePost(id: string) {
+  await api.delete(`/api/blogs/${id}`)
 }
 
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { listPosts, deletePost } from "@/lib/blog-store";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,16 @@ export default function BlogsListPage() {
   const router = useRouter()
   const [query, setQuery] = useState("")
   const [status, setStatus] = useState<"all" | "draft" | "published">("all")
-  const posts = listPosts()
+  const [posts, setPosts] = useState<any[]>([])
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      const items = await listPosts()
+      if (mounted) setPosts(items)
+    })()
+    return () => { mounted = false }
+  }, [])
 
   const filtered = useMemo(() => {
     return posts.filter((p) => {
@@ -24,10 +33,11 @@ export default function BlogsListPage() {
     })
   }, [posts, query, status])
 
-  function onDelete(id: string) {
-    deletePost(id)
+  async function onDelete(id: string) {
+    await deletePost(id)
     toast.success("Deleted")
-    router.refresh()
+    const items = await listPosts()
+    setPosts(items)
   }
 
   return (

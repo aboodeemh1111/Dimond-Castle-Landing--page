@@ -8,23 +8,26 @@ import { getPage } from "@/lib/page-store";
 export default function EditPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
-  const [ready, setReady] = useState(false)
-  const [notFound, setNotFound] = useState(false)
-
-  const page = typeof window !== 'undefined' ? getPage(params.id) : undefined
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState<any | null>(null)
 
   useEffect(() => {
-    setReady(true)
-    if (!page) setNotFound(true)
-  }, [])
+    let active = true
+    ;(async () => {
+      try {
+        const doc = await getPage(params.id)
+        if (active) setPage(doc)
+      } catch {
+        if (active) router.replace('/admin/pages')
+      } finally {
+        if (active) setLoading(false)
+      }
+    })()
+    return () => { active = false }
+  }, [params.id, router])
 
-  if (!ready) return null
-  if (notFound) {
-    router.replace('/admin/pages')
-    return null
-  }
-
-  return <PageEditor initial={page!} />
+  if (loading || !page) return null
+  return <PageEditor initial={page} />
 }
 
 

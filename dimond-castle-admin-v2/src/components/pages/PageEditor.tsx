@@ -34,26 +34,45 @@ const sectionLabels: Record<SectionKey, string> = {
 
 export function PageEditor({ initial }: EditorProps) {
   const router = useRouter()
-  const [page, setPage] = useState<Page>(
-    initial ?? createPage()
-  )
+  const [page, setPage] = useState<Page | null>(initial ?? null)
   const [dirty, setDirty] = useState(false)
+  const [slugInUse, setSlugInUse] = useState(false)
 
   useEffect(() => {
-    if (!initial) router.replace(`/admin/pages/${page.id}`)
+    if (!initial) {
+      ;(async () => {
+        const created = await createPage()
+        setPage(created)
+        router.replace(`/admin/pages/${(created as any)._id || (created as any).id}`)
+      })()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
+    if (!page) return
     if (dirty) {
-      const t = setTimeout(() => {
-        updatePage(page.id, page)
+      const t = setTimeout(async () => {
+        const updated = await updatePage((page as any)._id || (page as any).id, page)
+        setPage(updated)
         toast.success("Saved")
         setDirty(false)
       }, 800)
       return () => clearTimeout(t)
     }
   }, [dirty, page])
+
+  useEffect(() => {
+    let active = true
+    if (!page) return
+    ;(async () => {
+      const unique = await isPageSlugUnique(page.slug, (page as any)._id || (page as any).id)
+      if (active) setSlugInUse(!unique)
+    })()
+    return () => { active = false }
+  }, [page?.slug])
+
+  if (!page) return null
 
   const lastSaved = useMemo(() => new Date(page.updatedAt).toLocaleString(), [page.updatedAt])
 
@@ -121,7 +140,6 @@ export function PageEditor({ initial }: EditorProps) {
     const s = slugify(page.en.title || "")
     if (!s) return
     const full = `/${s}`
-    if (!isPageSlugUnique(full, page.id)) toast.error("Slug already exists")
     updateField('slug', full)
   }
 
@@ -249,7 +267,7 @@ export function PageEditor({ initial }: EditorProps) {
                   <Input value={page.slug} onChange={(e) => updateField('slug', e.target.value)} placeholder="/transport-solutions" />
                   <Button variant="outline" onClick={onSlugSuggest}>Suggest</Button>
                 </div>
-                {!isPageSlugUnique(page.slug, page.id) && (
+                {slugInUse && (
                   <div className="text-xs text-red-500">Slug already exists</div>
                 )}
               </div>
