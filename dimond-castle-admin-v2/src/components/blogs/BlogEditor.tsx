@@ -1,0 +1,245 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import type { BlogPost, Block, LocaleContent } from "@/lib/blog-store";
+import { createPost, updatePost, deletePost, isSlugUnique } from "@/lib/blog-store";
+import { slugify, cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { BlockEditor } from "./BlockEditor";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { AlertTriangle } from "lucide-react";
+
+type EditorProps = {
+  initial?: BlogPost
+}
+
+export function BlogEditor({ initial }: EditorProps) {
+  const router = useRouter()
+  const [post, setPost] = useState<BlogPost>(
+    initial ??
+      createPost({
+        en: { title: "", excerpt: "", blocks: [] },
+        ar: { title: "", excerpt: "", blocks: [] },
+      })
+  )
+  const [dirty, setDirty] = useState(false)
+
+  useEffect(() => {
+    if (!initial) {
+      // redirect to the new id route if we just created
+      router.replace(`/admin/blogs/${post.id}`)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (dirty) {
+      const t = setTimeout(() => {
+        updatePost(post.id, post)
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        toast.success("Saved")
+        setDirty(false)
+      }, 800)
+      return () => clearTimeout(t)
+    }
+  }, [dirty, post])
+
+  const statusBadge = (
+    <Badge variant={post.status === "published" ? "default" : "secondary"}>
+      {post.status === "published" ? "Published" : "Draft"}
+    </Badge>
+  )
+
+  function setLocaleContent(locale: "en" | "ar", data: Partial<LocaleContent>) {
+    setPost((p) => ({ ...p, [locale]: { ...p[locale], ...data } as LocaleContent }))
+    setDirty(true)
+  }
+
+  function setBlocks(locale: "en" | "ar", blocks: Block[]) {
+    setLocaleContent(locale, { blocks })
+  }
+
+  function updateField<K extends keyof BlogPost>(key: K, value: BlogPost[K]) {
+    setPost((p) => ({ ...p, [key]: value, updatedAt: new Date().toISOString() }))
+    setDirty(true)
+  }
+
+  function validateCanPublish(p: BlogPost) {
+    const errors: string[] = []
+    if (!p.en.title.trim()) errors.push("English title required")
+    if (!p.ar.title.trim()) errors.push("Arabic title required")
+    if (!(p.en.blocks && p.en.blocks.length)) errors.push("At least one English block required")
+    if (!(p.ar.blocks && p.ar.blocks.length)) errors.push("At least one Arabic block required")
+    return errors
+  }
+
+  function onPublishToggle() {
+    if (post.status === "draft") {
+      const errs = validateCanPublish(post)
+      if (errs.length) {
+        toast.error("Cannot publish", { description: errs.join(" · ") })
+        return
+      }
+      updateField("status", "published")
+      toast.success("Published")
+    } else {
+      updateField("status", "draft")
+      toast("Unpublished")
+    }
+  }
+
+  function onSave() {
+    updatePost(post.id, post)
+    toast.success("Saved")
+  }
+
+  function onDelete() {
+    deletePost(post.id)
+    toast.success("Deleted")
+    router.push("/admin/blogs")
+  }
+
+  function onSlugSuggest() {
+    const s = slugify(post.en.title || "")
+    if (!s) return
+    if (!isSlugUnique(s, post.id)) {
+      toast.error("Slug already exists. Edit it to make unique.")
+    }
+    updateField("slug", s)
+  }
+
+  const lastSaved = useMemo(() => new Date(post.updatedAt).toLocaleString(), [post.updatedAt])
+
+  return (
+    <div className="space-y-4">
+      {/* Top bar */}
+      <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b bg-background/80 px-2 py-3 backdrop-blur">
+        <div className="flex items-center gap-3">
+          <div className="text-sm text-muted-foreground">Dashboard / Blogs /</div>
+          <div className="font-medium">{post.en.title || "New Post"}</div>
+          {statusBadge}
+          <div className="hidden text-xs text-muted-foreground sm:block">Last saved {lastSaved}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={onSave}>Save</Button>
+          <Button variant={post.status === 'published' ? 'secondary' : 'default'} onClick={onPublishToggle}>
+            {post.status === 'published' ? 'Unpublish' : 'Publish'}
+          </Button>
+          <Button variant="destructive" onClick={onDelete}>Delete</Button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col gap-6 md:flex-row">
+        {/* Main */}
+        <div className="flex-1 space-y-4">
+          <Tabs defaultValue="en">
+            <TabsList>
+              <TabsTrigger value="en">English</TabsTrigger>
+              <TabsTrigger value="ar">العربية</TabsTrigger>
+            </TabsList>
+            <TabsContent value="en" className="space-y-4">
+              <Card>
+                <CardHeader><CardTitle>Content</CardTitle></CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="en-title">Title</Label>
+                    <Input id="en-title" value={post.en.title} onChange={(e) => setLocaleContent('en', { title: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="en-excerpt">Excerpt</Label>
+                    <Textarea id="en-excerpt" rows={3} value={post.en.excerpt || ''} onChange={(e) => setLocaleContent('en', { excerpt: e.target.value })} />
+                  </div>
+                  <BlockEditor value={post.en.blocks} onChange={(blocks) => setBlocks('en', blocks)} dir="ltr" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader><CardTitle>SEO</CardTitle></CardHeader>
+                <CardContent className="space-y-2">
+                  <Label>Meta title</Label>
+                  <Input value={post.en.seo?.title || ''} onChange={(e) => setLocaleContent('en', { seo: { ...(post.en.seo || {}), title: e.target.value } })} />
+                  <Label>Meta description</Label>
+                  <Textarea rows={3} value={post.en.seo?.description || ''} onChange={(e) => setLocaleContent('en', { seo: { ...(post.en.seo || {}), description: e.target.value } })} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="ar" className="space-y-4" dir="rtl">
+              <Card>
+                <CardHeader><CardTitle>المحتوى</CardTitle></CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="ar-title">العنوان</Label>
+                    <Input id="ar-title" value={post.ar.title} onChange={(e) => setLocaleContent('ar', { title: e.target.value })} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="ar-excerpt">الملخص</Label>
+                    <Textarea id="ar-excerpt" rows={3} value={post.ar.excerpt || ''} onChange={(e) => setLocaleContent('ar', { excerpt: e.target.value })} />
+                  </div>
+                  <BlockEditor value={post.ar.blocks} onChange={(blocks) => setBlocks('ar', blocks)} dir="rtl" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader><CardTitle>السيو</CardTitle></CardHeader>
+                <CardContent className="space-y-2">
+                  <Label>عنوان الميتا</Label>
+                  <Input value={post.ar.seo?.title || ''} onChange={(e) => setLocaleContent('ar', { seo: { ...(post.ar.seo || {}), title: e.target.value } })} />
+                  <Label>وصف الميتا</Label>
+                  <Textarea rows={3} value={post.ar.seo?.description || ''} onChange={(e) => setLocaleContent('ar', { seo: { ...(post.ar.seo || {}), description: e.target.value } })} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Sidebar */}
+        <div className="w-full md:w-80 space-y-4">
+          <Card>
+            <CardHeader><CardTitle>Meta</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-2">
+                <Label>Slug</Label>
+                <div className="flex gap-2">
+                  <Input value={post.slug} onChange={(e) => updateField('slug', e.target.value)} />
+                  <Button variant="outline" onClick={onSlugSuggest}>Suggest</Button>
+                </div>
+                {!isSlugUnique(post.slug, post.id) && (
+                  <div className="flex items-center gap-2 text-xs text-red-500"><AlertTriangle className="h-3 w-3" /> Slug already in use</div>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <div className="text-sm text-muted-foreground">{post.status}</div>
+              </div>
+              <div className="space-y-2">
+                <Label>Cover image public_id</Label>
+                <Input value={post.coverPublicId || ''} onChange={(e) => updateField('coverPublicId', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Tags (comma separated)</Label>
+                <Input value={post.tags.join(', ')} onChange={(e) => updateField('tags', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))} />
+              </div>
+              <div className="space-y-2">
+                <Label>Author</Label>
+                <Input value={post.author || ''} onChange={(e) => updateField('author', e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label>Publish date</Label>
+                <Input type="datetime-local" value={post.publishAt ? new Date(post.publishAt).toISOString().slice(0,16) : ''} onChange={(e) => updateField('publishAt', e.target.value ? new Date(e.target.value).toISOString() : undefined)} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+

@@ -100,6 +100,9 @@ export function BlogEditor({ blogId }: BlogEditorProps) {
     setMediaPicker((state) => ({ ...state, open: false, onSelect: null }));
   }, []);
 
+  const watchedStatus = methods.watch("status");
+  const watchedSlug = methods.watch("slug");
+
   const blocks = methods.watch(`${activeLocale}.blocks` as const) ?? [];
 
   const handleBlocksChange = useCallback(

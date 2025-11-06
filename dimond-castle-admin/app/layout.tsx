@@ -17,7 +17,11 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Navbar />
-        {children}
+        <div className="min-h-screen bg-slate-50">
+          <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 pb-24">
+            {children}
+          </main>
+        </div>
         <Toaster
           position="top-right"
           toastOptions={{

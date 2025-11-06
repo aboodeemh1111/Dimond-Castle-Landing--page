@@ -46,7 +46,7 @@ const blockOptions: Array<{ type: Block["type"]; label: string; icon: React.Reac
 const initialBlockByType: Record<Block["type"], Block> = {
   heading: { type: "heading", level: 2, text: "Section title" },
   paragraph: { type: "paragraph", text: "Start writing your story..." },
-  image: { type: "image", publicId: "sample/admin/cover-1", alt: "", caption: "" },
+  image: { type: "image", publicId: "sample", alt: "", caption: "" },
   video: { type: "video", publicId: "sample/admin/promo-video", caption: "", posterId: undefined },
   link: { type: "link", href: "https://www.dimondcastle.com", label: "Dimond Castle" },
   list: { type: "list", ordered: false, items: ["List item"] },

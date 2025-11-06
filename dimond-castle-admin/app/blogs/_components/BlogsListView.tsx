@@ -55,7 +55,7 @@ export default function BlogsListView() {
   };
 
   return (
-    <div className="space-y-6 px-4 pb-24 pt-8 lg:px-10">
+    <div className="space-y-6">
       <div className="space-y-2">
         <h1 className="text-3xl font-semibold text-slate-900">Blogs</h1>
         <p className="text-sm text-slate-500">Manage Dimond Castle articles across languages and publish when ready.</p>

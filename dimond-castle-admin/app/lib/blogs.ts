@@ -138,7 +138,7 @@ let mockBlogs: Blog[] = Array.from({ length: 8 }).map((_, index) => {
     _id: id,
     slug: `sample-blog-${id}`,
     status: index % 2 === 0 ? "published" : "draft",
-    coverImage: index % 2 === 0 ? `sample/cover-${id}` : undefined,
+    coverImage: index % 2 === 0 ? `sample` : undefined,
     tags: index % 3 === 0 ? ["business", "strategy"] : ["news"],
     author: index % 2 === 0 ? "Admin" : "Editor",
     publishedAt,
@@ -294,41 +294,32 @@ export type MediaAsset = {
   height: number;
 };
 
-const sampleMedia: MediaAsset[] = [
+let mediaAssets: MediaAsset[] = [
   {
     id: "1",
-    publicId: "sample/admin/cover-1",
+    publicId: "sample",
     type: "image",
     width: 1600,
     height: 900,
   },
   {
     id: "2",
-    publicId: "sample/admin/cover-2",
+    publicId: "cld-sample-5",
     type: "image",
     width: 1400,
     height: 800,
   },
-  {
-    id: "3",
-    publicId: "sample/admin/promo-video",
-    type: "video",
-    width: 1920,
-    height: 1080,
-  },
 ];
 
-export async function fetchMediaAssets(search?: string): Promise<MediaAsset[]> {
+export async function fetchMediaAssets(search?: string, type?: "all" | "image" | "video"): Promise<MediaAsset[]> {
   await delay(200);
 
-  if (!search) {
-    return sampleMedia;
-  }
+  let items = [...mediaAssets];
+  if (type && type !== "all") items = items.filter((a) => a.type === type);
+  if (!search) return items;
 
   const normalized = search.trim().toLowerCase();
-  return sampleMedia.filter((asset) =>
-    asset.publicId.toLowerCase().includes(normalized)
-  );
+  return items.filter((asset) => asset.publicId.toLowerCase().includes(normalized));
 }
 
 export function getMediaUrl(publicId: string, type: "image" | "video" = "image") {
@@ -339,4 +330,20 @@ export function getMediaUrl(publicId: string, type: "image" | "video" = "image")
   }
 
   return `https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_1200/${publicId}.jpg`;
+}
+
+export async function addSampleMedia(kind: "image" | "video"): Promise<MediaAsset> {
+  await delay(200);
+  const id = (mediaAssets.length + 1).toString();
+  const asset: MediaAsset =
+    kind === "image"
+      ? { id, publicId: "cld-sample-3", type: "image", width: 1600, height: 900 }
+      : { id, publicId: "sea_turtle", type: "video", width: 1920, height: 1080 };
+  mediaAssets = [asset, ...mediaAssets];
+  return asset;
+}
+
+export async function deleteMediaAsset(id: string): Promise<void> {
+  await delay(150);
+  mediaAssets = mediaAssets.filter((a) => a.id !== id);
 }

@@ -1,0 +1,40 @@
+import {
+  LayoutDashboard,
+  Newspaper,
+  FileText,
+  Menu as MenuIcon,
+  Image as ImageIcon,
+  Palette,
+  Settings as SettingsIcon,
+  Inbox,
+  LogOut,
+  ExternalLink,
+} from "lucide-react";
+
+export type AdminNavItem = {
+  label: { en: string; ar: string };
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+export type AdminFooterItem =
+  | { label: { en: string; ar: string }; action: "logout"; icon: React.ComponentType<{ className?: string }> }
+  | { label: { en: string; ar: string }; href: string; icon: React.ComponentType<{ className?: string }>; external?: boolean };
+
+export const adminNav: AdminNavItem[] = [
+  { label: { en: "Dashboard", ar: "لوحة التحكم" }, href: "/dashboard", icon: LayoutDashboard },
+  { label: { en: "Blogs", ar: "المدونة" }, href: "/admin/blogs", icon: Newspaper },
+  { label: { en: "Pages", ar: "الصفحات" }, href: "/admin/pages", icon: FileText },
+  { label: { en: "Navigation", ar: "القائمة" }, href: "/admin/navigation", icon: MenuIcon },
+  { label: { en: "Media", ar: "الوسائط" }, href: "/admin/media", icon: ImageIcon },
+  { label: { en: "Theme", ar: "السمة" }, href: "/admin/theme", icon: Palette },
+  { label: { en: "Settings", ar: "الإعدادات" }, href: "/admin/settings", icon: SettingsIcon },
+  { label: { en: "Contacts", ar: "الرسائل" }, href: "/admin/contacts", icon: Inbox },
+];
+
+export const adminFooter: AdminFooterItem[] = [
+  { label: { en: "Preview site", ar: "معاينة الموقع" }, href: "/", icon: ExternalLink, external: true },
+  { label: { en: "Logout", ar: "تسجيل الخروج" }, action: "logout", icon: LogOut },
+];
+
+
