@@ -7,6 +7,20 @@ const express_1 = require("express");
 const BlogPost_1 = __importDefault(require("../models/BlogPost"));
 const blogs_1 = require("../validation/blogs");
 const router = (0, express_1.Router)();
+// Count endpoint
+router.get('/count', async (req, res, next) => {
+    try {
+        const { status } = req.query;
+        const where = {};
+        if (status && ['draft', 'published'].includes(status))
+            where.status = status;
+        const total = await BlogPost_1.default.countDocuments(where);
+        res.json({ count: total });
+    }
+    catch (e) {
+        next(e);
+    }
+});
 // List with filters
 router.get('/', async (req, res, next) => {
     try {

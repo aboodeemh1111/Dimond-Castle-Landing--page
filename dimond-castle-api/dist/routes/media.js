@@ -9,6 +9,23 @@ const env_1 = require("../config/env");
 const BlogPost_1 = __importDefault(require("../models/BlogPost"));
 const Page_1 = __importDefault(require("../models/Page"));
 const router = (0, express_1.Router)();
+// Count assets (images + videos)
+router.get('/count', async (_req, res, next) => {
+    try {
+        if (!cloudinary_1.cloudinary.config().cloud_name) {
+            return res.json({ count: 0 });
+        }
+        const result = await cloudinary_1.cloudinary.search
+            .expression('resource_type:image OR resource_type:video')
+            .max_results(1)
+            .execute();
+        res.json({ count: result.total_count || 0 });
+    }
+    catch (e) {
+        // Return 0 if Cloudinary is not configured
+        res.json({ count: 0 });
+    }
+});
 // Get signed upload parameters
 router.post('/signature', async (req, res, next) => {
     try {

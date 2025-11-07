@@ -79,7 +79,7 @@ router.get('/public/:slug', async (req, res) => {
       status: 'published',
     })
       .select('-__v')
-      .lean()
+      .lean() as any
 
     if (!product) {
       return res.status(404).json({ error: 'Product not found' })

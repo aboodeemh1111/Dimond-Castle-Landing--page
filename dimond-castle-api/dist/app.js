@@ -12,6 +12,13 @@ const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const blogs_1 = __importDefault(require("./routes/blogs"));
 const pages_1 = __importDefault(require("./routes/pages"));
 const media_1 = __importDefault(require("./routes/media"));
+const theme_1 = __importDefault(require("./routes/theme"));
+const navigation_1 = __importDefault(require("./routes/navigation"));
+const contact_1 = __importDefault(require("./routes/contact"));
+const activity_1 = __importDefault(require("./routes/activity"));
+const settings_1 = __importDefault(require("./routes/settings"));
+const auth_1 = __importDefault(require("./routes/auth"));
+const products_1 = __importDefault(require("./routes/products"));
 const app = (0, express_1.default)();
 app.use((0, helmet_1.default)());
 // CORS configuration - allow all origins in development
@@ -30,6 +37,13 @@ app.get('/api/health', (_req, res) => res.json({ ok: true }));
 app.use('/api/blogs', blogs_1.default);
 app.use('/api/pages', pages_1.default);
 app.use('/api/media', media_1.default);
+app.use('/api/theme', theme_1.default);
+app.use('/api/navigation', navigation_1.default);
+app.use('/api/contact', contact_1.default);
+app.use('/api/activity', activity_1.default);
+app.use('/api/settings', settings_1.default);
+app.use('/api/auth', auth_1.default);
+app.use('/api/products', products_1.default);
 // Not found handler
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }));
 // Error handler

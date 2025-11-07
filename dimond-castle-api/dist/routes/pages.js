@@ -7,6 +7,20 @@ const express_1 = require("express");
 const Page_1 = __importDefault(require("../models/Page"));
 const pages_1 = require("../validation/pages");
 const router = (0, express_1.Router)();
+// Count endpoint
+router.get('/count', async (req, res, next) => {
+    try {
+        const { status } = req.query;
+        const query = {};
+        if (status && (status === 'draft' || status === 'published'))
+            query.status = status;
+        const total = await Page_1.default.countDocuments(query);
+        res.json({ count: total });
+    }
+    catch (err) {
+        next(err);
+    }
+});
 // List pages with search and filters
 router.get('/', async (req, res, next) => {
     try {
@@ -60,7 +74,7 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 // Get page by slug (public endpoint)
-router.get('/slug/:slug(*)', async (req, res, next) => {
+router.get('/slug/:slug', async (req, res, next) => {
     try {
         const slug = '/' + req.params.slug;
         const page = await Page_1.default.findOne({ slug, status: 'published' }).lean();
