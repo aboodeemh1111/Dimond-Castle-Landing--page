@@ -3,6 +3,7 @@
 import { use } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "@/lib/products-api";
+import { getCloudinaryUrl } from "@/lib/cloudinary";
 import { Loader2 } from "lucide-react";
 
 type Props = {
@@ -63,9 +64,13 @@ export default function ProductPreviewPage({ params }: Props) {
               <div>
                 {product.coverPublicId ? (
                   <img
-                    src={`https://res.cloudinary.com/demo/image/upload/${product.coverPublicId}`}
+                    src={getCloudinaryUrl(product.coverPublicId, {
+                      width: 800,
+                      height: 600,
+                      crop: 'fill',
+                    })}
                     alt={product.en.name}
-                    className="w-full rounded-lg"
+                    className="w-full rounded-lg shadow-md object-cover"
                   />
                 ) : (
                   <div className="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -149,6 +154,27 @@ export default function ProductPreviewPage({ params }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* Gallery Images */}
+            {product.galleryPublicIds && product.galleryPublicIds.length > 0 && (
+              <div className="mt-12 pt-12 border-t">
+                <h2 className="text-2xl font-bold mb-6">Product Gallery</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {product.galleryPublicIds.map((publicId, index) => (
+                    <img
+                      key={index}
+                      src={getCloudinaryUrl(publicId, {
+                        width: 400,
+                        height: 400,
+                        crop: 'fill',
+                      })}
+                      alt={`${product.en.name} - Gallery ${index + 1}`}
+                      className="w-full h-48 object-cover rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Page Builder Sections Preview */}
             {product.en.sections && product.en.sections.length > 0 && (

@@ -1,6 +1,7 @@
 import NavbarServer from "../../components/NavbarServer";
 import Footer from "../../components/Footer";
 import { getPublicProductBySlug, type Product } from "../../lib/products-api";
+import { getCloudinaryUrl } from "../../lib/cloudinary";
 import { PageRenderer } from "../../components/PageRenderer";
 import { notFound } from "next/navigation";
 
@@ -17,7 +18,7 @@ export async function generateMetadata({ params }: PageProps) {
   const title = product.en.seo?.title || product.en.name;
   const description = product.en.seo?.description || product.en.description;
   const ogImage = product.en.seo?.ogImage || (product.coverPublicId 
-    ? `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'demo'}/image/upload/${product.coverPublicId}`
+    ? getCloudinaryUrl(product.coverPublicId, { width: 1200, height: 630, crop: 'fill' })
     : undefined);
 
   return {
@@ -72,7 +73,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   // Default product page layout
   const imageUrl = product.coverPublicId
-    ? `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'demo'}/image/upload/w_800,h_600,c_fill/${product.coverPublicId}`
+    ? getCloudinaryUrl(product.coverPublicId, { width: 800, height: 600, crop: 'fill' })
     : "/images/basmatiBag.png";
 
   return (
@@ -139,9 +140,13 @@ export default async function ProductPage({ params }: PageProps) {
                     {product.galleryPublicIds.map((publicId, index) => (
                       <img
                         key={index}
-                        src={`https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'demo'}/image/upload/w_400,h_400,c_fill/${publicId}`}
+                        src={getCloudinaryUrl(publicId, { 
+                          width: 400, 
+                          height: 400, 
+                          crop: 'fill' 
+                        })}
                         alt={`${product.en.name} - Image ${index + 1}`}
-                        className="w-full h-48 object-cover rounded-lg"
+                        className="w-full h-48 object-cover rounded-lg hover:shadow-lg transition-shadow cursor-pointer"
                       />
                     ))}
                   </div>

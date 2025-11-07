@@ -456,6 +456,7 @@ export function ProductEditor({ product, onDelete }: Props) {
                   <SectionsList
                     sections={localProduct[locale].sections || []}
                     onChange={updateSections}
+                    locale={locale}
                   />
                 </CardContent>
               </Card>

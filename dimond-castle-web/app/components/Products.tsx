@@ -3,6 +3,7 @@
 import { useI18n } from "./I18nProvider";
 import { useEffect, useState } from "react";
 import { getPublicProducts, type Product } from "../lib/products-api";
+import { getCloudinaryUrl } from "../lib/cloudinary";
 
 export default function Products() {
   const { t, dir } = useI18n();
@@ -73,7 +74,7 @@ export default function Products() {
             {products.map((product) => {
               const locale = dir === "rtl" ? "ar" : "en";
               const imageUrl = product.coverPublicId
-                ? `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'demo'}/image/upload/w_400,h_400,c_fill/${product.coverPublicId}`
+                ? getCloudinaryUrl(product.coverPublicId, { width: 400, height: 400, crop: 'fill' })
                 : "/images/basmatiBag.png";
 
               return (
