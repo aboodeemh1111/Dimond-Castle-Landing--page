@@ -9,6 +9,7 @@ import {
   Inbox,
   LogOut,
   ExternalLink,
+  Package,
 } from "lucide-react";
 
 export type AdminNavItem = {
@@ -23,6 +24,7 @@ export type AdminFooterItem =
 
 export const adminNav: AdminNavItem[] = [
   { label: { en: "Dashboard", ar: "لوحة التحكم" }, href: "/admin/dashboard", icon: LayoutDashboard },
+  { label: { en: "Products", ar: "المنتجات" }, href: "/admin/products", icon: Package },
   { label: { en: "Blogs", ar: "المدونة" }, href: "/admin/blogs", icon: Newspaper },
   { label: { en: "Pages", ar: "الصفحات" }, href: "/admin/pages", icon: FileText },
   { label: { en: "Navigation", ar: "القائمة" }, href: "/admin/navigation", icon: MenuIcon },

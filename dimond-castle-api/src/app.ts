@@ -14,6 +14,7 @@ import contactRouter from './routes/contact'
 import activityRouter from './routes/activity'
 import settingsRouter from './routes/settings'
 import authRouter from './routes/auth'
+import productsRouter from './routes/products'
 
 const app = express()
 
@@ -42,6 +43,7 @@ app.use('/api/contact', contactRouter)
 app.use('/api/activity', activityRouter)
 app.use('/api/settings', settingsRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/products', productsRouter)
 
 // Not found handler
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
