@@ -219,16 +219,19 @@ export default function ProductsPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
-                      <Link
-                        href={`/admin/products/preview/${product._id}`}
-                        target="_blank"
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          const mainWebsiteUrl = process.env.NEXT_PUBLIC_MAIN_WEBSITE_URL || 'http://localhost:3000';
+                          window.open(`${mainWebsiteUrl}/products/${product.slug}`, '_blank');
+                        }}
+                        title={t('actions.preview')}
                       >
-                        <Button variant="ghost" size="sm">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </Link>
+                        <Eye className="w-4 h-4" />
+                      </Button>
                       <Link href={`/admin/products/${product._id}`}>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" title={t('actions.edit')}>
                           <Edit className="w-4 h-4" />
                         </Button>
                       </Link>
@@ -236,6 +239,7 @@ export default function ProductsPage() {
                         variant="ghost"
                         size="sm"
                         onClick={() => setDeleteId(product._id)}
+                        title={t('actions.delete')}
                       >
                         <Trash2 className="w-4 h-4 text-red-600" />
                       </Button>

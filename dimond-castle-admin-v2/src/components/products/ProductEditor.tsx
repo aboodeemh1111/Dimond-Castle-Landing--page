@@ -148,7 +148,14 @@ export function ProductEditor({ product, onDelete }: Props) {
             {hasChanges && <Badge variant="outline">Unsaved</Badge>}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => window.open(`/products/${localProduct.slug}`, '_blank')}>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                const mainWebsiteUrl = process.env.NEXT_PUBLIC_MAIN_WEBSITE_URL || 'http://localhost:3000';
+                window.open(`${mainWebsiteUrl}/products/${localProduct.slug}`, '_blank');
+              }}
+            >
               <Eye className="w-4 h-4 mr-2" />
               Preview
             </Button>
