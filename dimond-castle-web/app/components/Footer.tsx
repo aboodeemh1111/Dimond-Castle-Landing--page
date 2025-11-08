@@ -22,7 +22,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="glass-morphism bg-white/10 border border-white/20 shadow-xl rounded-3xl px-6 sm:px-10 py-8 sm:py-10">
             {/* Top content */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 items-start">
               {/* Brand */}
               <div>
                 <div className="flex items-center gap-3">
@@ -70,10 +70,10 @@ export default function Footer() {
                   <li>
                     <a
                       href="mailto:info@alsanadgroup.com"
-                      className="group inline-flex items-center gap-3 text-white hover:text-white"
+                      className="group flex items-center gap-3 text-white hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
                       aria-label="Email info@alsanadgroup.com"
                     >
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 border border-white/30 shadow-sm group-hover:shadow transition-all">
+                      <span className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-white/20 border border-white/30 shadow-sm group-hover:shadow transition-all flex-shrink-0">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
@@ -85,7 +85,7 @@ export default function Footer() {
                           <path strokeWidth="1.5" d="M4 7l8 6 8-6" />
                         </svg>
                       </span>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium break-all">
                         info@alsanadgroup.com
                       </span>
                     </a>
@@ -93,10 +93,10 @@ export default function Footer() {
                   <li>
                     <a
                       href="tel:+966503992995"
-                      className="group inline-flex items-center gap-3 text-white hover:text-white"
+                      className="group flex items-center gap-3 text-white hover:text-white transition-colors p-2 rounded-lg hover:bg-white/10"
                       aria-label="Call +966503992995"
                     >
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 border border-white/30 shadow-sm group-hover:shadow transition-all">
+                      <span className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full bg-white/20 border border-white/30 shadow-sm group-hover:shadow transition-all flex-shrink-0">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
@@ -124,40 +124,40 @@ export default function Footer() {
                 <p className="text-sm text-white/80 mt-1">
                   {t("footer.socialSub")}
                 </p>
-                <div className="mt-4 flex items-center gap-3">
+                <div className="mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
                   <a
                     href="https://x.com/wh_1diamond"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="X (Twitter) @wh_1diamond"
-                    className="group inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/20 border border-white/30 shadow-sm hover:shadow transition-all text-white"
+                    className="group inline-flex items-center gap-2 px-2 sm:px-3 py-2 rounded-full bg-white/20 border border-white/30 shadow-sm hover:shadow transition-all text-white text-xs sm:text-sm"
                   >
                     <svg
                       viewBox="0 0 24 24"
                       aria-hidden
-                      className="h-4 w-4"
+                      className="h-4 w-4 flex-shrink-0"
                       fill="currentColor"
                     >
                       <path d="M18.244 2H21l-6.56 7.49L22 22h-6.828l-5.34-6.992L3.6 22H1l7.09-8.088L2 2h6.828l4.82 6.42L18.244 2zm-2.392 18h1.763L8.24 4h-1.8l9.412 16z" />
                     </svg>
-                    <span className="text-sm font-medium">@wh_1diamond</span>
+                    <span className="font-medium truncate">@wh_1diamond</span>
                   </a>
                   <a
                     href="https://instagram.com/wh_1diamond"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram @wh_1diamond"
-                    className="group inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/20 border border-white/30 shadow-sm hover:shadow transition-all text-white"
+                    className="group inline-flex items-center gap-2 px-2 sm:px-3 py-2 rounded-full bg-white/20 border border-white/30 shadow-sm hover:shadow transition-all text-white text-xs sm:text-sm"
                   >
                     <svg
                       viewBox="0 0 24 24"
                       aria-hidden
-                      className="h-4 w-4"
+                      className="h-4 w-4 flex-shrink-0"
                       fill="currentColor"
                     >
                       <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm0 2a3 3 0 00-3 3v10a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H7zm5 3a5 5 0 110 10 5 5 0 010-10zm0 2.2a2.8 2.8 0 100 5.6 2.8 2.8 0 000-5.6zM18 6.8a1 1 0 110 2 1 1 0 010-2z" />
                     </svg>
-                    <span className="text-sm font-medium">@wh_1diamond</span>
+                    <span className="font-medium truncate">@wh_1diamond</span>
                   </a>
                 </div>
               </div>
@@ -167,13 +167,13 @@ export default function Footer() {
             <div className="my-8 border-t border-white/60" />
 
             {/* Bottom bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/80">
-              <p>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-white/80">
+              <p className="text-center sm:text-left">
                 © {new Date().getFullYear()} Diamond Castle Trading Company.{" "}
                 {t("footer.copyright")}
               </p>
               <div className="flex items-center gap-4">
-                <a href="#home" className="hover:underline">
+                <a href="#home" className="hover:underline transition-colors">
                   {t("footer.backToTop")}
                 </a>
               </div>

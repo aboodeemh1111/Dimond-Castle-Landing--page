@@ -130,66 +130,74 @@ export default function ContactUs() {
 
           {/* Contact details */}
           {settings && (
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-gray-700">
-              {(settings.phoneNumbers?.length || settings.whatsappNumbers?.length) && (
-                <div>
-                  <div className="font-semibold mb-1">{t("contact.phone")}</div>
-                  <ul className="space-y-1">
-                    {settings.phoneNumbers?.map((p, i) => (
-                      <li key={`ph-${i}`}><a href={`tel:${p}`}>{p}</a></li>
-                    ))}
-                    {settings.whatsappNumbers?.map((w, i) => {
-                      // Clean the phone number for WhatsApp link
-                      const cleanNumber = w.replace(/\D/g, '');
-                      // Remove leading '00' if present (international dialing prefix)
-                      const whatsappNumber = cleanNumber.startsWith('00') ? cleanNumber.substring(2) : cleanNumber;
-                      return (
-                        <li key={`wa-${i}`}>
-                          <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener">
-                            WhatsApp: {w}
-                          </a>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {settings.emails?.length ? (
-                <div>
-                  <div className="font-semibold mb-1">{t("contact.email")}</div>
-                  <ul className="space-y-1">
-                    {settings.emails.map((em, i) => (
-                      <li key={`em-${i}`}><a href={`mailto:${em}`}>{em}</a></li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-              {(settings.addressesEN?.length || settings.addressesAR?.length) && (
-                <div className="sm:col-span-2">
-                  <div className="font-semibold mb-1">{t("contact.address")}</div>
-                  <ul className="space-y-1">
-                    {(language === "ar" ? settings.addressesAR : settings.addressesEN)?.map((a, i) => (
-                      <li key={`ad-${i}`}>{a}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {settings.businessHours?.length ? (
-                <div className="sm:col-span-2">
-                  <div className="font-semibold mb-1">{t("contact.hours")}</div>
-                  <ul className="space-y-1">
-                    {settings.businessHours.map((h, i) => (<li key={`bh-${i}`}>{h}</li>))}
-                  </ul>
-                </div>
-              ) : null}
-              {settings.googleMapEmbedUrl ? (
-                <div className="sm:col-span-2">
-                  <div className="aspect-video w-full">
-                    <iframe className="w-full h-full rounded border" src={settings.googleMapEmbedUrl} loading="lazy" />
+            ((settings.phoneNumbers?.length ?? 0) > 0 ||
+             (settings.whatsappNumbers?.length ?? 0) > 0 ||
+             (settings.emails?.length ?? 0) > 0 ||
+             (settings.addressesEN?.length ?? 0) > 0 ||
+             (settings.addressesAR?.length ?? 0) > 0 ||
+             (settings.businessHours?.length ?? 0) > 0 ||
+             settings.googleMapEmbedUrl) && (
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-gray-700">
+                {(settings.phoneNumbers?.length || settings.whatsappNumbers?.length) && (
+                  <div>
+                    <div className="font-semibold mb-1">{t("contact.phone")}</div>
+                    <ul className="space-y-1">
+                      {settings.phoneNumbers?.map((p, i) => (
+                        <li key={`ph-${i}`}><a href={`tel:${p}`}>{p}</a></li>
+                      ))}
+                      {settings.whatsappNumbers?.map((w, i) => {
+                        // Clean the phone number for WhatsApp link
+                        const cleanNumber = w.replace(/\D/g, '');
+                        // Remove leading '00' if present (international dialing prefix)
+                        const whatsappNumber = cleanNumber.startsWith('00') ? cleanNumber.substring(2) : cleanNumber;
+                        return (
+                          <li key={`wa-${i}`}>
+                            <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener">
+                              WhatsApp: {w}
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </div>
-                </div>
-              ) : null}
-            </div>
+                )}
+                {settings.emails?.length ? (
+                  <div>
+                    <div className="font-semibold mb-1">{t("contact.email")}</div>
+                    <ul className="space-y-1">
+                      {settings.emails.map((em, i) => (
+                        <li key={`em-${i}`}><a href={`mailto:${em}`}>{em}</a></li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {(settings.addressesEN?.length || settings.addressesAR?.length) && (
+                  <div className="sm:col-span-2">
+                    <div className="font-semibold mb-1">{t("contact.address")}</div>
+                    <ul className="space-y-1">
+                      {(language === "ar" ? settings.addressesAR : settings.addressesEN)?.map((a, i) => (
+                        <li key={`ad-${i}`}>{a}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {settings.businessHours?.length ? (
+                  <div className="sm:col-span-2">
+                    <div className="font-semibold mb-1">{t("contact.hours")}</div>
+                    <ul className="space-y-1">
+                      {settings.businessHours.map((h, i) => (<li key={`bh-${i}`}>{h}</li>))}
+                    </ul>
+                  </div>
+                ) : null}
+                {settings.googleMapEmbedUrl ? (
+                  <div className="sm:col-span-2">
+                    <div className="aspect-video w-full">
+                      <iframe className="w-full h-full rounded border" src={settings.googleMapEmbedUrl} loading="lazy" />
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            )
           )}
 
           <form onSubmit={sendEmail} className="mt-10 space-y-6">
