@@ -120,9 +120,14 @@ export function Sidebar({ className, collapsed, onToggleCollapsed, onLogout }: S
           }
 
           if ("href" in item) {
+            // Dynamically set main website URL for preview site button
+            const href = item.label.en === "Preview site"
+              ? (process.env.NEXT_PUBLIC_MAIN_WEBSITE_URL || 'http://localhost:3000')
+              : item.href;
+
             return (
-              <Button key={`footer-${idx}`} asChild variant="ghost" className={cn(baseClasses, "mb-1")}> 
-                <Link href={item.href} target={item.external ? "_blank" : undefined} aria-label={label}>
+              <Button key={`footer-${idx}`} asChild variant="ghost" className={cn(baseClasses, "mb-1")}>
+                <Link href={href} target={item.external ? "_blank" : undefined} aria-label={label}>
                   {Icon && <Icon className="h-4 w-4" />}
                   {!collapsed && <span>{label}</span>}
                 </Link>
