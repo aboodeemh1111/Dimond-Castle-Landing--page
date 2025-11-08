@@ -35,8 +35,10 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { getProducts, deleteProduct, type Product } from "@/lib/products-api";
 import { getCloudinaryUrl } from "@/lib/cloudinary";
+import { useAdminI18n } from "@/components/providers/AdminI18nProvider";
 
 export default function ProductsPage() {
+  const { t } = useAdminI18n();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "draft" | "published">("all");
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -56,11 +58,11 @@ export default function ProductsPage() {
     mutationFn: deleteProduct,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      toast.success("Product deleted successfully");
+      toast.success(t('products.title').toLowerCase() + ' ' + t('actions.delete').toLowerCase());
       setDeleteId(null);
     },
     onError: (error: Error) => {
-      toast.error(error.message || "Failed to delete product");
+      toast.error(error.message || t('actions.delete') + ' ' + t('actions.cancel').toLowerCase());
     },
   });
 
@@ -71,15 +73,15 @@ export default function ProductsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t('products.title')}</h1>
           <p className="text-gray-600 mt-1">
-            Manage your product catalog and inventory
+            {t('products.subtitle')}
           </p>
         </div>
         <Link href="/admin/products/new">
           <Button size="lg" className="gap-2">
             <Plus className="w-5 h-5" />
-            Add Product
+            {t('products.addProduct')}
           </Button>
         </Link>
       </div>
@@ -89,7 +91,7 @@ export default function ProductsPage() {
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
-            placeholder="Search products..."
+            placeholder={t('products.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -97,12 +99,12 @@ export default function ProductsPage() {
         </div>
         <Select value={statusFilter} onValueChange={(v: any) => setStatusFilter(v)}>
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Filter by status" />
+            <SelectValue placeholder={t('actions.filter')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Products</SelectItem>
-            <SelectItem value="published">Published</SelectItem>
-            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="all">{t('products.allProducts')}</SelectItem>
+            <SelectItem value="published">{t('products.published')}</SelectItem>
+            <SelectItem value="draft">{t('products.draft')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -117,15 +119,15 @@ export default function ProductsPage() {
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Package className="w-12 h-12 text-gray-400 mb-4" />
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No products found
+              {t('products.noProducts')}
             </h3>
             <p className="text-gray-600 mb-4">
-              Get started by creating your first product
+              {t('products.getStarted')}
             </p>
             <Link href="/admin/products/new">
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
-                Add Product
+                {t('products.addProduct')}
               </Button>
             </Link>
           </div>
@@ -200,14 +202,14 @@ export default function ProductsPage() {
                         product.status === "published" ? "default" : "secondary"
                       }
                     >
-                      {product.status}
+                      {t(`status.${product.status}`)}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant={product.inStock ? "default" : "destructive"}
                     >
-                      {product.inStock ? "In Stock" : "Out of Stock"}
+                      {product.inStock ? t('status.inStock') : t('status.outOfStock')}
                     </Badge>
                   </TableCell>
                   <TableCell>
@@ -250,19 +252,18 @@ export default function ProductsPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Product</AlertDialogTitle>
+            <AlertDialogTitle>{t('actions.delete')} {t('products.title').toLowerCase()}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this product? This action cannot be
-              undone.
+              {t('actions.delete')} {t('products.title').toLowerCase()}؟ {t('actions.cancel').toLowerCase()} {t('actions.continue').toLowerCase()}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteId && deleteMutation.mutate(deleteId)}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete
+              {t('actions.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

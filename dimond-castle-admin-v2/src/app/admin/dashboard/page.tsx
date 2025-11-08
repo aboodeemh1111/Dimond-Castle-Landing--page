@@ -6,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
 import { fetchCounts, fetchDrafts, fetchHealth, fetchRecentActivity } from '@/lib/dashboard-api'
+import { useAdminI18n } from '@/components/providers/AdminI18nProvider'
 
 export default function AdminDashboardPage() {
+  const { t, locale } = useAdminI18n()
   const counts = useQuery({ queryKey: ['dash-counts'], queryFn: fetchCounts, staleTime: 60_000 })
   const activity = useQuery({ queryKey: ['dash-activity'], queryFn: () => fetchRecentActivity(20), staleTime: 60_000 })
   const drafts = useQuery({ queryKey: ['dash-drafts'], queryFn: fetchDrafts, staleTime: 30_000 })
@@ -17,28 +19,28 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Overview, quick actions and recent activity</p>
+          <h1 className="text-3xl font-bold">{t('dashboard.title')}</h1>
+          <p className="text-muted-foreground">{t('dashboard.subtitle')}</p>
         </div>
         <div className="flex gap-2">
-          <Link href="/admin/blogs/new"><Button>New Blog Post</Button></Link>
-          <Link href="/admin/pages/new"><Button variant="outline">New Page</Button></Link>
-          <Link href="/admin/media"><Button variant="outline">Upload Media</Button></Link>
+          <Link href="/admin/blogs/new"><Button>{t('dashboard.newBlog')}</Button></Link>
+          <Link href="/admin/pages/new"><Button variant="outline">{t('dashboard.newPage')}</Button></Link>
+          <Link href="/admin/media"><Button variant="outline">{t('dashboard.uploadMedia')}</Button></Link>
         </div>
       </div>
 
       {/* KPI cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard title="Published Posts" value={counts.data?.posts} href="/admin/blogs?status=published" />
-        <KpiCard title="Published Pages" value={counts.data?.pages} href="/admin/pages?status=published" />
-        <KpiCard title="Media Assets" value={counts.data?.media} href="/admin/media" />
-        <KpiCard title="New Messages (7d)" value={counts.data?.messages7d} href="/admin/contact" />
+        <KpiCard title={t('nav.blogs')} value={counts.data?.posts} href="/admin/blogs?status=published" />
+        <KpiCard title={t('nav.pages')} value={counts.data?.pages} href="/admin/pages?status=published" />
+        <KpiCard title={t('nav.media')} value={counts.data?.media} href="/admin/media" />
+        <KpiCard title={t('dashboard.messagesOverview')} value={counts.data?.messages7d} href="/admin/contact" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Recent Activity */}
         <Card>
-          <CardHeader><CardTitle>Recent Activity</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t('dashboard.recentActivity')}</CardTitle></CardHeader>
           <CardContent>
             <div className="space-y-3 max-h-[360px] overflow-auto">
               {(activity.data || []).map((it, idx) => (
@@ -48,11 +50,11 @@ export default function AdminDashboardPage() {
                     <span className="mx-2">•</span>
                     <span>{it.title}</span>
                   </div>
-                  <div className="text-xs text-muted-foreground">{new Date(it.updatedAt).toLocaleString()}</div>
+                  <div className="text-xs text-muted-foreground">{new Date(it.updatedAt).toLocaleString(locale)}</div>
                 </div>
               ))}
               {activity.data && activity.data.length === 0 && (
-                <div className="text-sm text-muted-foreground">No recent activity.</div>
+                <div className="text-sm text-muted-foreground">{t('dashboard.noDrafts')}</div>
               )}
             </div>
           </CardContent>
@@ -60,34 +62,34 @@ export default function AdminDashboardPage() {
 
         {/* Drafts */}
         <Card>
-          <CardHeader><CardTitle>Drafts</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t('dashboard.drafts')}</CardTitle></CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <div className="text-sm font-semibold mb-2">Blog posts</div>
+                <div className="text-sm font-semibold mb-2">{t('dashboard.blogDrafts')}</div>
                 <div className="space-y-2">
                   {(drafts.data?.blogDrafts || []).map((p: any) => (
                     <div key={p._id} className="flex items-center justify-between">
                       <div className="text-sm truncate">{p.en?.title || 'Untitled'}</div>
-                      <Link href={`/admin/blogs/${p._id}`} className="text-sm underline">Continue</Link>
+                      <Link href={`/admin/blogs/${p._id}`} className="text-sm underline">{t('actions.continue')}</Link>
                     </div>
                   ))}
                   {drafts.data && drafts.data.blogDrafts?.length === 0 && (
-                    <div className="text-sm text-muted-foreground">No blog drafts</div>
+                    <div className="text-sm text-muted-foreground">{t('dashboard.noDrafts')}</div>
                   )}
                 </div>
               </div>
               <div>
-                <div className="text-sm font-semibold mb-2">Pages</div>
+                <div className="text-sm font-semibold mb-2">{t('dashboard.pageDrafts')}</div>
                 <div className="space-y-2">
                   {(drafts.data?.pageDrafts || []).map((p: any) => (
                     <div key={p._id} className="flex items-center justify-between">
                       <div className="text-sm truncate">{p.en?.title || 'Untitled'}</div>
-                      <Link href={`/admin/pages/${p._id}`} className="text-sm underline">Continue</Link>
+                      <Link href={`/admin/pages/${p._id}`} className="text-sm underline">{t('actions.continue')}</Link>
                     </div>
                   ))}
                   {drafts.data && drafts.data.pageDrafts?.length === 0 && (
-                    <div className="text-sm text-muted-foreground">No page drafts</div>
+                    <div className="text-sm text-muted-foreground">{t('dashboard.noDrafts')}</div>
                   )}
                 </div>
               </div>
@@ -99,7 +101,7 @@ export default function AdminDashboardPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Messages overview */}
         <Card>
-          <CardHeader><CardTitle>Messages Overview</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t('dashboard.messagesOverview')}</CardTitle></CardHeader>
           <CardContent>
             <MessagesPreview />
           </CardContent>
@@ -107,12 +109,12 @@ export default function AdminDashboardPage() {
 
         {/* System health */}
         <Card>
-          <CardHeader><CardTitle>System Health</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{t('dashboard.systemHealth')}</CardTitle></CardHeader>
           <CardContent>
             <div className="space-y-2 text-sm">
               <HealthRow label="API" ok={!!health.data?.api} />
               <HealthRow label="Cloudinary" ok={!!health.data?.media} />
-              <div className="text-sm text-muted-foreground">Last theme update: {health.data?.lastThemeUpdate ? new Date(health.data.lastThemeUpdate).toLocaleString() : '—'}</div>
+              <div className="text-sm text-muted-foreground">{t('dashboard.lastThemeUpdate')}: {health.data?.lastThemeUpdate ? new Date(health.data.lastThemeUpdate).toLocaleString(locale) : '—'}</div>
             </div>
           </CardContent>
         </Card>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Menu } from "lucide-react";
+import { Bell, Menu, Languages } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -15,25 +15,31 @@ import { adminNav } from "@/config/admin-nav";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useAdminI18n } from "@/components/providers/AdminI18nProvider";
 
-export function Header({ locale = "en" }: { locale?: "en" | "ar" }) {
+export function Header() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const { locale, t, setLocale } = useAdminI18n();
   const labelFor = (en: string, ar: string) => (locale === "ar" ? ar : en);
   const isActive = (href: string) => pathname.startsWith(href);
+
+  const toggleLanguage = () => {
+    setLocale(locale === "en" ? "ar" : "en");
+  };
 
   return (
     <header className="flex h-14 items-center justify-between border-b px-4">
       <div className="flex items-center gap-2">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger asChild>
-            <Button aria-label="Open menu" variant="ghost" size="icon" className="md:hidden">
+            <Button aria-label={t("aria.openMenu")} variant="ghost" size="icon" className="md:hidden">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0">
             <SheetHeader className="px-4 py-3">
-              <SheetTitle>{labelFor("Menu", "القائمة")}</SheetTitle>
+              <SheetTitle>{t("nav.menu")}</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 px-2 pb-4">
               {adminNav.map((item) => {
@@ -61,10 +67,18 @@ export function Header({ locale = "en" }: { locale?: "en" | "ar" }) {
             </nav>
           </SheetContent>
         </Sheet>
-        <span className="text-sm text-muted-foreground">Dashboard</span>
+        <span className="text-sm text-muted-foreground">{t("nav.dashboard")}</span>
       </div>
       <div className="flex items-center gap-2">
-        <Button aria-label="Notifications" variant="ghost" size="icon">
+        <Button
+          aria-label="Toggle language"
+          variant="ghost"
+          size="icon"
+          onClick={toggleLanguage}
+        >
+          <Languages className="h-5 w-5" />
+        </Button>
+        <Button aria-label={t("aria.notifications")} variant="ghost" size="icon">
           <Bell className="h-5 w-5" />
         </Button>
         <Avatar className="h-8 w-8">

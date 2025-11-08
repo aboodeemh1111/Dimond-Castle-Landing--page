@@ -14,17 +14,18 @@ import {
 } from "@/components/ui/tooltip";
 import { ChevronsLeft } from "lucide-react";
 import { adminNav, adminFooter } from "@/config/admin-nav";
+import { useAdminI18n } from "@/components/providers/AdminI18nProvider";
 
 type SidebarProps = {
   className?: string;
   collapsed: boolean;
   onToggleCollapsed: () => void;
-  locale?: "en" | "ar";
   onLogout?: () => void;
 };
 
-export function Sidebar({ className, collapsed, onToggleCollapsed, locale = "en", onLogout }: SidebarProps) {
+export function Sidebar({ className, collapsed, onToggleCollapsed, onLogout }: SidebarProps) {
   const pathname = usePathname();
+  const { locale, t } = useAdminI18n();
 
   const isActive = (href: string) => pathname.startsWith(href);
   const labelFor = (en: string, ar: string) => (locale === "ar" ? ar : en);
@@ -45,7 +46,7 @@ export function Sidebar({ className, collapsed, onToggleCollapsed, locale = "en"
           {!collapsed && <span className="font-semibold">Dimond Castle</span>}
         </div>
         <Button
-          aria-label={collapsed ? labelFor("Expand sidebar", "توسيع القائمة") : labelFor("Collapse sidebar", "تصغير القائمة")}
+          aria-label={collapsed ? t("aria.expandSidebar") : t("aria.collapseSidebar")}
           variant="ghost"
           size="icon"
           onClick={onToggleCollapsed}
