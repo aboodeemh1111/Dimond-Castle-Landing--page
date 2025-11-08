@@ -1,5 +1,5 @@
 {
-  "env": {
-    "NEXT_PUBLIC_MAIN_WEBSITE_URL": "https://dimond-castle-landing-page-g3ui.vercel.app/"
-  }
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "framework": "nextjs"
 }
