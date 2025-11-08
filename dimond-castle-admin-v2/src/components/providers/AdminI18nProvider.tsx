@@ -68,6 +68,17 @@ const messages = {
     "navigation.validation.depth": "Max nesting depth: 3 levels",
     "navigation.validation.duplicate": "No duplicate links in the same level",
 
+    // Messages page
+    "messages.title": "Messages",
+    "messages.subtitle": "View and manage contact form submissions",
+    "messages.search": "Search messages...",
+    "messages.allMessages": "All Messages",
+    "messages.unseen": "Unseen",
+    "messages.resolved": "Resolved",
+    "messages.unresolved": "Unresolved",
+    "messages.noMessages": "No messages found",
+    "messages.noMessagesDesc": "Messages from the contact form will appear here",
+
     // Products page
     "products.title": "Products",
     "products.subtitle": "Manage your product catalog and inventory",
@@ -148,6 +159,17 @@ const messages = {
     "navigation.validation.link": "الرابط مطلوب؛ الداخلي يجب أن يشير إلى صفحة منشورة",
     "navigation.validation.depth": "الحد الأقصى للعمق: 3 مستويات",
     "navigation.validation.duplicate": "لا روابط مكررة في نفس المستوى",
+
+    // Messages page
+    "messages.title": "الرسائل الواردة",
+    "messages.subtitle": "عرض وإدارة رسائل نموذج الاتصال",
+    "messages.search": "البحث في الرسائل...",
+    "messages.allMessages": "جميع الرسائل",
+    "messages.unseen": "غير مقروءة",
+    "messages.resolved": "مُحلّة",
+    "messages.unresolved": "غير محلولة",
+    "messages.noMessages": "لم يتم العثور على رسائل",
+    "messages.noMessagesDesc": "ستظهر رسائل نموذج الاتصال هنا",
 
     // Products page
     "products.title": "المنتجات",
