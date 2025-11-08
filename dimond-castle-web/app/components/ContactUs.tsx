@@ -45,15 +45,34 @@ export default function ContactUs() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    // Prevent any unwanted characters that might cause display issues
+    const sanitizedValue = value.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+    setForm((prev) => ({ ...prev, [name]: sanitizedValue }));
   };
 
   const sendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) {
+
+    // Trim whitespace and validate required fields
+    const trimmedForm = {
+      name: form.name.trim(),
+      email: form.email.trim(),
+      subject: form.subject.trim(),
+      message: form.message.trim(),
+    };
+
+    if (!trimmedForm.name || !trimmedForm.email || !trimmedForm.message) {
       setStatus({ type: "error", message: t("contact.fillRequired") });
       return;
     }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedForm.email)) {
+      setStatus({ type: "error", message: "Please enter a valid email address." });
+      return;
+    }
+
     setStatus({ type: "submitting" });
     try {
       const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -61,11 +80,11 @@ export default function ContactUs() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          message: form.subject
-            ? `${form.subject}\n\n${form.message}`
-            : form.message,
+          name: trimmedForm.name,
+          email: trimmedForm.email,
+          message: trimmedForm.subject
+            ? `${trimmedForm.subject}\n\n${trimmedForm.message}`
+            : trimmedForm.message,
         }),
       });
 
@@ -75,6 +94,7 @@ export default function ContactUs() {
       }
 
       setStatus({ type: "success", message: t("contact.success") });
+      // Clear form completely
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err: any) {
       setStatus({
@@ -118,9 +138,19 @@ export default function ContactUs() {
                     {settings.phoneNumbers?.map((p, i) => (
                       <li key={`ph-${i}`}><a href={`tel:${p}`}>{p}</a></li>
                     ))}
-                    {settings.whatsappNumbers?.map((w, i) => (
-                      <li key={`wa-${i}`}><a href={`https://wa.me/${w.replace(/\D/g, '')}`} target="_blank" rel="noopener">WhatsApp: {w}</a></li>
-                    ))}
+                    {settings.whatsappNumbers?.map((w, i) => {
+                      // Clean the phone number for WhatsApp link
+                      const cleanNumber = w.replace(/\D/g, '');
+                      // Remove leading '00' if present (international dialing prefix)
+                      const whatsappNumber = cleanNumber.startsWith('00') ? cleanNumber.substring(2) : cleanNumber;
+                      return (
+                        <li key={`wa-${i}`}>
+                          <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener">
+                            WhatsApp: {w}
+                          </a>
+                        </li>
+                      );
+                    })}
                   </ul>
                 </div>
               )}
@@ -178,6 +208,7 @@ export default function ContactUs() {
                   required
                   value={form.name}
                   onChange={onChange}
+                  autoComplete="name"
                   className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
                   placeholder={t("contact.placeholder.name")}
                 />
@@ -197,6 +228,7 @@ export default function ContactUs() {
                   required
                   value={form.email}
                   onChange={onChange}
+                  autoComplete="email"
                   className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
                   placeholder={t("contact.placeholder.email")}
                 />
@@ -216,6 +248,7 @@ export default function ContactUs() {
                 type="text"
                 value={form.subject}
                 onChange={onChange}
+                autoComplete="off"
                 className="mt-2 block w-full rounded-md border border-[var(--dc-gray)] bg-white px-3 py-2 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold-500)] focus:outline-offset-2"
                 placeholder={t("contact.placeholder.subject")}
               />
@@ -235,6 +268,7 @@ export default function ContactUs() {
                 rows={6}
                 value={form.message}
                 onChange={onChange}
+                autoComplete="off"
                 className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
                 placeholder={t("contact.placeholder.message")}
               />
