@@ -72,10 +72,13 @@ router.get('/:id', async (req, res, next) => {
   }
 })
 
-// Get page by slug (public endpoint)
-router.get('/slug/:slug', async (req, res, next) => {
+// Get page by slug (public endpoint, supports nested slugs with custom regex)
+router.get(/^\/slug\/(.+)$/, async (req, res, next) => {
   try {
-    const slug = '/' + req.params.slug
+    // Extract everything after /slug/ using regex capture group
+    const rawSlug = req.params[0] || ''
+    const normalized = rawSlug.startsWith('/') ? rawSlug : `/${rawSlug}`
+    const slug = normalized.replace(/\/{2,}/g, '/')
     const page = await Page.findOne({ slug, status: 'published' }).lean()
     if (!page) {
       return res.status(404).json({ error: 'Page not found' })
