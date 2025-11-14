@@ -60,53 +60,48 @@ export default function Navbar({
 
             {/* Desktop Navigation */}
             <nav className="hidden md:block overflow-visible">
-              {treeItems ? (
-                <ul className="flex items-center gap-4 2xl:gap-6 overflow-x-auto overflow-y-visible whitespace-nowrap no-scrollbar">
-                  {treeItems.map((item, idx) => (
-                    <li key={`${item.href}-${idx}`} className="relative group">
-                      <a
-                        href={item.href}
-                        target={item.newTab ? '_blank' : undefined}
-                        rel={item.newTab ? 'noopener' : undefined}
-                        className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 hover:underline underline-offset-4 decoration-[var(--gold-500)] after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300 glow-gold"
-                      >
-                        {language === 'ar' ? item.labelAR : item.labelEN}
-                      </a>
-                      {item.children && item.children.length > 0 && (
-                        <div className="invisible group-hover:visible absolute left-0 top-full mt-2 min-w-[200px] rounded-md border border-[var(--dc-gray)] bg-white shadow-lg p-2">
-                          <ul className="flex flex-col gap-1">
-                            {item.children.map((child, cidx) => (
-                              <li key={`${child.href}-${cidx}`}>
-                                <a
-                                  href={child.href}
-                                  target={child.newTab ? '_blank' : undefined}
-                                  rel={child.newTab ? 'noopener' : undefined}
-                                  className="block px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] rounded-md hover:bg-accent/30 hover:underline underline-offset-4"
-                                >
-                                  {language === 'ar' ? child.labelAR : child.labelEN}
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <ul className="flex items-center gap-4 2xl:gap-6 overflow-x-auto overflow-y-visible whitespace-nowrap no-scrollbar">
-                  {items.map((item) => (
-                    <li key={item.key}>
-                      <a
-                        href={item.href}
-                        className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 hover:underline underline-offset-4 decoration-[var(--gold-500)] after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300 glow-gold"
-                      >
-                        {t(item.key)}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <ul className="flex items-center gap-4 2xl:gap-6 overflow-x-auto overflow-y-visible whitespace-nowrap no-scrollbar">
+                {items.map((item) => (
+                  <li key={`default-${item.key}`}>
+                    <a
+                      href={item.href}
+                      className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 hover:underline underline-offset-4 decoration-[var(--gold-500)] after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300 glow-gold"
+                    >
+                      {t(item.key)}
+                    </a>
+                  </li>
+                ))}
+                {treeItems?.map((item, idx) => (
+                  <li key={`tree-${item.href}-${idx}`} className="relative group">
+                    <a
+                      href={item.href}
+                      target={item.newTab ? '_blank' : undefined}
+                      rel={item.newTab ? 'noopener' : undefined}
+                      className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 hover:underline underline-offset-4 decoration-[var(--gold-500)] after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300 glow-gold"
+                    >
+                      {language === 'ar' ? item.labelAR : item.labelEN}
+                    </a>
+                    {item.children && item.children.length > 0 && (
+                      <div className="invisible group-hover:visible absolute left-0 top-full mt-2 min-w-[200px] rounded-md border border-[var(--dc-gray)] bg-white shadow-lg p-2">
+                        <ul className="flex flex-col gap-1">
+                          {item.children.map((child, cidx) => (
+                            <li key={`tree-child-${child.href}-${idx}-${cidx}`}>
+                              <a
+                                href={child.href}
+                                target={child.newTab ? '_blank' : undefined}
+                                rel={child.newTab ? 'noopener' : undefined}
+                                className="block px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] rounded-md hover:bg-accent/30 hover:underline underline-offset-4"
+                              >
+                                {language === 'ar' ? child.labelAR : child.labelEN}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </nav>
           </div>
 
@@ -184,19 +179,18 @@ export default function Navbar({
       >
         <div className="px-4 sm:px-6 lg:px-8 pb-4">
           <ul className="mt-2 space-y-1 rounded-lg border border-[var(--dc-gray)] bg-white shadow-sm overflow-hidden">
-            {treeItems
-              ? renderMobileTree(treeItems, language, closeMobileMenu)
-              : items.map((item) => (
-                  <li key={item.key} className="border-b last:border-b-0 border-gray-100">
-                    <a
-                      href={item.href}
-                      onClick={closeMobileMenu}
-                      className="relative group block px-4 py-3 text-gray-700 hover:bg-accent/30 text-sm font-medium transition-all duration-300 hover:underline underline-offset-4 after:content-[''] after:absolute after:left-4 after:bottom-2 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] group-hover:after:w-10 after:transition-all after:duration-300 glow-gold"
-                    >
-                      {t(item.key)}
-                    </a>
-                  </li>
-                ))}
+            {items.map((item) => (
+              <li key={`mobile-default-${item.key}`} className="border-b last:border-b-0 border-gray-100">
+                <a
+                  href={item.href}
+                  onClick={closeMobileMenu}
+                  className="relative group block px-4 py-3 text-gray-700 hover:bg-accent/30 text-sm font-medium transition-all duration-300 hover:underline underline-offset-4 after:content-[''] after:absolute after:left-4 after:bottom-2 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] group-hover:after:w-10 after:transition-all after:duration-300 glow-gold"
+                >
+                  {t(item.key)}
+                </a>
+              </li>
+            ))}
+            {treeItems ? renderMobileTree(treeItems, language, closeMobileMenu) : null}
           </ul>
 
           {/* Mobile language switcher */}
