@@ -45,7 +45,10 @@ export default function NavigationPage() {
   })
 
   useEffect(() => {
-    if (navQuery.data) setItems(navQuery.data.items || [])
+    if (navQuery.data) {
+      const normalized = ensureUniqueNavIds(navQuery.data.items || [])
+      setItems(normalized)
+    }
   }, [navQuery.data])
 
   useEffect(() => {
@@ -327,6 +330,33 @@ function ValidationHints({ t }: { t: (key: string) => string }) {
       </CardContent>
     </Card>
   )
+}
+
+function ensureUniqueNavIds(items: NavItem[]): NavItem[] {
+  const seen = new Set<string>()
+  return assignIds(items, seen)
+}
+
+function assignIds(items: NavItem[], seen: Set<string>): NavItem[] {
+  return items.map((item) => {
+    let nextId = item.id?.trim()
+    while (!nextId || seen.has(nextId)) {
+      nextId = crypto.randomUUID()
+    }
+    seen.add(nextId)
+
+    const children = item.children ? assignIds(item.children, seen) : item.children
+
+    if (nextId !== item.id || children !== item.children) {
+      return {
+        ...item,
+        id: nextId,
+        children,
+      }
+    }
+
+    return item
+  })
 }
 
 
