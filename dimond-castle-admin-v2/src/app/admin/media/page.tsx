@@ -245,8 +245,9 @@ export default function MediaLibraryPage() {
                   <input
                     type="file"
                     multiple
-                    // @ts-expect-error - non-standard but supported in modern browsers
+                    // @ts-ignore - non-standard but supported in modern browsers
                     webkitdirectory="true"
+                    // @ts-ignore - non-standard directory attribute
                     directory="true"
                     accept="image/jpeg,image/png,image/webp,video/mp4"
                     onChange={(e) => {
