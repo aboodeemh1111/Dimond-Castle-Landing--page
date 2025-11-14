@@ -17,6 +17,15 @@ type NavTreeResponse = {
   items: NavTreeItem[];
 };
 
+function filterVisible(items: NavTreeItem[]): NavTreeItem[] {
+  return items
+    .filter((i) => i.visible !== false)
+    .map((i) => ({
+      ...i,
+      children: i.children ? filterVisible(i.children) : [],
+    }));
+}
+
 export default function NavigationPage() {
   const [data, setData] = useState<NavTreeResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,11 +57,29 @@ export default function NavigationPage() {
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">Navigation</h1>
       <p className="text-sm text-gray-600">
-        This reflects the current navbar configuration used on the public
-        website.
+        Below is a live preview of the current public navbar and its structure.
       </p>
 
-      <div className="rounded-2xl bg-white shadow-sm p-5 text-sm text-gray-700">
+      {/* Current Navbar preview */}
+      <div className="rounded-2xl bg-white shadow-sm p-5 text-sm text-gray-700 space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900">
+              Current Navbar
+            </h2>
+            <p className="text-xs text-gray-500">
+              This preview uses the same data and order as the main website
+              navbar.
+            </p>
+          </div>
+          {!loading && data && (
+            <p className="text-xs text-gray-500">
+              {filterVisible(data.items).length} visible top-level item
+              {filterVisible(data.items).length !== 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
+
         {loading && (
           <div className="text-gray-500">Loading navigation&hellip;</div>
         )}
@@ -69,26 +96,80 @@ export default function NavigationPage() {
           </div>
         )}
 
-        {!loading && !error && data && data.items.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                  Nav set
-                </p>
-                <p className="text-sm font-semibold text-gray-900">
-                  {data.name || "Main"}
-                </p>
-              </div>
-              <p className="text-xs text-gray-500">
-                {data.items.length} top-level item
-                {data.items.length !== 1 ? "s" : ""}
+        {!loading &&
+          !error &&
+          data &&
+          filterVisible(data.items).length > 0 && (
+            <CurrentNavbarPreview items={filterVisible(data.items)} />
+          )}
+      </div>
+
+      {/* Structural tree view */}
+      {!loading && !error && data && data.items.length > 0 && (
+        <div className="rounded-2xl bg-white shadow-sm p-5 text-sm text-gray-700">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                Nav set
+              </p>
+              <p className="text-sm font-semibold text-gray-900">
+                {data.name || "Main"}
               </p>
             </div>
-
-            <NavTreeList items={data.items} />
+            <p className="text-xs text-gray-500">
+              {data.items.length} top-level item
+              {data.items.length !== 1 ? "s" : ""}
+            </p>
           </div>
-        )}
+
+          <NavTreeList items={data.items} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CurrentNavbarPreview({ items }: { items: NavTreeItem[] }) {
+  return (
+    <div className="border border-[var(--dc-gray)] rounded-xl overflow-hidden bg-white">
+      <div className="bg-white/80 border-b border-[var(--dc-gray)]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center h-12 gap-6">
+            {/* Logo placeholder */}
+            <div className="flex items-center gap-2">
+              <div className="h-7 w-7 rounded-full bg-emerald-600" />
+              <span className="text-sm font-semibold tracking-tight text-gray-900">
+                Dimond Castle
+              </span>
+            </div>
+
+            {/* Desktop nav preview */}
+            <nav className="hidden md:block overflow-visible">
+              <ul className="flex items-center gap-4 overflow-x-auto overflow-y-visible whitespace-nowrap no-scrollbar py-1">
+                {items.map((item, idx) => (
+                  <li key={`${item.href}-${idx}`} className="relative group">
+                    <span className="relative group px-3 py-1.5 text-[13px] font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 hover:underline underline-offset-4 decoration-[var(--gold-500)] after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300">
+                      {item.labelEN || "(no EN label)"}
+                    </span>
+                    {item.children && item.children.length > 0 && (
+                      <div className="invisible group-hover:visible absolute left-0 top-full mt-2 min-w-[200px] rounded-md border border-[var(--dc-gray)] bg-white shadow-lg p-2 z-10">
+                        <ul className="flex flex-col gap-1">
+                          {item.children.map((child, cidx) => (
+                            <li key={`${child.href}-${idx}-${cidx}`}>
+                              <span className="block px-3 py-1.5 text-[13px] font-medium text-[var(--dc-text)] rounded-md hover:bg-accent/30 hover:underline underline-offset-4">
+                                {child.labelEN || "(no EN label)"}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        </div>
       </div>
     </div>
   );
