@@ -1,67 +1,84 @@
 import { Router } from 'express'
-import { cloudinary } from '../config/cloudinary'
+import fs from 'fs/promises'
+import path from 'path'
+import multer from 'multer'
 import { env } from '../config/env'
 import BlogPost from '../models/BlogPost'
 import Page from '../models/Page'
+import Product from '../models/Product'
 
 const router = Router()
+
+// Ensure upload directory exists
+const uploadDir = path.resolve(env.UPLOAD_DIR)
+fs.mkdir(uploadDir, { recursive: true }).catch(() => {})
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir)
+  },
+  filename: (req, file, cb) => {
+    const unique = Date.now() + '-' + Math.round(Math.random() * 1e9)
+    const ext = path.extname(file.originalname)
+    cb(null, `${unique}${ext}`)
+  },
+})
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    // Allow images and videos
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
+      cb(null, true)
+    } else {
+      cb(new Error('Only images and videos are allowed'))
+    }
+  },
+})
 
 // Count assets (images + videos)
 router.get('/count', async (_req, res, next) => {
   try {
-    if (!cloudinary.config().cloud_name) {
-      return res.json({ count: 0 })
-    }
-    const result = await cloudinary.search
-      .expression('resource_type:image OR resource_type:video')
-      .max_results(1)
-      .execute()
-    res.json({ count: result.total_count || 0 })
+    const files = await fs.readdir(uploadDir).catch(() => [])
+    const mediaFiles = files.filter(file =>
+      /\.(jpg|jpeg|png|webp|gif|mp4|webm|mov)$/i.test(file)
+    )
+    res.json({ count: mediaFiles.length })
   } catch (e) {
-    // Return 0 if Cloudinary is not configured
     res.json({ count: 0 })
   }
 })
 
-// Get signed upload parameters
-router.post('/signature', async (req, res, next) => {
+// Upload media file
+router.post('/upload', upload.single('file'), async (req, res, next) => {
   try {
-    const { folder = '', public_id, resource_type = 'auto', eager, tags } = req.body || {}
-    const timestamp = Math.floor(Date.now() / 1000)
-
-    const paramsToSign: Record<string, any> = {
-      timestamp,
-      folder,
-    }
-    if (public_id) paramsToSign.public_id = public_id
-    if (eager) paramsToSign.eager = eager
-    if (tags) paramsToSign.tags = tags
-
-    // Extract cloud name from config (supports both CLOUDINARY_URL and explicit vars)
-    let cloudName = env.CLOUDINARY_CLOUD_NAME
-    let apiKey = env.CLOUDINARY_API_KEY
-    let apiSecret = env.CLOUDINARY_API_SECRET
-
-    if (!cloudName && env.CLOUDINARY_URL) {
-      // Parse cloudinary://API_KEY:API_SECRET@CLOUD_NAME
-      const match = env.CLOUDINARY_URL.match(/cloudinary:\/\/([^:]+):([^@]+)@(.+)/)
-      if (match) {
-        apiKey = match[1]
-        apiSecret = match[2]
-        cloudName = match[3]
-      }
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' })
     }
 
-    const signature = cloudinary.utils.api_sign_request(paramsToSign, apiSecret)
+    const publicId = req.file.filename
+    const baseUrl = env.MEDIA_BASE_URL || `${req.protocol}://${req.get('host')}/media`
+    const url = `${baseUrl}/${publicId}`
+
+    const isVideo = req.file.mimetype.startsWith('video/')
+
     res.json({
-      timestamp,
-      signature,
-      apiKey,
-      cloudName,
-      folder,
-      resource_type,
+      asset_id: publicId,
+      public_id: publicId,
+      resource_type: isVideo ? 'video' : 'image',
+      format: path.extname(req.file.originalname).slice(1),
+      bytes: req.file.size,
+      width: null, // We don't extract dimensions
+      height: null,
+      url,
+      secure_url: url,
+      created_at: new Date().toISOString(),
     })
-  } catch (e) { next(e) }
+  } catch (e) {
+    next(e)
+  }
 })
 
 // Usage check for a given public_id
@@ -70,6 +87,7 @@ router.get('/usage', async (req, res, next) => {
     const { publicId } = req.query as any
     if (!publicId) return res.status(400).json({ error: 'publicId is required' })
 
+    // Check blog posts
     const coverCount = await BlogPost.countDocuments({ coverPublicId: publicId })
     const blocksCount = await BlogPost.countDocuments({
       $or: [
@@ -89,7 +107,7 @@ router.get('/usage', async (req, res, next) => {
       ],
     }).select({ _id: 1, slug: 1, 'en.title': 1 }).limit(50)
 
-    // Basic pages usage check: look for ogImageId fields
+    // Check pages
     const pagesCount = await Page.countDocuments({
       $or: [
         { 'en.seo.ogImageId': publicId },
@@ -97,48 +115,101 @@ router.get('/usage', async (req, res, next) => {
       ],
     })
 
+    // Check products
+    const productsCount = await Product.countDocuments({
+      $or: [
+        { coverPublicId: publicId },
+        { galleryPublicIds: publicId },
+      ],
+    })
+
     res.json({
       blog: { coverCount, blocksCount, total: Math.max(coverCount, 0) + Math.max(blocksCount, 0), posts },
       pages: { total: pagesCount },
+      products: { total: productsCount },
     })
   } catch (e) { next(e) }
 })
 
-// List media (images/videos) via Cloudinary Search API
+// List media (scan local directory)
 router.get('/', async (req, res, next) => {
   try {
-    const { q = '', type = 'all', page = '1', max_results = '30', folder } = req.query as any
-    const expressions: string[] = []
-    if (type === 'image') expressions.push('resource_type:image')
-    if (type === 'video') expressions.push('resource_type:video')
-    if (folder) expressions.push(`folder:${folder}`)
-    if (q) expressions.push(`public_id:${q}* OR tags=${q}* OR context.alt:${q}* OR context.caption:${q}*`)
+    const { q = '', type = 'all', max_results = '30' } = req.query as any
 
-    const expression = expressions.length ? expressions.join(' AND ') : ''
+    let files = await fs.readdir(uploadDir).catch(() => [])
+    const baseUrl = env.MEDIA_BASE_URL || `${req.protocol}://${req.get('host')}/media`
 
-    const search = cloudinary.search
-      .expression(expression || 'resource_type:image OR resource_type:video')
-      .sort_by('created_at', 'desc')
-      .max_results(Number(max_results))
+    // Filter by type
+    if (type === 'image') {
+      files = files.filter(file => /\.(jpg|jpeg|png|webp|gif)$/i.test(file))
+    } else if (type === 'video') {
+      files = files.filter(file => /\.(mp4|webm|mov)$/i.test(file))
+    } else {
+      files = files.filter(file => /\.(jpg|jpeg|png|webp|gif|mp4|webm|mov)$/i.test(file))
+    }
 
-    const result = await search.execute()
+    // Filter by query (simple filename matching)
+    if (q) {
+      files = files.filter(file => file.toLowerCase().includes(q.toLowerCase()))
+    }
 
-    res.json({ items: result.resources, total_count: result.total_count, next_cursor: result.next_cursor })
-  } catch (e) { next(e) }
+    // Sort by creation time (descending)
+    const filesWithStats = await Promise.all(
+      files.map(async file => {
+        try {
+          const stats = await fs.stat(path.join(uploadDir, file))
+          return { file, mtime: stats.mtime }
+        } catch {
+          return { file, mtime: new Date(0) }
+        }
+      })
+    )
+    filesWithStats.sort((a, b) => b.mtime.getTime() - a.mtime.getTime())
+    files = filesWithStats.slice(0, Number(max_results)).map(f => f.file)
+
+    // Convert to MediaItem format
+    const items = files.map(file => ({
+      asset_id: file,
+      public_id: file,
+      resource_type: /\.(mp4|webm|mov)$/i.test(file) ? 'video' : 'image',
+      format: path.extname(file).slice(1),
+      bytes: 0, // We could get file size but skipping for now
+      width: null,
+      height: null,
+      created_at: filesWithStats.find(f => f.file === file)?.mtime.toISOString() || new Date().toISOString(),
+      url: `${baseUrl}/${file}`,
+      secure_url: `${baseUrl}/${file}`,
+    }))
+
+    res.json({
+      items,
+      total_count: items.length,
+      next_cursor: null // Not implementing pagination for local files
+    })
+  } catch (e) {
+    next(e)
+  }
 })
 
 // Delete a media asset by public_id
 router.delete('/:publicId', async (req, res, next) => {
   try {
     const { publicId } = req.params
-    // Attempt to delete as image first, fallback to video
-    const img = await cloudinary.uploader.destroy(publicId, { resource_type: 'image' })
-    if (img.result === 'not found') {
-      const vid = await cloudinary.uploader.destroy(publicId, { resource_type: 'video' })
-      return res.json(vid)
+    const filePath = path.join(uploadDir, publicId)
+
+    try {
+      await fs.unlink(filePath)
+      res.json({ result: 'ok' })
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
+        res.json({ result: 'not found' })
+      } else {
+        throw error
+      }
     }
-    res.json(img)
-  } catch (e) { next(e) }
+  } catch (e) {
+    next(e)
+  }
 })
 
 export default router

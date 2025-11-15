@@ -1,4 +1,5 @@
 import express from 'express'
+import path from 'path'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -32,6 +33,13 @@ app.use(express.urlencoded({ extended: true }))
 app.use(compression())
 app.use(morgan('dev'))
 app.use(rateLimit({ windowMs: 60_000, max: 300 }))
+
+// Static media serving
+app.use('/media', express.static(path.resolve(env.UPLOAD_DIR), {
+  maxAge: '7d',
+  index: false,
+  fallthrough: true,
+}))
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
 
