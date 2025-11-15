@@ -10,17 +10,17 @@ export const socialLinksSchema = z.object({
 }).partial()
 
 export const contactSettingsSchema = z.object({
-  titleEN: z.string().min(1),
-  titleAR: z.string().min(1),
+  titleEN: z.string().optional(),
+  titleAR: z.string().optional(),
   subtitleEN: z.string().optional(),
   subtitleAR: z.string().optional(),
   businessHours: z.array(z.string()).default([]),
   phoneNumbers: z.array(z.string()).default([]),
   whatsappNumbers: z.array(z.string()).default([]),
-  emails: z.array(z.string().email().or(z.string().min(3))).default([]),
+  emails: z.array(z.string()).default([]),
   addressesEN: z.array(z.string()).default([]),
   addressesAR: z.array(z.string()).default([]),
-  googleMapEmbedUrl: z.string().url().optional(),
+  googleMapEmbedUrl: z.string().url().optional().or(z.literal('')),
   socialLinks: socialLinksSchema.optional(),
   contactPageHeroImageId: z.string().optional(),
   updatedBy: z.string().optional(),

@@ -35,8 +35,22 @@ router.get('/settings', async (_req, res, next) => {
 // Settings: upsert (replace)
 router.put('/settings', async (req, res, next) => {
   try {
-    const parsed = contactSettingsSchema.safeParse(req.body)
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.flatten() })
+    // Clean up the request body - filter empty strings from arrays
+    const cleaned = {
+      ...req.body,
+      phoneNumbers: (req.body.phoneNumbers || []).filter((s: string) => s && s.trim().length > 0),
+      whatsappNumbers: (req.body.whatsappNumbers || []).filter((s: string) => s && s.trim().length > 0),
+      emails: (req.body.emails || []).filter((s: string) => s && s.trim().length > 0),
+      addressesEN: (req.body.addressesEN || []).filter((s: string) => s && s.trim().length > 0),
+      addressesAR: (req.body.addressesAR || []).filter((s: string) => s && s.trim().length > 0),
+      businessHours: (req.body.businessHours || []).filter((s: string) => s && s.trim().length > 0),
+    }
+    const parsed = contactSettingsSchema.safeParse(cleaned)
+    if (!parsed.success) {
+      // eslint-disable-next-line no-console
+      console.error('Validation error:', parsed.error.flatten())
+      return res.status(400).json({ error: parsed.error.flatten() })
+    }
     const payload = parsed.data
     const saved = await ContactSettings.findOneAndUpdate({}, payload, { new: true, upsert: true })
     res.json(saved)
