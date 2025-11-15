@@ -15,20 +15,15 @@ export type MediaItem = {
   tags?: string[];
 };
 
-export async function getUploadSignature(body: {
-  folder?: string;
-  public_id?: string;
-  resource_type?: string;
-  tags?: string[];
-}) {
-  return api.post<{
-    timestamp: number;
-    signature: string;
-    apiKey: string;
-    cloudName: string;
-    folder?: string;
-    resource_type: string;
-  }>("/api/media/signature", body);
+export async function uploadMedia(file: File): Promise<MediaItem> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return api.post<MediaItem>("/api/media/upload", formData, {
+    headers: {
+      // Let the browser set Content-Type for FormData
+    },
+  });
 }
 
 export async function listMedia(params: {
@@ -56,6 +51,7 @@ export async function deleteMedia(publicId: string) {
 export async function getUsage(publicId: string): Promise<{
   blog: { coverCount: number; blocksCount: number; total: number; posts: Array<{ _id: string; slug: string; en?: { title?: string } }> };
   pages: { total: number };
+  products: { total: number };
 }> {
   return api.get(`/api/media/usage?publicId=${encodeURIComponent(publicId)}`);
 }

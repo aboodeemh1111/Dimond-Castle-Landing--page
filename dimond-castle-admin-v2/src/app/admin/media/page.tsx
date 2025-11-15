@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { listMedia, type MediaItem, deleteMedia, getUploadSignature, getUsage } from "@/lib/media-api";
+import { listMedia, type MediaItem, deleteMedia, uploadMedia, getUsage } from "@/lib/media-api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +17,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { X, CheckCircle2, AlertCircle, Loader2, Upload, FolderOpen } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, Loader2, Upload } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type UploadTask = {
@@ -27,25 +27,7 @@ type UploadTask = {
   progress: number;
   error?: string;
   result?: any;
-  targetFolder: string;
 };
-
-function getTargetFolder(baseFolder: string, file: File): string {
-  const base = (baseFolder || "").trim().replace(/\/+$/g, "");
-  const relPath = (file as any).webkitRelativePath as string | undefined;
-
-  if (relPath && relPath.length > 0) {
-    const normalized = relPath.replace(/\\/g, "/");
-    const segments = normalized.split("/");
-    // Remove file name
-    segments.pop();
-    const relFolder = segments.join("/");
-    const combined = [base, relFolder].filter(Boolean).join("/");
-    return combined.replace(/\/+/g, "/");
-  }
-
-  return base;
-}
 
 export default function MediaLibraryPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
@@ -54,14 +36,11 @@ export default function MediaLibraryPage() {
   const [loading, setLoading] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [files, setFiles] = useState<FileList | null>(null);
-  const [folder, setFolder] = useState("dimond-castle/media");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [usageSummary, setUsageSummary] = useState<string>("");
   const [uploadTasks, setUploadTasks] = useState<UploadTask[]>([]);
   const [managerOpen, setManagerOpen] = useState(false);
-  const [folderFiles, setFolderFiles] = useState<FileList | null>(null);
-
   async function refresh() {
     setLoading(true);
     try {
@@ -86,16 +65,12 @@ export default function MediaLibraryPage() {
     }
 
     // Create upload tasks
-    const tasks: UploadTask[] = Array.from(files).map((file) => {
-      const targetFolder = getTargetFolder(folder, file);
-      return {
-        id: Math.random().toString(36).substring(7),
-        file,
-        status: "pending" as const,
-        progress: 0,
-        targetFolder,
-      };
-    });
+    const tasks: UploadTask[] = Array.from(files).map((file) => ({
+      id: Math.random().toString(36).substring(7),
+      file,
+      status: "pending" as const,
+      progress: 0,
+    }));
 
     setUploadTasks(tasks);
     setManagerOpen(true);
@@ -119,59 +94,12 @@ export default function MediaLibraryPage() {
     );
 
     try {
-      const isVideo = task.file.type.startsWith("video/");
-      const sig = await getUploadSignature({
-        folder: task.targetFolder || folder,
-        resource_type: isVideo ? "video" : "image",
-      });
-      
-      const formData = new FormData();
-      formData.append("file", task.file);
-      formData.append("api_key", sig.apiKey);
-      formData.append("timestamp", String(sig.timestamp));
-      formData.append("signature", sig.signature);
-      if (sig.folder) formData.append("folder", sig.folder);
-
-      const endpoint = `https://api.cloudinary.com/v1_1/${sig.cloudName}/${isVideo ? "video" : "image"}/upload`;
-
-      // Upload with progress tracking using XMLHttpRequest
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-
-        xhr.upload.addEventListener("progress", (e) => {
-          if (e.lengthComputable) {
-            const progress = Math.round((e.loaded / e.total) * 100);
-            setUploadTasks((prev) =>
-              prev.map((t) => (t.id === task.id ? { ...t, progress } : t))
-            );
-          }
-        });
-
-        xhr.addEventListener("load", () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            const result = JSON.parse(xhr.responseText);
-            setUploadTasks((prev) =>
-              prev.map((t) =>
-                t.id === task.id ? { ...t, status: "success", progress: 100, result } : t
-              )
-            );
-            resolve();
-          } else {
-            let errorMsg = "Upload failed";
-            try {
-              const errorData = JSON.parse(xhr.responseText);
-              errorMsg = errorData.error?.message || errorMsg;
-            } catch {}
-            reject(new Error(errorMsg));
-          }
-        });
-
-        xhr.addEventListener("error", () => reject(new Error("Network error")));
-        xhr.addEventListener("abort", () => reject(new Error("Upload cancelled")));
-
-        xhr.open("POST", endpoint);
-        xhr.send(formData);
-      });
+      const result = await uploadMedia(task.file);
+      setUploadTasks((prev) =>
+        prev.map((t) =>
+          t.id === task.id ? { ...t, status: "success", progress: 100, result } : t
+        )
+      );
     } catch (e: any) {
       setUploadTasks((prev) =>
         prev.map((t) =>
@@ -234,48 +162,6 @@ export default function MediaLibraryPage() {
                       {files.length} file{files.length > 1 ? "s" : ""} selected
                     </p>
                   )}
-                </div>
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <FolderOpen className="h-4 w-4" />
-                    Folders (upload folder and all contents)
-                  </label>
-                  {/* Using native input here so we can attach `webkitdirectory` safely */}
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                  <input
-                    type="file"
-                    multiple
-                    // @ts-ignore - non-standard but supported in modern browsers
-                    webkitdirectory="true"
-                    // @ts-ignore - non-standard directory attribute
-                    directory="true"
-                    accept="image/jpeg,image/png,image/webp,video/mp4"
-                    onChange={(e) => {
-                      const fl = e.target.files;
-                      setFolderFiles(fl);
-                      if (fl && fl.length > 0) {
-                        setFiles(fl);
-                      }
-                    }}
-                    className="mt-1 block w-full text-sm text-muted-foreground file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
-                  />
-                  {folderFiles && folderFiles.length > 0 && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {folderFiles.length} item{folderFiles.length > 1 ? "s" : ""} in selected folder(s)
-                    </p>
-                  )}
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    When you select a folder, its subfolders will be preserved in Cloudinary under the base folder below.
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Folder (optional)</label>
-                  <Input
-                    placeholder="e.g. dimond-castle/blog"
-                    value={folder}
-                    onChange={(e) => setFolder(e.target.value)}
-                    className="mt-1"
-                  />
                 </div>
                 <p className="text-xs text-muted-foreground">Allowed: JPG, PNG, WEBP, MP4</p>
               </div>
