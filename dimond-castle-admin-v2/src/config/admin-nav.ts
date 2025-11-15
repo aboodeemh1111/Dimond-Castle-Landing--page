@@ -11,6 +11,7 @@ import {
   LogOut,
   ExternalLink,
   Package,
+  Truck,
 } from "lucide-react";
 
 export type AdminNavItem = {
@@ -30,6 +31,7 @@ export const adminNav: AdminNavItem[] = [
   { label: { en: "Pages", ar: "الصفحات" }, href: "/admin/pages", icon: FileText },
   { label: { en: "Navigation", ar: "القائمة" }, href: "/admin/navigation", icon: MenuIcon },
   { label: { en: "Media", ar: "الوسائط" }, href: "/admin/media", icon: ImageIcon },
+  { label: { en: "Services", ar: "الخدمات" }, href: "/admin/services", icon: Truck },
   { label: { en: "Messages", ar: "الرسائل الواردة" }, href: "/admin/messages", icon: Mail },
   { label: { en: "Theme", ar: "السمة" }, href: "/admin/theme", icon: Palette },
   { label: { en: "Settings", ar: "الإعدادات" }, href: "/admin/settings", icon: SettingsIcon },

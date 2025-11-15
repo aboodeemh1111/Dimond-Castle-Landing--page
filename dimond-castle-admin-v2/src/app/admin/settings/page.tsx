@@ -16,10 +16,12 @@ import { getSettings, patchSettings, exportAll, exportBlogs, exportConfig, expor
 export default function SettingsPage() {
   const { toast } = useToast()
   const [tab, setTab] = useState('general')
+  const [mounted, setMounted] = useState(false)
   const [settings, setSettings] = useState<Settings | null>(null)
 
   const query = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   useEffect(() => { if (query.data) setSettings(query.data) }, [query.data])
+  useEffect(() => { setMounted(true) }, [])
 
   const save = useMutation({
     mutationFn: (patch: Partial<Settings>) => patchSettings(patch),
@@ -34,6 +36,8 @@ export default function SettingsPage() {
     if (s?.adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.adminEmail)) { toast({ title: 'Invalid admin email', variant: 'destructive' }); return }
     s && save.mutate(s)
   }
+
+  if (!mounted) return null
 
   return (
     <div className="space-y-6">
