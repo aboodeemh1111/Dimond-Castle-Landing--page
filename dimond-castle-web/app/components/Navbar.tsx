@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useI18n } from "./I18nProvider";
 
 type NavItem = { key: string; href: string };
@@ -17,6 +17,18 @@ const defaultItems: NavItem[] = [
   { key: "nav.blog", href: "/blog" },
 ];
 
+const desktopLinkClass =
+  "relative group inline-flex flex-col items-center justify-center px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:-translate-y-0.5 hover:text-[var(--gold-600)]";
+
+const desktopTextClass =
+  "relative z-10 block tracking-wide transition-all duration-300 group-hover:text-[var(--gold-500)] group-hover:tracking-[0.08em]";
+
+const hoverBeamClass =
+  "after:content-[''] after:absolute after:inset-x-3 after:bottom-1 after:h-[2px] after:bg-gradient-to-r after:from-[var(--gold-500)] after:via-white after:to-[var(--green-500)] after:opacity-0 after:rounded-full after:transition-all after:duration-300 group-hover:after:opacity-100 group-hover:after:scale-110";
+
+const mobileLinkClass =
+  "relative group block px-4 py-3 text-gray-800 text-sm font-medium transition-all duration-300 hover:bg-accent/40 rounded-md";
+
 export default function Navbar({
   items = defaultItems,
   treeItems,
@@ -25,15 +37,40 @@ export default function Navbar({
   treeItems?: TreeItem[];
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
   const { t, language, toggleLanguage } = useI18n();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (typeof window === "undefined") return;
+      setIsPinned(window.scrollY > 10);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const closeMobileMenu = () => {
     setIsOpen(false);
   };
 
+  const navClasses = [
+    "sticky top-0 inset-x-0 z-50 transition-all duration-500 will-change-transform w-full",
+    "border",
+    isPinned
+      ? "bg-white/80 backdrop-blur-2xl border-white/40 shadow-[0_18px_45px_rgba(0,0,0,0.15)]"
+      : "bg-white/40 backdrop-blur-lg border-white/10 shadow-none",
+  ].join(" ");
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-[var(--dc-gray)] supports-backdrop-filter:bg-white/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className={`${navClasses} relative overflow-hidden`}>
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-white/10" />
+        <div className="absolute -top-24 left-1/3 h-72 w-72 bg-[var(--gold-500)]/20 blur-[110px] animate-pulse" />
+        <div className="absolute top-1/2 -translate-y-1/2 right-10 h-56 w-56 bg-[var(--green-500)]/15 blur-[100px]" />
+        <div className="absolute bottom-0 left-0 h-40 w-40 bg-white/30 blur-3xl" />
+      </div>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-16">
           {/* Logo and Navigation grouped on the left */}
           <div className="flex items-center gap-6 xl:gap-8 flex-1">
@@ -59,15 +96,15 @@ export default function Navbar({
             </a>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:block overflow-visible">
+            <div className="hidden md:block overflow-visible">
               <ul className="flex items-center gap-4 2xl:gap-6 overflow-x-auto overflow-y-visible whitespace-nowrap no-scrollbar">
                 {items.map((item) => (
                   <li key={`default-${item.key}`}>
                     <a
                       href={item.href}
-                      className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 hover:underline underline-offset-4 decoration-[var(--gold-500)] after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300 glow-gold"
+                      className={`${desktopLinkClass} ${hoverBeamClass} glow-gold`}
                     >
-                      {t(item.key)}
+                      <span className={desktopTextClass}>{t(item.key)}</span>
                     </a>
                   </li>
                 ))}
@@ -77,9 +114,11 @@ export default function Navbar({
                       href={item.href}
                       target={item.newTab ? '_blank' : undefined}
                       rel={item.newTab ? 'noopener' : undefined}
-                      className="relative group px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] transition-all duration-300 border-b-2 border-transparent rounded-md hover:bg-accent/30 hover:shadow-sm hover:-translate-y-0.5 hover:underline underline-offset-4 decoration-[var(--gold-500)] after:content-[''] after:absolute after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] after:rounded-full group-hover:after:w-3/4 after:transition-all after:duration-300 glow-gold"
+                      className={`${desktopLinkClass} ${hoverBeamClass} glow-gold`}
                     >
-                      {language === 'ar' ? item.labelAR : item.labelEN}
+                      <span className={desktopTextClass}>
+                        {language === 'ar' ? item.labelAR : item.labelEN}
+                      </span>
                     </a>
                     {item.children && item.children.length > 0 && (
                       <div className="invisible group-hover:visible absolute left-0 top-full mt-2 min-w-[200px] rounded-md border border-[var(--dc-gray)] bg-white shadow-lg p-2">
@@ -90,7 +129,7 @@ export default function Navbar({
                                 href={child.href}
                                 target={child.newTab ? '_blank' : undefined}
                                 rel={child.newTab ? 'noopener' : undefined}
-                                className="block px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] rounded-md hover:bg-accent/30 hover:underline underline-offset-4"
+                                className="block px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] rounded-md hover:bg-accent/30 hover:text-[var(--gold-600)] transition-all duration-300"
                               >
                                 {language === 'ar' ? child.labelAR : child.labelEN}
                               </a>
@@ -102,7 +141,7 @@ export default function Navbar({
                   </li>
                 ))}
               </ul>
-            </nav>
+            </div>
           </div>
 
           {/* Desktop language switcher */}
@@ -171,22 +210,27 @@ export default function Navbar({
 
       {/* Mobile Navigation */}
       <div
-        className={`md:hidden transition-all duration-200 ease-out overflow-hidden ${
+        className={`md:hidden transition-all duration-300 ease-out overflow-hidden ${
           isOpen
             ? "max-h-[80vh] opacity-100 translate-y-0"
             : "max-h-0 opacity-0 -translate-y-2 pointer-events-none"
         }`}
       >
         <div className="px-4 sm:px-6 lg:px-8 pb-4">
-          <ul className="mt-2 space-y-1 rounded-lg border border-[var(--dc-gray)] bg-white shadow-sm overflow-hidden">
+          <ul className="mt-2 space-y-1 rounded-xl border border-[var(--dc-gray)] bg-white/95 shadow-xl overflow-hidden backdrop-blur-sm p-2">
             {items.map((item) => (
               <li key={`mobile-default-${item.key}`} className="border-b last:border-b-0 border-gray-100">
                 <a
                   href={item.href}
                   onClick={closeMobileMenu}
-                  className="relative group block px-4 py-3 text-gray-700 hover:bg-accent/30 text-sm font-medium transition-all duration-300 hover:underline underline-offset-4 after:content-[''] after:absolute after:left-4 after:bottom-2 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] group-hover:after:w-10 after:transition-all after:duration-300 glow-gold"
+                  className={`${mobileLinkClass} glow-gold`}
                 >
-                  {t(item.key)}
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold-500)] transition-all group-hover:scale-150" />
+                    <span className="transition-transform duration-300 group-hover:translate-x-1">
+                      {t(item.key)}
+                    </span>
+                  </span>
                 </a>
               </li>
             ))}
@@ -234,12 +278,15 @@ function renderMobileTree(items: TreeItem[], language: string, onClick: () => vo
       <li key={`${item.href}-${idx}`} className="border-b last:border-b-0 border-gray-100">
         <a
           href={item.href}
-          className="relative group block px-4 py-3 text-gray-700 hover:bg-accent/30 text-sm font-medium transition-all duration-300 hover:underline underline-offset-4 after:content-[''] after:absolute after:left-4 after:bottom-2 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] group-hover:after:w-10 after:transition-all after:duration-300 glow-gold"
+          className={`${mobileLinkClass} glow-gold`}
           onClick={onClick}
           target={item.newTab ? '_blank' : undefined}
           rel={item.newTab ? 'noopener' : undefined}
         >
-          {label}
+          <span className="inline-flex items-center gap-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold-500)] transition-all group-hover:scale-150" />
+            <span className="transition-transform duration-300 group-hover:translate-x-1">{label}</span>
+          </span>
         </a>
       </li>
     )
@@ -248,12 +295,17 @@ function renderMobileTree(items: TreeItem[], language: string, onClick: () => vo
           <li key={`${child.href}-${idx}-${cidx}`} className="border-b last:border-b-0 border-gray-100 pl-6">
             <a
               href={child.href}
-              className="relative group block px-4 py-3 text-gray-700 hover:bg-accent/30 text-sm font-medium transition-all duration-300 hover:underline underline-offset-4 after:content-[''] after:absolute after:left-4 after:bottom-2 after:h-[2px] after:w-0 after:bg-[var(--gold-500)] group-hover:after:w-10 after:transition-all after:duration-300 glow-gold"
+              className={`${mobileLinkClass} glow-gold`}
               onClick={onClick}
               target={child.newTab ? '_blank' : undefined}
               rel={child.newTab ? 'noopener' : undefined}
             >
-              {language === 'ar' ? child.labelAR : child.labelEN}
+              <span className="inline-flex items-center gap-2 pl-2">
+                <span className="h-1 w-6 bg-gradient-to-r from-[var(--gold-500)] to-transparent rounded-full opacity-70" />
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
+                  {language === 'ar' ? child.labelAR : child.labelEN}
+                </span>
+              </span>
             </a>
           </li>
         ))
