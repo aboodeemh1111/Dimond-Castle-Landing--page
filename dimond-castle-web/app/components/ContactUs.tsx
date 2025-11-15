@@ -138,7 +138,7 @@ export default function ContactUs() {
              (settings.businessHours?.length ?? 0) > 0 ||
              settings.googleMapEmbedUrl) && (
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm text-gray-700">
-                {(settings.phoneNumbers?.length || settings.whatsappNumbers?.length) && (
+                {((settings.phoneNumbers?.length ?? 0) > 0 || (settings.whatsappNumbers?.length ?? 0) > 0) && (
                   <div>
                     <div className="font-semibold mb-1">{t("contact.phone")}</div>
                     <ul className="space-y-1">
@@ -171,7 +171,7 @@ export default function ContactUs() {
                     </ul>
                   </div>
                 ) : null}
-                {(settings.addressesEN?.length || settings.addressesAR?.length) && (
+                {((settings.addressesEN?.length ?? 0) > 0 || (settings.addressesAR?.length ?? 0) > 0) && (
                   <div className="sm:col-span-2">
                     <div className="font-semibold mb-1">{t("contact.address")}</div>
                     <ul className="space-y-1">
