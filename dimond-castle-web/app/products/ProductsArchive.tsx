@@ -299,8 +299,8 @@ export default function ProductsArchive({ initialData }: ProductsArchiveProps) {
                 const localized = product[locale as "en" | "ar"];
                 const imageUrl = product.coverPublicId
                   ? getCloudinaryUrl(product.coverPublicId, {
-                      width: 640,
-                      height: 640,
+                      width: 800,
+                      height: 650,
                       crop: "fill",
                     })
                   : "/images/basmatiBag.png";
@@ -310,7 +310,7 @@ export default function ProductsArchive({ initialData }: ProductsArchiveProps) {
                     key={product._id}
                     className="group overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
                   >
-                    <div className="relative h-64 overflow-hidden bg-gray-100">
+                    <div className="relative bg-gray-100 h-80 overflow-hidden">
                       <Image
                         src={imageUrl}
                         alt={localized.name}

@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: PageProps) {
   const title = product.en.seo?.title || product.en.name;
   const description = product.en.seo?.description || product.en.description;
   const ogImage = product.en.seo?.ogImage || (product.coverPublicId 
-    ? getCloudinaryUrl(product.coverPublicId, { width: 1200, height: 630, crop: 'fill' })
+    ? getCloudinaryUrl(product.coverPublicId, { width: 1200, height: 630, crop: 'fit' })
     : undefined);
 
   return {
@@ -73,7 +73,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   // Default product page layout
   const imageUrl = product.coverPublicId
-    ? getCloudinaryUrl(product.coverPublicId, { width: 1200, height: 800, crop: 'fill' })
+    ? getCloudinaryUrl(product.coverPublicId, { width: 1200, height: 800, crop: 'fit' })
     : "/images/basmatiBag.png";
 
   return (
@@ -128,8 +128,8 @@ export default async function ProductPage({ params }: PageProps) {
                         <img
                           src={getCloudinaryUrl(publicId, { 
                             width: 300, 
-                            height: 300, 
-                            crop: 'fill' 
+                            height: 225, 
+                            crop: 'fit' 
                           })}
                           alt={`${product.en.name} - Thumbnail ${index + 1}`}
                           className="w-full h-full object-cover"
@@ -290,9 +290,9 @@ export default async function ProductPage({ params }: PageProps) {
                   >
                     <img
                       src={getCloudinaryUrl(publicId, { 
-                        width: 500, 
-                        height: 500, 
-                        crop: 'fill' 
+                        width: 800, 
+                        height: 600, 
+                        crop: 'fit' 
                       })}
                       alt={`${product.en.name} - Gallery ${index + 1}`}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"

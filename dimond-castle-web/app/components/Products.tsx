@@ -74,7 +74,11 @@ export default function Products() {
             {products.map((product) => {
               const locale = dir === "rtl" ? "ar" : "en";
               const imageUrl = product.coverPublicId
-                ? getCloudinaryUrl(product.coverPublicId, { width: 400, height: 400, crop: 'fill' })
+                ? getCloudinaryUrl(product.coverPublicId, {
+                    width: 700,
+                    height: 550,
+                    crop: "fill",
+                  })
                 : "/images/basmatiBag.png";
 
               return (
@@ -83,11 +87,11 @@ export default function Products() {
                   className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[var(--dc-gray)]/80"
                 >
                   {/* Product Image */}
-                  <div className="relative h-64 overflow-hidden bg-accent/30">
+                  <div className="relative bg-accent/30 h-72 overflow-hidden">
                     <img
                       src={imageUrl}
                       alt={product[locale].name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
