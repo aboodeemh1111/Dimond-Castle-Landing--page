@@ -205,7 +205,7 @@ export default function ContactUs() {
               <div>
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900"
                 >
                   {t("contact.name")}
                 </label>
@@ -217,7 +217,7 @@ export default function ContactUs() {
                   value={form.name}
                   onChange={onChange}
                   autoComplete="name"
-                  className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                  className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm transition-all duration-200 hover:border-gray-400 hover:shadow-md focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 focus:shadow-lg"
                   placeholder={t("contact.placeholder.name")}
                 />
               </div>
@@ -225,7 +225,7 @@ export default function ContactUs() {
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900"
                 >
                   {t("contact.email")}
                 </label>
@@ -237,7 +237,7 @@ export default function ContactUs() {
                   value={form.email}
                   onChange={onChange}
                   autoComplete="email"
-                  className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                  className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm transition-all duration-200 hover:border-gray-400 hover:shadow-md focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 focus:shadow-lg"
                   placeholder={t("contact.placeholder.email")}
                 />
               </div>
@@ -246,7 +246,7 @@ export default function ContactUs() {
             <div>
               <label
                 htmlFor="subject"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900"
                 >
                 {t("contact.subject")}
               </label>
@@ -257,7 +257,7 @@ export default function ContactUs() {
                 value={form.subject}
                 onChange={onChange}
                 autoComplete="off"
-                className="mt-2 block w-full rounded-md border border-[var(--dc-gray)] bg-white px-3 py-2 text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--gold-500)] focus:outline-offset-2"
+                className="mt-2 block w-full rounded-md border border-[var(--dc-gray)] bg-white px-3 py-2 text-gray-900 shadow-sm transition-all duration-200 hover:border-gray-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--gold-500)] focus:outline-offset-2 focus:shadow-lg"
                 placeholder={t("contact.placeholder.subject")}
               />
             </div>
@@ -265,7 +265,7 @@ export default function ContactUs() {
             <div>
               <label
                 htmlFor="message"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 transition-colors duration-200 hover:text-gray-900"
                 >
                 {t("contact.message")}
               </label>
@@ -277,7 +277,7 @@ export default function ContactUs() {
                 value={form.message}
                 onChange={onChange}
                 autoComplete="off"
-                className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                className="mt-2 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm transition-all duration-200 hover:border-gray-400 hover:shadow-md focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900 focus:shadow-lg resize-none"
                 placeholder={t("contact.placeholder.message")}
               />
             </div>
@@ -287,7 +287,7 @@ export default function ContactUs() {
               <button
                 type="submit"
                 disabled={status.type === "submitting"}
-                className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm disabled:opacity-60 focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)] btn-glass"
+                className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-sm focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)] btn-glass"
               >
                 {status.type === "submitting" ? t("contact.sending") : t("contact.send")}
               </button>

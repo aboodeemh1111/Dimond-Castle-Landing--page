@@ -9,7 +9,7 @@ import { useI18n } from "./I18nProvider";
 export default function Hero() {
   const { t } = useI18n();
   return (
-    <section className="relative w-full h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative w-full h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 w-full h-full">
         <Image

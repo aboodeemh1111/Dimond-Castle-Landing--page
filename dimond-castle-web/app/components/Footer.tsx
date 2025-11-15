@@ -270,7 +270,19 @@ export default function Footer() {
                 {t("footer.copyright")}
               </p>
               <div className="flex items-center gap-4">
-                <a href="#home" className="hover:underline transition-colors">
+                <a 
+                  href="#home" 
+                  className="hover:underline transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const homeElement = document.getElementById('home');
+                    if (homeElement) {
+                      homeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                >
                   {t("footer.backToTop")}
                 </a>
               </div>

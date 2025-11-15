@@ -42,6 +42,10 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background: var(--dc-bg);
   color: var(--dc-text);
