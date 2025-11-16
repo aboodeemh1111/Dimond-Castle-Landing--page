@@ -16,6 +16,7 @@ import settingsRouter from './routes/settings'
 import authRouter from './routes/auth'
 import productsRouter from './routes/products'
 import servicesRouter from './routes/services'
+import heroRouter from './routes/hero'
 
 const app = express()
 
@@ -46,6 +47,7 @@ app.use('/api/settings', settingsRouter)
 app.use('/api/auth', authRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/services', servicesRouter)
+app.use('/api/hero', heroRouter)
 
 // Not found handler
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
