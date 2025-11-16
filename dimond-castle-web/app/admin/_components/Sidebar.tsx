@@ -32,7 +32,7 @@ export default function Sidebar() {
 
   return (
     <aside className="w-64 bg-brand-green-600 text-white hidden md:flex md:flex-col">
-      <div className="px-4 py-5 text-lg font-semibold tracking-wide">Dimond Castle</div>
+      <div className="px-4 py-5 text-lg font-semibold tracking-wide">Diamond Castle</div>
       <nav className="flex-1 overflow-y-auto no-scrollbar px-2 space-y-1">
         {items.map(({ href, label, icon: Icon }) => {
           const active = pathname.startsWith(href);

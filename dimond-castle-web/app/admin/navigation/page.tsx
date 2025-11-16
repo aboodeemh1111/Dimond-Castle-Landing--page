@@ -139,7 +139,7 @@ function CurrentNavbarPreview({ items }: { items: NavTreeItem[] }) {
             <div className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-full bg-emerald-600" />
               <span className="text-sm font-semibold tracking-tight text-gray-900">
-                Dimond Castle
+                Diamond Castle
               </span>
             </div>
 

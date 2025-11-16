@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dimond Castle Admin",
-  description: "Admin panel for Dimond Castle",
+  title: "Diamond Castle Admin",
+  description: "Admin panel for Diamond Castle",
 };
 
 export default function RootLayout({

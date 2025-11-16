@@ -153,7 +153,7 @@ export default function SettingsPage() {
             <CardHeader><CardTitle>SEO Defaults</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <Row label="Title Suffix">
-                <Input value={s?.seo?.titleSuffix || ''} onChange={(e) => set({ seo: { ...s?.seo, titleSuffix: e.target.value } })} placeholder="| Dimond Castle Trading" />
+                <Input value={s?.seo?.titleSuffix || ''} onChange={(e) => set({ seo: { ...s?.seo, titleSuffix: e.target.value } })} placeholder="| Diamond Castle Trading" />
               </Row>
               <Row label="Default Description (EN)">
                 <Input value={s?.seo?.descriptionEN || ''} onChange={(e) => set({ seo: { ...s?.seo, descriptionEN: e.target.value } })} />

@@ -26,7 +26,7 @@ const dictionaries: Dictionaries = {
     "brand.full": "Diamond Castle",
     "hero.title.leading": "White Diamond",
     "hero.title.trailing": "The Crown Jewel of Rice",
-    "hero.subtitle": "From Dimond Castle Trading Company, the \"White Diamond\" brand symbolizes purity, heritage, and perfection — the choice of premium rice buyers worldwide.",
+    "hero.subtitle": "From Diamond Castle Trading Company, the \"White Diamond\" brand symbolizes purity, heritage, and perfection — the choice of premium rice buyers worldwide.",
     "hero.imageAlt": "Luxurious rice feast with roasted chicken, nuts, and tea service",
     "hero.cta.view": "View White Diamond Rice",
     "hero.cta.learn": "Learn More About Us",

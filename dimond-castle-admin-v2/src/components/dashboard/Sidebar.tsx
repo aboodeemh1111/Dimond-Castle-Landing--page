@@ -43,7 +43,7 @@ export function Sidebar({ className, collapsed, onToggleCollapsed, onLogout }: S
       <div className="flex h-16 items-center justify-between px-3 sticky top-0 z-10 bg-emerald-950/95 backdrop-blur supports-[backdrop-filter]:bg-emerald-950/80">
         <div className="flex items-center gap-2">
           <div className="grid h-8 w-8 place-items-center rounded bg-emerald-800 text-white">DC</div>
-          {!collapsed && <span className="font-semibold">Dimond Castle</span>}
+          {!collapsed && <span className="font-semibold">Diamond Castle</span>}
         </div>
         <Button
           aria-label={collapsed ? t("aria.expandSidebar") : t("aria.collapseSidebar")}

@@ -10,7 +10,7 @@ export const mockToken = "mock-token";
 const mockBlogs = [
   {
     _id: "b1",
-    title: "Welcome to Dimond Castle",
+    title: "Welcome to Diamond Castle",
     status: "published",
     publishedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

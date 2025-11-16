@@ -31,7 +31,7 @@ export default function BlogIndexPage() {
   const t = {
     en: {
       title: "Blog",
-      subtitle: "Latest insights, updates, and stories from Dimond Castle",
+      subtitle: "Latest insights, updates, and stories from Diamond Castle",
       noPosts: "No posts yet",
       noPostsSub: "Check back soon for our latest updates!",
       readMore: "Read more",
