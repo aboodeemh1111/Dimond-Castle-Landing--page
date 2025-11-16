@@ -100,16 +100,18 @@ export default function Story() {
         <div className="mt-10 grid items-center gap-8 md:gap-10 lg:gap-14 md:grid-cols-2">
           {/* Visual panel */}
           <div className="relative order-1 md:order-0">
-            <div className="relative rounded-3xl overflow-hidden border border-gray/40 shadow-2xl">
-              {/* Overlay accents */}
-              <div className="pointer-events-none absolute inset-0 bg-linear-to-tr from-white/10 to-transparent" />
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-secondary to-brown" />
-
-              <img
-                src={storyImage}
-                alt={imageAlt}
-                className="aspect-4/3 w-full object-cover"
-              />
+            <div className="relative rounded-3xl overflow-hidden border border-white/40 shadow-2xl backdrop-blur bg-white/40">
+              <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-primary via-secondary to-brown opacity-80" />
+              <div className="aspect-[4/3] w-full">
+                <img
+                  src={storyImage}
+                  alt={imageAlt}
+                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-black/20 via-transparent to-black/10 mix-blend-multiply" />
+              </div>
+              <div className="absolute -bottom-10 left-1/2 h-32 w-2/3 -translate-x-1/2 rounded-full bg-black/20 blur-[60px]" aria-hidden />
             </div>
           </div>
 
