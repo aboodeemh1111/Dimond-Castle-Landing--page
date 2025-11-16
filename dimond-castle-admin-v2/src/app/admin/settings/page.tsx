@@ -55,7 +55,6 @@ export default function SettingsPage() {
           <TabsTrigger value="localization">Localization</TabsTrigger>
           <TabsTrigger value="seo">SEO Defaults</TabsTrigger>
           <TabsTrigger value="admin">Admin Account</TabsTrigger>
-          <TabsTrigger value="integrations">Integrations</TabsTrigger>
           <TabsTrigger value="export">Backups / Export</TabsTrigger>
           <TabsTrigger value="danger">Danger Zone</TabsTrigger>
         </TabsList>
@@ -145,32 +144,6 @@ export default function SettingsPage() {
               </Row>
               <Separator />
               <div className="text-sm text-muted-foreground">Password change is not enabled in this build.</div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="integrations">
-          <Card>
-            <CardHeader><CardTitle>Integrations</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
-              <Row label="Cloudinary Cloud Name">
-                <Input value={s?.integrations?.cloudinaryCloudName || ''} onChange={(e) => set({ integrations: { ...s?.integrations, cloudinaryCloudName: e.target.value } })} />
-              </Row>
-              <Row label="Cloudinary Folder Prefix">
-                <Input value={s?.integrations?.cloudinaryFolderPrefix || ''} onChange={(e) => set({ integrations: { ...s?.integrations, cloudinaryFolderPrefix: e.target.value } })} />
-              </Row>
-              <Row label="GA Measurement ID (G-XXXX)">
-                <Input value={s?.integrations?.gaMeasurementId || ''} onChange={(e) => set({ integrations: { ...s?.integrations, gaMeasurementId: e.target.value } })} />
-              </Row>
-              <Row label="GTM ID (GTM-XXXX)">
-                <Input value={s?.integrations?.gtmId || ''} onChange={(e) => set({ integrations: { ...s?.integrations, gtmId: e.target.value } })} />
-              </Row>
-              <Row label="Search Console Property ID">
-                <Input value={s?.integrations?.gscPropertyId || ''} onChange={(e) => set({ integrations: { ...s?.integrations, gscPropertyId: e.target.value } })} />
-              </Row>
-              <Row label="reCAPTCHA Site Key">
-                <Input value={s?.integrations?.recaptchaSiteKey || ''} onChange={(e) => set({ integrations: { ...s?.integrations, recaptchaSiteKey: e.target.value } })} />
-              </Row>
             </CardContent>
           </Card>
         </TabsContent>
