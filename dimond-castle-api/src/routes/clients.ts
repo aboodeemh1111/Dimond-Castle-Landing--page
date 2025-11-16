@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { Types } from 'mongoose'
-import ClientSettings from '../models/ClientSettings'
+import ClientSettings, { type ClientSettingsDocument } from '../models/ClientSettings'
 import { clientSettingsSchema } from '../validation/clients'
 
 const router = Router()
@@ -45,7 +45,7 @@ const defaultResponse = {
 
 router.get('/settings', async (_req, res, next) => {
   try {
-    const settings = await ClientSettings.findOne().lean()
+    const settings = (await ClientSettings.findOne().lean()) as ClientSettingsDocument | null
     if (!settings || !settings.clients?.length) {
       return res.json(defaultResponse)
     }
