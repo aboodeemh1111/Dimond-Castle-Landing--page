@@ -37,6 +37,7 @@ export function ProductEditor({ product, onDelete }: Props) {
   const [hasChanges, setHasChanges] = useState(false)
   const [locale, setLocale] = useState<'en' | 'ar'>('en')
   const [activeTab, setActiveTab] = useState('details')
+  const [newSize, setNewSize] = useState('')
 
   useEffect(() => {
     setLocalProduct(product)
@@ -104,10 +105,10 @@ export function ProductEditor({ product, onDelete }: Props) {
   }
 
   const addSize = () => {
-    const newSize = prompt('Enter size (e.g., 5kg, 10kg):')
-    if (newSize) {
-      updateField('sizes', [...(localProduct.sizes || []), newSize])
-    }
+    const value = newSize.trim()
+    if (!value) return
+    updateField('sizes', [...(localProduct.sizes || []), value])
+    setNewSize('')
   }
 
   const removeSize = (index: number) => {
@@ -134,11 +135,11 @@ export function ProductEditor({ product, onDelete }: Props) {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] gap-6">
+    <div className="flex flex-col gap-6 lg:flex-row lg:h-[calc(100vh-4rem)]">
       {/* Left: Editor */}
       <div className="flex-1 flex flex-col min-w-0">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-4">
+          <div className="flex flex-wrap items-center gap-3">
             <h1 className="text-2xl font-bold truncate">{localProduct[locale].name}</h1>
             {localProduct.status === 'published' ? (
               <Badge className="bg-green-500">Published</Badge>
@@ -147,7 +148,7 @@ export function ProductEditor({ product, onDelete }: Props) {
             )}
             {hasChanges && <Badge variant="outline">Unsaved</Badge>}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button 
               variant="outline" 
               size="sm" 
@@ -169,14 +170,14 @@ export function ProductEditor({ product, onDelete }: Props) {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          <TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
+          <TabsList className="flex-nowrap overflow-auto gap-2">
             <TabsTrigger value="details">Product Details</TabsTrigger>
             <TabsTrigger value="page">Page Builder</TabsTrigger>
             <TabsTrigger value="seo">SEO</TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="flex-1 mt-4">
+          <ScrollArea className="mt-4 flex-1 lg:h-[calc(100vh-20rem)]">
             <TabsContent value="details" className="space-y-6 mt-0">
               {/* Language Toggle */}
               <Card>
@@ -249,7 +250,7 @@ export function ProductEditor({ product, onDelete }: Props) {
                   <CardTitle>Pricing & Inventory</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label>Price</Label>
                       <Input
@@ -362,10 +363,17 @@ export function ProductEditor({ product, onDelete }: Props) {
                       </Badge>
                     ))}
                   </div>
-                  <Button variant="outline" size="sm" onClick={addSize}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Size
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Input
+                      value={newSize}
+                      onChange={(e) => setNewSize(e.target.value)}
+                      placeholder="e.g., 5kg, 10kg"
+                    />
+                    <Button variant="outline" size="sm" onClick={addSize} disabled={!newSize.trim()}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Size
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
 
@@ -414,7 +422,7 @@ export function ProductEditor({ product, onDelete }: Props) {
                   </div>
                   <div>
                     <Label>Gallery Images</Label>
-                    <div className="grid grid-cols-3 gap-2 mt-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
                       {localProduct.galleryPublicIds?.map((publicId, index) => (
                         <div key={index} className="relative">
                           <img
@@ -523,7 +531,7 @@ export function ProductEditor({ product, onDelete }: Props) {
       </div>
 
       {/* Right: Info Panel */}
-      <div className="w-80 space-y-4">
+      <div className="w-full lg:w-80 space-y-4 flex-shrink-0">
         <Card>
           <CardHeader>
             <CardTitle>Product Info</CardTitle>
