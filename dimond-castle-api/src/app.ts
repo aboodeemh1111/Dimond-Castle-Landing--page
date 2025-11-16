@@ -17,6 +17,9 @@ import authRouter from './routes/auth'
 import productsRouter from './routes/products'
 import servicesRouter from './routes/services'
 import heroRouter from './routes/hero'
+import storyRouter from './routes/story'
+import visionRouter from './routes/vision'
+import valuesRouter from './routes/values'
 
 const app = express()
 
@@ -48,6 +51,9 @@ app.use('/api/auth', authRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/services', servicesRouter)
 app.use('/api/hero', heroRouter)
+app.use('/api/story', storyRouter)
+app.use('/api/vision', visionRouter)
+app.use('/api/values', valuesRouter)
 
 // Not found handler
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))

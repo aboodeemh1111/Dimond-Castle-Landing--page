@@ -31,7 +31,8 @@ export default function SettingsPage() {
   })
 
   const s = settings
-  const set = (patch: Partial<Settings>) => setSettings((prev) => ({ ...(prev as Settings), ...patch }))
+  const set = (patch: Partial<Settings>) =>
+    setSettings((prev) => (prev ? { ...prev, ...patch } : prev))
   const doSave = () => {
     if (!s?.companyName?.trim()) { toast({ title: 'Company name is required', variant: 'destructive' }); return }
     if (s?.adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.adminEmail)) { toast({ title: 'Invalid admin email', variant: 'destructive' }); return }
@@ -61,6 +62,24 @@ export default function SettingsPage() {
   }
 
   if (!mounted) return null
+
+  if (query.isError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-4rem)] space-y-4">
+        <div className="text-destructive">Failed to load settings</div>
+        <div className="text-sm text-muted-foreground">{(query.error as Error)?.message || 'Unknown error'}</div>
+        <Button onClick={() => query.refetch()}>Retry</Button>
+      </div>
+    )
+  }
+
+  if (!s) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+        <div className="text-muted-foreground">Loading settings...</div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
