@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "./I18nProvider";
+import { useThemeSettings } from "./ThemeContext";
+import { getCloudinaryImageUrl } from "../lib/cloudinary";
 
 type NavItem = { key: string; href: string };
 type TreeItem = { labelEN: string; labelAR: string; href: string; newTab?: boolean; children?: TreeItem[] };
@@ -39,6 +41,19 @@ export default function Navbar({
   const [isOpen, setIsOpen] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
   const { t, language, toggleLanguage } = useI18n();
+  const theme = useThemeSettings();
+
+  const logoSrc = useMemo(() => {
+    const lightId = theme.globalAssets?.logoLightId;
+    const darkId = theme.globalAssets?.logoDarkId;
+    if (isPinned && darkId) {
+      return getCloudinaryImageUrl(darkId, "f_auto,q_auto,h_80");
+    }
+    if (lightId) {
+      return getCloudinaryImageUrl(lightId, "f_auto,q_auto,h_80");
+    }
+    return encodeURI("/images/logo/الالماس-الابيض.png");
+  }, [isPinned, theme.globalAssets?.logoDarkId, theme.globalAssets?.logoLightId]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,15 +95,13 @@ export default function Navbar({
               className="shrink-0 flex items-center gap-2"
               aria-label={t("nav.aria.home")}
             >
-              {/* Brand logo image */}
               <img
-                src={encodeURI("/images/logo/الالماس-الابيض.png")}
-                alt="White Diamond logo"
+                src={logoSrc}
+                alt={t("brand.full")}
                 className="h-7 sm:h-8 w-auto"
                 loading="eager"
                 decoding="async"
               />
-              {/* Brand text (compact) */}
               <span className="text-sm sm:text-base font-semibold tracking-tight text-gray-900">
                 <span className="sm:hidden">{t("brand.short")}</span>
                 <span className="hidden sm:inline">{t("brand.full")}</span>

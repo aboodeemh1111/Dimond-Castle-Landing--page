@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "./I18nProvider";
+import { useThemeSettings } from "./ThemeContext";
+import { getCloudinaryImageUrl } from "../lib/cloudinary";
 
 export default function Footer() {
   const { t, language } = useI18n();
+  const theme = useThemeSettings();
 
   type ContactSettings = {
     titleEN?: string;
@@ -36,6 +39,11 @@ export default function Footer() {
       }
     })();
   }, []);
+  const brandLogo = useMemo(() => {
+    const assetId = theme.globalAssets?.logoLightId || theme.globalAssets?.logoDarkId;
+    return assetId ? getCloudinaryImageUrl(assetId, "f_auto,q_auto,h_80") : null;
+  }, [theme.globalAssets?.logoDarkId, theme.globalAssets?.logoLightId]);
+
   return (
     <footer id="footer" className="relative mt-20 bg-[var(--green-600)] text-white">
       {/* Subtle pattern */}
@@ -58,29 +66,33 @@ export default function Footer() {
               {/* Brand */}
               <div>
                 <div className="flex items-center gap-3">
-                  <svg
-                    className="h-7 w-7 text-white"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M12 2L22 9L12 22L2 9L12 2Z"
-                      fill="currentColor"
-                      fillOpacity="0.12"
-                    />
-                    <path
-                      d="M12 2L22 9L12 22L2 9L12 2Z"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                    />
-                    <path
-                      d="M12 2V22M2 9H22"
-                      stroke="currentColor"
-                      strokeWidth="1"
-                      opacity="0.5"
-                    />
-                  </svg>
+                  {brandLogo ? (
+                    <img src={brandLogo} alt={t("footer.brand")} className="h-10 w-auto rounded-md bg-white/10 p-2" />
+                  ) : (
+                    <svg
+                      className="h-7 w-7 text-white"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M12 2L22 9L12 22L2 9L12 2Z"
+                        fill="currentColor"
+                        fillOpacity="0.12"
+                      />
+                      <path
+                        d="M12 2L22 9L12 22L2 9L12 2Z"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                      />
+                      <path
+                        d="M12 2V22M2 9H22"
+                        stroke="currentColor"
+                        strokeWidth="1"
+                        opacity="0.5"
+                      />
+                    </svg>
+                  )}
                   <p className="text-lg font-semibold tracking-tight text-white">
                     {t("footer.brand")}
                   </p>

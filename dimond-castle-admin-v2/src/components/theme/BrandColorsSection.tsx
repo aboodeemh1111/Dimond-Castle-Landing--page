@@ -43,9 +43,12 @@ export function BrandColorsSection({ colors, onChange }: Props) {
           <div key={key} className="space-y-2">
             <Label htmlFor={key}>{label}</Label>
             <div className="flex gap-3">
-              <div
-                className="w-12 h-10 rounded-md border shadow-sm flex-shrink-0"
-                style={{ backgroundColor: safeColors[key] }}
+              <input
+                type="color"
+                value={safeColors[key]}
+                aria-label={`${label} picker`}
+                onChange={(e) => updateColor(key, e.target.value)}
+                className="h-10 w-12 rounded-md border shadow-sm flex-shrink-0 cursor-pointer bg-transparent"
               />
               <div className="flex-1 space-y-1">
                 <Input

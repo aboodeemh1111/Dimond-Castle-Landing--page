@@ -34,7 +34,7 @@ export type Theme = {
 export async function getTheme(): Promise<Theme> {
   try {
     const res = await fetch(`${API_URL}/api/theme`, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      cache: 'no-store',
     })
     if (!res.ok) throw new Error('Failed to fetch theme')
     return res.json()
