@@ -201,16 +201,18 @@ function TextField({
   value,
   onChange,
   rtl,
+  placeholder,
 }: {
   label: string
   value: string
   onChange: (value: string) => void
   rtl?: boolean
+  placeholder?: string
 }) {
   return (
     <div>
       <Label>{label}</Label>
-      <Input dir={rtl ? 'rtl' : undefined} value={value} onChange={(e) => onChange(e.target.value)} />
+      <Input dir={rtl ? 'rtl' : undefined} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
     </div>
   )
 }
