@@ -18,6 +18,7 @@ export default function SettingsPage() {
   const [tab, setTab] = useState('general')
   const [mounted, setMounted] = useState(false)
   const [settings, setSettings] = useState<Settings | null>(null)
+  const [exporting, setExporting] = useState<string | null>(null)
 
   const query = useQuery({ queryKey: ['settings'], queryFn: getSettings })
   useEffect(() => { if (query.data) setSettings(query.data) }, [query.data])
@@ -35,6 +36,28 @@ export default function SettingsPage() {
     if (!s?.companyName?.trim()) { toast({ title: 'Company name is required', variant: 'destructive' }); return }
     if (s?.adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.adminEmail)) { toast({ title: 'Invalid admin email', variant: 'destructive' }); return }
     s && save.mutate(s)
+  }
+
+  const downloadJson = async (key: string, fetcher: () => Promise<any>, filename: string) => {
+    setExporting(key)
+    try {
+      const data = await fetcher()
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      const stamped = `${filename}-${new Date().toISOString().replace(/[:.]/g, '-')}.json`
+      link.href = url
+      link.download = stamped
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      toast({ title: 'Export ready', description: `${filename} download started.` })
+    } catch (e: any) {
+      toast({ title: 'Export failed', description: e?.message || 'Unknown error', variant: 'destructive' })
+    } finally {
+      setExporting(null)
+    }
   }
 
   if (!mounted) return null
@@ -153,10 +176,33 @@ export default function SettingsPage() {
             <CardHeader><CardTitle>Backups / Export</CardTitle></CardHeader>
             <CardContent className="space-y-3">
               <div className="flex gap-2 flex-wrap">
-                <Button variant="outline" onClick={() => window.open('/api/settings/export/pages', '_blank')}>Export Pages</Button>
-                <Button variant="outline" onClick={() => window.open('/api/settings/export/blogs', '_blank')}>Export Blog Posts</Button>
-                <Button variant="outline" onClick={() => window.open('/api/settings/export/config', '_blank')}>Export Config</Button>
-                <Button onClick={() => window.open('/api/settings/export/all', '_blank')}>Export Full Backup</Button>
+                <Button
+                  variant="outline"
+                  disabled={exporting !== null}
+                  onClick={() => downloadJson('pages', exportPages, 'pages-export')}
+                >
+                  {exporting === 'pages' ? 'Exporting...' : 'Export Pages'}
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={exporting !== null}
+                  onClick={() => downloadJson('blogs', exportBlogs, 'blogs-export')}
+                >
+                  {exporting === 'blogs' ? 'Exporting...' : 'Export Blog Posts'}
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={exporting !== null}
+                  onClick={() => downloadJson('config', exportConfig, 'config-export')}
+                >
+                  {exporting === 'config' ? 'Exporting...' : 'Export Config'}
+                </Button>
+                <Button
+                  disabled={exporting !== null}
+                  onClick={() => downloadJson('all', exportAll, 'full-backup')}
+                >
+                  {exporting === 'all' ? 'Exporting...' : 'Export Full Backup'}
+                </Button>
               </div>
             </CardContent>
           </Card>
