@@ -14,6 +14,7 @@ import {
   Truck,
   Sparkles,
   BookOpen,
+  Handshake,
 } from "lucide-react";
 
 export type AdminNavItem = {
@@ -37,6 +38,7 @@ export const adminNav: AdminNavItem[] = [
   { label: { en: "Story", ar: "القصة" }, href: "/admin/story", icon: BookOpen },
   { label: { en: "Vision", ar: "الرؤية" }, href: "/admin/vision", icon: BookOpen },
   { label: { en: "Values", ar: "القيم" }, href: "/admin/values", icon: BookOpen },
+  { label: { en: "Clients", ar: "العملاء" }, href: "/admin/clients", icon: Handshake },
   { label: { en: "Services", ar: "الخدمات" }, href: "/admin/services", icon: Truck },
   { label: { en: "Messages", ar: "الرسائل الواردة" }, href: "/admin/messages", icon: Mail },
   { label: { en: "Theme", ar: "السمة" }, href: "/admin/theme", icon: Palette },
