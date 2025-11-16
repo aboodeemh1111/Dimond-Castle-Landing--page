@@ -6,26 +6,26 @@ import { getCloudinaryImageUrl } from "../lib/cloudinary";
 import { getClientSettings, type ClientEntry } from "../lib/clients-api";
 
 const fallbackClients: ClientEntry[] = [
-  { nameEN: "MS Logistics", nameAR: "MS Logistics", logoUrl: "/images/partners/MS.png", order: 0 },
-  { nameEN: "SAUDI MEDICAL SYSTEM", nameAR: "النظام الطبي السعودي", logoUrl: "/images/partners/SVR.png", order: 1 },
-  { nameEN: "Business Facilities", nameAR: "اعمال المرافق", logoUrl: "/images/partners/اعمال-المرافق.png", order: 2 },
-  { nameEN: "الباسم", nameAR: "الباسم", logoUrl: "/images/partners/الباسم.png", order: 3 },
-  { nameEN: "البيت الرومنسي", nameAR: "البيت الرومنسي", logoUrl: "/images/partners/البيت-الرومنسي.png", order: 4 },
-  { nameEN: "Gulf Catering Food Factory", nameAR: "مصنع الخليج للتموين", logoUrl: "/images/partners/الخليج.png", order: 5 },
-  { nameEN: "Atheeb Catering", nameAR: "أثيب للتموين", logoUrl: "/images/partners/الذيب.png", order: 6 },
-  { nameEN: "أسواق الرشيد", nameAR: "أسواق الرشيد", logoUrl: "/images/partners/الرشيد.png", order: 7 },
-  { nameEN: "الريم", nameAR: "الريم", logoUrl: "/images/partners/الريم.png", order: 8 },
-  { nameEN: "الصالة الاقتصادية", nameAR: "الصالة الاقتصادية", logoUrl: "/images/partners/الصالة-الاقتصادية.png", order: 9 },
-  { nameEN: "النبلاء", nameAR: "النبلاء", logoUrl: "/images/partners/النبلاء.png", order: 10 },
-  { nameEN: "إمداد", nameAR: "إمداد", logoUrl: "/images/partners/امداد.png", order: 11 },
-  { nameEN: "أوج", nameAR: "أوج", logoUrl: "/images/partners/اوج.png", order: 12 },
-  { nameEN: "Shawarma House", nameAR: "بيت الشاورما", logoUrl: "/images/partners/بيت-الشاورما.png", order: 13 },
-  { nameEN: "شركة فهد الرشيد", nameAR: "شركة فهد الرشيد", logoUrl: "/images/partners/شركة-فهد.png", order: 14 },
-  { nameEN: "شرما للاستثمار", nameAR: "شرما للاستثمار", logoUrl: "/images/partners/شرما.png", order: 15 },
-  { nameEN: "أسواق ضواحي الرمال", nameAR: "أسواق ضواحي الرمال", logoUrl: "/images/partners/ضواحي-الرمال.png", order: 16 },
-  { nameEN: "Gannas Arabia", nameAR: "شركة قناص العربية", logoUrl: "/images/partners/قناص.png", order: 17 },
-  { nameEN: "Consumer Stores", nameAR: "متاجر المستهلك", logoUrl: "/images/partners/متاجر-المستهلك.png", order: 18 },
-  { nameEN: "Hozoon", nameAR: "هزون", logoUrl: "/images/partners/هزون.png", order: 19 },
+  { nameEN: "MS Logistics", nameAR: "MS Logistics", logoUrl: "/images/partners/MS.png", order: 0, bgColor: "#FFFFFF" },
+  { nameEN: "SAUDI MEDICAL SYSTEM", nameAR: "النظام الطبي السعودي", logoUrl: "/images/partners/SVR.png", order: 1, bgColor: "#FFFFFF" },
+  { nameEN: "Business Facilities", nameAR: "اعمال المرافق", logoUrl: "/images/partners/اعمال-المرافق.png", order: 2, bgColor: "#FFFFFF" },
+  { nameEN: "الباسم", nameAR: "الباسم", logoUrl: "/images/partners/الباسم.png", order: 3, bgColor: "#FFFFFF" },
+  { nameEN: "البيت الرومنسي", nameAR: "البيت الرومنسي", logoUrl: "/images/partners/البيت-الرومنسي.png", order: 4, bgColor: "#FFFFFF" },
+  { nameEN: "Gulf Catering Food Factory", nameAR: "مصنع الخليج للتموين", logoUrl: "/images/partners/الخليج.png", order: 5, bgColor: "#FFFFFF" },
+  { nameEN: "Atheeb Catering", nameAR: "أثيب للتموين", logoUrl: "/images/partners/الذيب.png", order: 6, bgColor: "#FFFFFF" },
+  { nameEN: "أسواق الرشيد", nameAR: "أسواق الرشيد", logoUrl: "/images/partners/الرشيد.png", order: 7, bgColor: "#FFFFFF" },
+  { nameEN: "الريم", nameAR: "الريم", logoUrl: "/images/partners/الريم.png", order: 8, bgColor: "#FFFFFF" },
+  { nameEN: "الصالة الاقتصادية", nameAR: "الصالة الاقتصادية", logoUrl: "/images/partners/الصالة-الاقتصادية.png", order: 9, bgColor: "#FFFFFF" },
+  { nameEN: "النبلاء", nameAR: "النبلاء", logoUrl: "/images/partners/النبلاء.png", order: 10, bgColor: "#FFFFFF" },
+  { nameEN: "إمداد", nameAR: "إمداد", logoUrl: "/images/partners/امداد.png", order: 11, bgColor: "#FFFFFF" },
+  { nameEN: "أوج", nameAR: "أوج", logoUrl: "/images/partners/اوج.png", order: 12, bgColor: "#FFFFFF" },
+  { nameEN: "Shawarma House", nameAR: "بيت الشاورما", logoUrl: "/images/partners/بيت-الشاورما.png", order: 13, bgColor: "#FFFFFF" },
+  { nameEN: "شركة فهد الرشيد", nameAR: "شركة فهد الرشيد", logoUrl: "/images/partners/شركة-فهد.png", order: 14, bgColor: "#FFFFFF" },
+  { nameEN: "شرما للاستثمار", nameAR: "شرما للاستثمار", logoUrl: "/images/partners/شرما.png", order: 15, bgColor: "#FFFFFF" },
+  { nameEN: "أسواق ضواحي الرمال", nameAR: "أسواق ضواحي الرمال", logoUrl: "/images/partners/ضواحي-الرمال.png", order: 16, bgColor: "#FFFFFF" },
+  { nameEN: "Gannas Arabia", nameAR: "شركة قناص العربية", logoUrl: "/images/partners/قناص.png", order: 17, bgColor: "#FFFFFF" },
+  { nameEN: "Consumer Stores", nameAR: "متاجر المستهلك", logoUrl: "/images/partners/متاجر-المستهلك.png", order: 18, bgColor: "#FFFFFF" },
+  { nameEN: "Hozoon", nameAR: "هزون", logoUrl: "/images/partners/هزون.png", order: 19, bgColor: "#FFFFFF" },
 ];
 
 export default function Clients() {
@@ -82,7 +82,8 @@ export default function Clients() {
             return (
               <figure
                 key={client._id ?? `${client.nameEN}-${index}`}
-                className="group relative flex items-center justify-center aspect-square bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 p-3 md:p-4 border border-gray/30 overflow-hidden transform hover:-translate-y-1"
+                className="group relative flex items-center justify-center aspect-square rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 p-3 md:p-4 border border-gray/30 overflow-hidden transform hover:-translate-y-1"
+                style={{ backgroundColor: client.bgColor || "#FFFFFF" }}
               >
                 <div className="relative w-full h-full flex items-center justify-center">
                   {logoSrc ? (

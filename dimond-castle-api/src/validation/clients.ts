@@ -8,6 +8,11 @@ export const clientSchema = z.object({
   logoUrl: z.string().min(1).or(z.literal('')).optional(),
   website: z.string().url().or(z.literal('')).optional(),
   order: z.number().optional(),
+  bgColor: z
+    .string()
+    .regex(/^#([0-9a-fA-F]{3}){1,2}$/, 'Color must be a valid hex value')
+    .or(z.literal(''))
+    .optional(),
 })
 
 export const clientSettingsSchema = z.object({

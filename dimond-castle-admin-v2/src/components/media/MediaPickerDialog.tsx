@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -29,6 +30,9 @@ export function MediaPickerDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Paste a Cloudinary public ID to link an existing asset.
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <Input

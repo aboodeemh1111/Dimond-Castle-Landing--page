@@ -8,6 +8,7 @@ const ClientSchema = new Schema(
     logoUrl: { type: String, default: '' },
     website: { type: String, default: '' },
     order: { type: Number, default: 0 },
+    bgColor: { type: String, default: '' },
   },
   { _id: true }
 )
@@ -27,6 +28,7 @@ export type ClientDocument = {
   logoUrl?: string
   website?: string
   order?: number
+  bgColor?: string
   _id: string
 }
 

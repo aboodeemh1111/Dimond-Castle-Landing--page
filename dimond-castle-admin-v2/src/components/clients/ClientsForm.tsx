@@ -1,12 +1,13 @@
 "use client"
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { MediaPickerDialog } from '@/components/media/MediaPickerDialog'
+import { MediaPickerModal } from '@/components/media/MediaPickerModal'
 import { getCloudinaryUrl } from '@/lib/cloudinary'
 import type { ClientItem, ClientSettings } from '@/lib/clients-api'
 import { cn } from '@/lib/utils'
@@ -20,6 +21,35 @@ export function ClientsForm({ value, onChange }: ClientsFormProps) {
   const clients = useMemo(() => {
     return [...(value.clients || [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
   }, [value.clients])
+
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
+  const [recentId, setRecentId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!recentId) return
+    const node = recentId ? cardRefs.current.get(recentId) : null
+    if (node) {
+      node.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      const firstInput = node.querySelector('input, textarea') as HTMLElement | null
+      firstInput?.focus()
+      setRecentId(null)
+    }
+  }, [clients, recentId])
+
+  useEffect(() => {
+    return () => {
+      cardRefs.current.clear()
+    }
+  }, [])
+
+  const registerCardRef = (id?: string) => (node: HTMLDivElement | null) => {
+    if (!id) return
+    if (node) {
+      cardRefs.current.set(id, node)
+    } else {
+      cardRefs.current.delete(id)
+    }
+  }
 
   const apply = (nextClients: ClientItem[]) => {
     onChange({
@@ -44,16 +74,17 @@ export function ClientsForm({ value, onChange }: ClientsFormProps) {
         : `client-${Date.now()}`
 
     apply([
-      ...clients,
       {
         _id: generatedId,
         nameEN: '',
         nameAR: '',
         logoPublicId: '',
         logoUrl: '',
-        order: clients.length,
+        order: 0,
       },
+      ...clients,
     ])
+    setRecentId(generatedId)
   }
 
   const removeClient = (index: number) => {
@@ -86,7 +117,7 @@ export function ClientsForm({ value, onChange }: ClientsFormProps) {
 
       <div className="space-y-4">
         {clients.map((client, index) => (
-          <Card key={client._id ?? index}>
+          <Card key={client._id ?? index} ref={registerCardRef(client._id)}>
             <CardContent className="pt-6 space-y-4">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
@@ -138,14 +169,24 @@ export function ClientsForm({ value, onChange }: ClientsFormProps) {
               <div className="space-y-3">
                 <Label>Logo</Label>
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
-                  <div className={cn('w-full max-w-xs rounded-xl border bg-muted/40 aspect-video flex items-center justify-center overflow-hidden')}>
+                  <div
+                    className={cn(
+                      'w-full max-w-xs rounded-xl border aspect-video flex items-center justify-center overflow-hidden'
+                    )}
+                    style={{ backgroundColor: client.bgColor || '#f4f4f4' }}
+                  >
                     <LogoPreview client={client} />
                   </div>
                   <div className="flex-1 space-y-3">
                     <div className="flex flex-wrap gap-3">
+                      <MediaPickerModal onSelect={(publicId) => updateClient(index, { logoPublicId: publicId, logoUrl: '' })}>
+                        <Button type="button" variant="outline">
+                          Browse media library
+                        </Button>
+                      </MediaPickerModal>
                       <MediaPickerDialog onSelect={(publicId) => updateClient(index, { logoPublicId: publicId, logoUrl: '' })}>
                         <Button type="button" variant="outline">
-                          {client.logoPublicId ? 'Change Cloudinary asset' : 'Select from media library'}
+                          Paste Cloudinary ID
                         </Button>
                       </MediaPickerDialog>
                       {client.logoPublicId && (
@@ -162,6 +203,29 @@ export function ClientsForm({ value, onChange }: ClientsFormProps) {
                         value={client.logoUrl || ''}
                         onChange={(e) => updateClient(index, { logoUrl: e.target.value })}
                       />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Background color</Label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="color"
+                          value={client.bgColor && /^#([0-9a-fA-F]{6})$/.test(client.bgColor) ? client.bgColor : '#f4f4f4'}
+                          onChange={(e) => updateClient(index, { bgColor: e.target.value.toUpperCase() })}
+                          className="h-10 w-12 rounded-md border shadow-sm cursor-pointer bg-transparent"
+                          aria-label="Logo background color"
+                        />
+                        <Input
+                          className="font-mono"
+                          value={client.bgColor || ''}
+                          placeholder="#F4F4F4"
+                          onChange={(e) => {
+                            const val = e.target.value.trim().toUpperCase()
+                            if (val === '' || /^#([0-9A-F]{0,6})$/.test(val)) {
+                              updateClient(index, { bgColor: val })
+                            }
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -4,7 +4,7 @@ import { listMedia, type MediaItem } from "@/lib/media-api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export function MediaPickerModal({
   children,
@@ -42,6 +42,9 @@ export function MediaPickerModal({
       <DialogContent className="max-w-4xl">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Browse the media library to pick an existing Cloudinary asset.
+          </DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-2">
           <Input

@@ -8,6 +8,7 @@ export type ClientItem = {
   logoUrl?: string
   website?: string
   order?: number
+  bgColor?: string
 }
 
 export type ClientSettings = {
