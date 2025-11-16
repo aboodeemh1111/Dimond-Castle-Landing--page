@@ -1,3 +1,5 @@
+"use client";
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { type Page, type Section, type Block, type Row, type GridCol } from '@/app/lib/pages-api'
