@@ -18,6 +18,10 @@ export default function ContactUs() {
     titleAR?: string;
     subtitleEN?: string;
     subtitleAR?: string;
+    titleColorEN?: string;
+    titleColorAR?: string;
+    subtitleColorEN?: string;
+    subtitleColorAR?: string;
     businessHours?: string[];
     phoneNumbers?: string[];
     whatsappNumbers?: string[];
@@ -116,15 +120,29 @@ export default function ContactUs() {
 
   const title = settings ? (language === "ar" ? settings.titleAR || t("contact.heading") : settings.titleEN || t("contact.heading")) : t("contact.heading");
   const subtitle = settings ? (language === "ar" ? settings.subtitleAR || t("contact.sub") : settings.subtitleEN || t("contact.sub")) : t("contact.sub");
+  
+  // Get colors based on language
+  const titleColor = settings 
+    ? (language === "ar" ? settings.titleColorAR : settings.titleColorEN)
+    : undefined;
+  const subtitleColor = settings 
+    ? (language === "ar" ? settings.subtitleColorAR : settings.subtitleColorEN)
+    : undefined;
 
   return (
     <section id="contact-us" className="py-16 sm:py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 text-center">
+          <h2 
+            className={`text-3xl sm:text-4xl font-bold text-center ${!titleColor ? 'text-gray-900' : ''}`}
+            style={titleColor ? { color: titleColor } : undefined}
+          >
             {title}
           </h2>
-          <p className="mt-3 text-center text-gray-600">
+          <p 
+            className={`mt-3 text-center ${!subtitleColor ? 'text-gray-600' : ''}`}
+            style={subtitleColor ? { color: subtitleColor } : undefined}
+          >
             {subtitle}
           </p>
 

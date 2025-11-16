@@ -136,7 +136,7 @@ export default function NavigationPage() {
           </Card>
         </div>
         <div className="md:col-span-7">
-          <NavigationItemEditor item={selectedItem} onChange={updateSelected} pages={pages} />
+          <NavigationItemEditor item={selectedItem} onChange={updateSelected} pages={pages} onSelectItem={setSelectedId} />
           <Separator className="my-6" />
           <ValidationHints t={t} />
         </div>

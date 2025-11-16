@@ -121,38 +121,7 @@ export default function Navbar({
                     </a>
                   </li>
                 ))}
-                {treeItems?.map((item, idx) => (
-                  <li key={`tree-${item.href}-${idx}`} className="relative group">
-                    <a
-                      href={item.href}
-                      target={item.newTab ? '_blank' : undefined}
-                      rel={item.newTab ? 'noopener' : undefined}
-                      className={`${desktopLinkClass} ${hoverBeamClass} glow-gold`}
-                    >
-                      <span className={desktopTextClass}>
-                        {language === 'ar' ? item.labelAR : item.labelEN}
-                      </span>
-                    </a>
-                    {item.children && item.children.length > 0 && (
-                      <div className="invisible group-hover:visible absolute left-0 top-full mt-2 min-w-[200px] rounded-md border border-[var(--dc-gray)] bg-white shadow-lg p-2">
-                        <ul className="flex flex-col gap-1">
-                          {item.children.map((child, cidx) => (
-                            <li key={`tree-child-${child.href}-${idx}-${cidx}`}>
-                              <a
-                                href={child.href}
-                                target={child.newTab ? '_blank' : undefined}
-                                rel={child.newTab ? 'noopener' : undefined}
-                                className="block px-3 py-2 text-[13px] xl:text-sm font-medium text-[var(--dc-text)] rounded-md hover:bg-accent/30 hover:text-[var(--gold-600)] transition-all duration-300"
-                              >
-                                {language === 'ar' ? child.labelAR : child.labelEN}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </li>
-                ))}
+                {treeItems && treeItems.length > 0 && renderDesktopNavTree(treeItems, language)}
               </ul>
             </div>
           </div>
@@ -185,7 +154,7 @@ export default function Navbar({
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden ml-auto">
+            <div className="md:hidden ml-auto">
             <button
               type="button"
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500"
@@ -247,7 +216,7 @@ export default function Navbar({
                 </a>
               </li>
             ))}
-            {treeItems ? renderMobileTree(treeItems, language, closeMobileMenu) : null}
+            {treeItems && treeItems.length > 0 ? renderMobileTree(treeItems, language, closeMobileMenu) : null}
           </ul>
 
           {/* Mobile language switcher */}
@@ -284,45 +253,96 @@ export default function Navbar({
   );
 }
 
-function renderMobileTree(items: TreeItem[], language: string, onClick: () => void) {
-  return items.flatMap((item, idx) => {
-    const label = language === 'ar' ? item.labelAR : item.labelEN
-    const self = (
-      <li key={`${item.href}-${idx}`} className="border-b last:border-b-0 border-gray-100">
+function renderDesktopNavTree(items: TreeItem[], language: string) {
+  return items.map((item, idx) => (
+    <DesktopNavItem key={`tree-${item.href}-${idx}`} item={item} language={language} depth={0} />
+  ));
+}
+
+function DesktopNavItem({ item, language, depth }: { item: TreeItem; language: string; depth: number }) {
+  const label = language === "ar" ? item.labelAR : item.labelEN;
+  const hasChildren = item.children && item.children.length > 0;
+  return (
+    <li className="relative group">
+      <a
+        href={item.href}
+        target={item.newTab ? "_blank" : undefined}
+        rel={item.newTab ? "noopener" : undefined}
+        className={`${desktopLinkClass} ${hoverBeamClass} glow-gold`}
+      >
+        <span className={desktopTextClass}>{label}</span>
+      </a>
+      {hasChildren && item.children && (
+        <div
+          className={`absolute z-30 min-w-[220px] rounded-xl border border-[var(--dc-gray)] bg-white p-3 shadow-2xl opacity-0 pointer-events-none transition-all duration-300 ${
+            depth === 0 ? "left-0 top-full mt-3 translate-y-2 group-hover:translate-y-0 group-hover:opacity-100 group-hover:pointer-events-auto" : "left-full top-0 ml-3 translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 group-hover:pointer-events-auto"
+          }`}
+        >
+          <ul className="space-y-1">
+            {item.children.map((child, idx) => (
+              <DesktopNavSubItem key={`${child.href}-${idx}`} item={child} language={language} depth={depth + 1} />
+            ))}
+          </ul>
+        </div>
+      )}
+    </li>
+  );
+}
+
+function DesktopNavSubItem({ item, language, depth }: { item: TreeItem; language: string; depth: number }) {
+  const label = language === "ar" ? item.labelAR : item.labelEN;
+  const hasChildren = item.children && item.children.length > 0;
+  return (
+    <li className="relative group rounded-md hover:bg-accent/20">
+      <a
+        href={item.href}
+        target={item.newTab ? "_blank" : undefined}
+        rel={item.newTab ? "noopener" : undefined}
+        className="flex items-center justify-between gap-3 px-3 py-2 text-sm text-[var(--dc-text)]"
+      >
+        <span>{label}</span>
+        {hasChildren && <span className="text-xs text-muted-foreground">›</span>}
+      </a>
+      {hasChildren && item.children && (
+        <div className="absolute left-full top-0 ml-2 min-w-[220px] rounded-xl border border-[var(--dc-gray)] bg-white p-3 shadow-2xl opacity-0 pointer-events-none transition-all duration-300 translate-x-2 group-hover:opacity-100 group-hover:pointer-events-auto group-hover:translate-x-0">
+          <ul className="space-y-1">
+            {item.children.map((child, idx) => (
+              <DesktopNavSubItem key={`${child.href}-${depth}-${idx}`} item={child} language={language} depth={depth + 1} />
+            ))}
+          </ul>
+        </div>
+      )}
+    </li>
+  );
+}
+
+function renderMobileTree(items: TreeItem[], language: string, onClick: () => void, depth = 0) {
+  return items.map((item, idx) => {
+    const label = language === "ar" ? item.labelAR : item.labelEN;
+    const hasChildren = item.children && item.children.length > 0;
+    return (
+      <li key={`${item.href}-${depth}-${idx}`} className="border-b last:border-b-0 border-gray-100">
         <a
           href={item.href}
           className={`${mobileLinkClass} glow-gold`}
           onClick={onClick}
-          target={item.newTab ? '_blank' : undefined}
-          rel={item.newTab ? 'noopener' : undefined}
+          target={item.newTab ? "_blank" : undefined}
+          rel={item.newTab ? "noopener" : undefined}
+          style={depth ? { paddingLeft: 16 + depth * 12 } : undefined}
         >
           <span className="inline-flex items-center gap-2">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold-500)] transition-all group-hover:scale-150" />
-            <span className="transition-transform duration-300 group-hover:translate-x-1">{label}</span>
+            <span className="transition-transform duration-300 group-hover:translate-x-1">
+              {label}
+            </span>
           </span>
         </a>
+        {hasChildren && item.children && (
+          <ul className="ml-4 border-l border-gray-200 pl-3 space-y-1">
+            {renderMobileTree(item.children, language, onClick, depth + 1)}
+          </ul>
+        )}
       </li>
-    )
-    const children = item.children && item.children.length > 0
-      ? item.children.map((child, cidx) => (
-          <li key={`${child.href}-${idx}-${cidx}`} className="border-b last:border-b-0 border-gray-100 pl-6">
-            <a
-              href={child.href}
-              className={`${mobileLinkClass} glow-gold`}
-              onClick={onClick}
-              target={child.newTab ? '_blank' : undefined}
-              rel={child.newTab ? 'noopener' : undefined}
-            >
-              <span className="inline-flex items-center gap-2 pl-2">
-                <span className="h-1 w-6 bg-gradient-to-r from-[var(--gold-500)] to-transparent rounded-full opacity-70" />
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  {language === 'ar' ? child.labelAR : child.labelEN}
-                </span>
-              </span>
-            </a>
-          </li>
-        ))
-      : []
-    return [self, ...children]
-  })
+    );
+  });
 }

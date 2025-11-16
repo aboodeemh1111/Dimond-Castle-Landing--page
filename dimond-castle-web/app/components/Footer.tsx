@@ -104,7 +104,7 @@ export default function Footer() {
 
               {/* Reach us directly */}
               <div>
-                <h3 className="text-base font-semibold text-white">
+                <h3 className="text-base font-semibold text-[var(--gold-500)]">
                   {t("footer.reach")}
                 </h3>
                 <p className="text-sm text-white/80 mt-1">
@@ -227,7 +227,7 @@ export default function Footer() {
 
               {/* Socials */}
               <div>
-                <h3 className="text-base font-semibold text-white">
+                <h3 className="text-base font-semibold text-[var(--gold-500)]">
                   {t("footer.social")}
                 </h3>
                 <p className="text-sm text-white/80 mt-1">

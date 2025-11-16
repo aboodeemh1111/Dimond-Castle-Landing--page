@@ -15,6 +15,10 @@ export type ContactSettings = {
   titleAR: string
   subtitleEN?: string
   subtitleAR?: string
+  titleColorEN?: string
+  titleColorAR?: string
+  subtitleColorEN?: string
+  subtitleColorAR?: string
   businessHours: string[]
   phoneNumbers: string[]
   whatsappNumbers: string[]

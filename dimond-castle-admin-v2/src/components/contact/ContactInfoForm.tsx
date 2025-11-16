@@ -7,7 +7,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import type { ContactSettings } from '@/lib/contact-api'
-import { MediaPickerDialog } from '@/components/media/MediaPickerDialog'
 
 type Props = {
   value: ContactSettings | null
@@ -23,6 +22,10 @@ export function ContactInfoForm({ value, onChange }: Props) {
         titleAR: '',
         subtitleEN: '',
         subtitleAR: '',
+        titleColorEN: '',
+        titleColorAR: '',
+        subtitleColorEN: '',
+        subtitleColorAR: '',
         businessHours: [],
         phoneNumbers: [],
         whatsappNumbers: [],
@@ -46,18 +49,122 @@ export function ContactInfoForm({ value, onChange }: Props) {
           <div>
             <Label>Page Title EN</Label>
             <Input value={value.titleEN} onChange={(e) => set({ titleEN: e.target.value })} />
+            <div className="mt-2 space-y-2">
+              <Label className="text-sm">Title Color EN</Label>
+              <div className="flex gap-3">
+                <input
+                  type="color"
+                  value={value.titleColorEN && /^#[0-9A-Fa-f]{6}$/.test(value.titleColorEN) ? value.titleColorEN : '#000000'}
+                  onChange={(e) => set({ titleColorEN: e.target.value.toUpperCase() })}
+                  className="h-10 w-12 rounded-md border shadow-sm flex-shrink-0 cursor-pointer bg-transparent"
+                  aria-label="Title Color EN picker"
+                />
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    value={value.titleColorEN || ''}
+                    onChange={(e) => {
+                      const val = e.target.value.trim()
+                      if (val === '' || /^#[0-9A-Fa-f]{0,6}$/.test(val)) {
+                        set({ titleColorEN: val })
+                      }
+                    }}
+                    placeholder="#000000"
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <div>
             <Label>Page Title AR</Label>
             <Input dir="rtl" value={value.titleAR} onChange={(e) => set({ titleAR: e.target.value })} />
+            <div className="mt-2 space-y-2">
+              <Label className="text-sm">Title Color AR</Label>
+              <div className="flex gap-3">
+                <input
+                  type="color"
+                  value={value.titleColorAR && /^#[0-9A-Fa-f]{6}$/.test(value.titleColorAR) ? value.titleColorAR : '#000000'}
+                  onChange={(e) => set({ titleColorAR: e.target.value.toUpperCase() })}
+                  className="h-10 w-12 rounded-md border shadow-sm flex-shrink-0 cursor-pointer bg-transparent"
+                  aria-label="Title Color AR picker"
+                />
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    value={value.titleColorAR || ''}
+                    onChange={(e) => {
+                      const val = e.target.value.trim()
+                      if (val === '' || /^#[0-9A-Fa-f]{0,6}$/.test(val)) {
+                        set({ titleColorAR: val })
+                      }
+                    }}
+                    placeholder="#000000"
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <div>
             <Label>Subtitle EN</Label>
             <Textarea rows={2} value={value.subtitleEN || ''} onChange={(e) => set({ subtitleEN: e.target.value })} />
+            <div className="mt-2 space-y-2">
+              <Label className="text-sm">Subtitle Color EN</Label>
+              <div className="flex gap-3">
+                <input
+                  type="color"
+                  value={value.subtitleColorEN && /^#[0-9A-Fa-f]{6}$/.test(value.subtitleColorEN) ? value.subtitleColorEN : '#000000'}
+                  onChange={(e) => set({ subtitleColorEN: e.target.value.toUpperCase() })}
+                  className="h-10 w-12 rounded-md border shadow-sm flex-shrink-0 cursor-pointer bg-transparent"
+                  aria-label="Subtitle Color EN picker"
+                />
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    value={value.subtitleColorEN || ''}
+                    onChange={(e) => {
+                      const val = e.target.value.trim()
+                      if (val === '' || /^#[0-9A-Fa-f]{0,6}$/.test(val)) {
+                        set({ subtitleColorEN: val })
+                      }
+                    }}
+                    placeholder="#000000"
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
           <div>
             <Label>Subtitle AR</Label>
             <Textarea rows={2} dir="rtl" value={value.subtitleAR || ''} onChange={(e) => set({ subtitleAR: e.target.value })} />
+            <div className="mt-2 space-y-2">
+              <Label className="text-sm">Subtitle Color AR</Label>
+              <div className="flex gap-3">
+                <input
+                  type="color"
+                  value={value.subtitleColorAR && /^#[0-9A-Fa-f]{6}$/.test(value.subtitleColorAR) ? value.subtitleColorAR : '#000000'}
+                  onChange={(e) => set({ subtitleColorAR: e.target.value.toUpperCase() })}
+                  className="h-10 w-12 rounded-md border shadow-sm flex-shrink-0 cursor-pointer bg-transparent"
+                  aria-label="Subtitle Color AR picker"
+                />
+                <div className="flex-1">
+                  <Input
+                    type="text"
+                    value={value.subtitleColorAR || ''}
+                    onChange={(e) => {
+                      const val = e.target.value.trim()
+                      if (val === '' || /^#[0-9A-Fa-f]{0,6}$/.test(val)) {
+                        set({ subtitleColorAR: val })
+                      }
+                    }}
+                    placeholder="#000000"
+                    className="font-mono"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -117,23 +224,6 @@ export function ContactInfoForm({ value, onChange }: Props) {
         </div>
       </section>
 
-      <Separator />
-
-      <section className="space-y-3">
-        <h3 className="font-semibold">Hero Visual</h3>
-        <div className="flex items-center gap-3">
-          <MediaPickerDialog
-            onSelect={(publicId) => {
-              set({ contactPageHeroImageId: publicId })
-            }}
-          >
-            <Button type="button" variant="outline">
-              {value.contactPageHeroImageId ? 'Change image' : 'Select image'}
-            </Button>
-          </MediaPickerDialog>
-          {value.contactPageHeroImageId && <span className="text-sm text-muted-foreground truncate">{value.contactPageHeroImageId}</span>}
-        </div>
-      </section>
     </div>
   )
 }
