@@ -17,6 +17,7 @@ export const clientSchema = z.object({
 
 export const clientSettingsSchema = z.object({
   clients: z.array(clientSchema),
+  enabled: z.boolean().optional(),
   updatedBy: z.string().optional(),
 })
 

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "./I18nProvider";
 import { getCloudinaryImageUrl } from "../lib/cloudinary";
-import { getClientSettings, type ClientEntry } from "../lib/clients-api";
+import { getClientSettings, type ClientEntry, type ClientSettings } from "../lib/clients-api";
 
 const fallbackClients: ClientEntry[] = [
   { nameEN: "MS Logistics", nameAR: "MS Logistics", logoUrl: "/images/partners/MS.png", order: 0, bgColor: "#FFFFFF" },
@@ -30,7 +30,7 @@ const fallbackClients: ClientEntry[] = [
 
 export default function Clients() {
   const { t, dir, language } = useI18n();
-  const [clientData, setClientData] = useState<ClientEntry[] | null>(null);
+  const [clientSettings, setClientSettings] = useState<ClientSettings | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -38,11 +38,15 @@ export default function Clients() {
       try {
         const data = await getClientSettings();
         if (mounted) {
-          setClientData(Array.isArray(data.clients) ? data.clients : []);
+          setClientSettings({
+            ...data,
+            enabled: data.enabled ?? true,
+            clients: Array.isArray(data.clients) ? data.clients : [],
+          });
         }
       } catch (error) {
         console.error("Failed to fetch clients", error);
-        if (mounted) setClientData([]);
+        if (mounted) setClientSettings({ clients: [], enabled: true });
       }
     })();
 
@@ -52,9 +56,18 @@ export default function Clients() {
   }, []);
 
   const clients = useMemo(() => {
-    const source = clientData && clientData.length > 0 ? clientData : fallbackClients;
+    const source =
+      clientSettings && Array.isArray(clientSettings.clients) && clientSettings.clients.length > 0
+        ? clientSettings.clients
+        : fallbackClients;
     return [...source].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-  }, [clientData]);
+  }, [clientSettings]);
+
+  const isEnabled = clientSettings?.enabled ?? true;
+
+  if (!isEnabled) {
+    return null;
+  }
 
   return (
     <section id="vip-clients" className="relative py-20 px-6 md:px-12 bg-accent/40">

@@ -16,6 +16,7 @@ const ClientSchema = new Schema(
 const ClientSettingsSchema = new Schema(
   {
     clients: { type: [ClientSchema], default: [] },
+    enabled: { type: Boolean, default: true },
     updatedBy: { type: String },
   },
   { timestamps: true }
@@ -35,6 +36,7 @@ export type ClientDocument = {
 export type ClientSettingsDocument = {
   _id: string
   clients: ClientDocument[]
+  enabled?: boolean
   updatedAt: Date
   createdAt: Date
   updatedBy?: string

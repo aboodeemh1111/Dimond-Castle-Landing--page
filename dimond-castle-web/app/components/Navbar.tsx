@@ -34,14 +34,21 @@ const mobileLinkClass =
 export default function Navbar({
   items = defaultItems,
   treeItems,
+  hideClientsLink = false,
 }: {
   items?: NavItem[];
   treeItems?: TreeItem[];
+  hideClientsLink?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPinned, setIsPinned] = useState(false);
   const { t, language, toggleLanguage } = useI18n();
   const theme = useThemeSettings();
+
+  const primaryItems = useMemo(() => {
+    if (!hideClientsLink) return items;
+    return items.filter((item) => item.key !== "nav.clients");
+  }, [hideClientsLink, items]);
 
   const logoSrc = useMemo(() => {
     const lightId = theme.globalAssets?.logoLightId;
@@ -111,7 +118,7 @@ export default function Navbar({
             {/* Desktop Navigation */}
             <div className="hidden md:block overflow-visible">
               <ul className="flex items-center gap-4 2xl:gap-6 overflow-x-auto overflow-y-visible whitespace-nowrap no-scrollbar">
-                {items.map((item) => (
+                {primaryItems.map((item) => (
                   <li key={`default-${item.key}`}>
                     <a
                       href={item.href}
@@ -200,7 +207,7 @@ export default function Navbar({
       >
         <div className="px-4 sm:px-6 lg:px-8 pb-4">
           <ul className="mt-2 space-y-1 rounded-xl border border-[var(--dc-gray)] bg-white/95 shadow-xl overflow-hidden backdrop-blur-sm p-2">
-            {items.map((item) => (
+            {primaryItems.map((item) => (
               <li key={`mobile-default-${item.key}`} className="border-b last:border-b-0 border-gray-100">
                 <a
                   href={item.href}

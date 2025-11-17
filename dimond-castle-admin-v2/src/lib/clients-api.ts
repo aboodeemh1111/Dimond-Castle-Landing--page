@@ -14,6 +14,7 @@ export type ClientItem = {
 export type ClientSettings = {
   _id?: string
   clients: ClientItem[]
+  enabled?: boolean
   updatedAt?: string
   updatedBy?: string
 }

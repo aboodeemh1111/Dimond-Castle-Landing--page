@@ -15,6 +15,7 @@ type PublicNavTreeItem = {
 
 export default function NavbarServer() {
   const [tree, setTree] = useState<PublicNavTreeItem[] | null>(null);
+  const [clientsEnabled, setClientsEnabled] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -36,11 +37,22 @@ export default function NavbarServer() {
         // ignore and fall back to defaults
       }
     })();
+
+    (async () => {
+      try {
+        const response = await apiGet<{ enabled?: boolean }>("/api/clients/settings");
+        if (mounted) {
+          setClientsEnabled(response?.enabled !== false);
+        }
+      } catch {
+        if (mounted) setClientsEnabled(true);
+      }
+    })();
     return () => {
       mounted = false;
     };
   }, []);
 
   // If nav not loaded, Navbar will use its own defaults
-  return <Navbar treeItems={tree ?? undefined} />;
+  return <Navbar treeItems={tree ?? undefined} hideClientsLink={!clientsEnabled} />;
 }

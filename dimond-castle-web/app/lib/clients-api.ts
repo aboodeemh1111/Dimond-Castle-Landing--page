@@ -13,6 +13,7 @@ export type ClientEntry = {
 
 export type ClientSettings = {
   clients: ClientEntry[]
+  enabled?: boolean
   updatedAt?: string
 }
 

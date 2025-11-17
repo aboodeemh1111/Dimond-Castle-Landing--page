@@ -40,6 +40,7 @@ const defaultClients = [
 
 const defaultResponse = {
   clients: defaultClients,
+  enabled: true,
   updatedAt: new Date().toISOString(),
 }
 
@@ -49,7 +50,10 @@ router.get('/settings', async (_req, res, next) => {
     if (!settings || !settings.clients?.length) {
       return res.json(defaultResponse)
     }
-    return res.json(settings)
+    return res.json({
+      ...settings,
+      enabled: settings.enabled ?? true,
+    })
   } catch (err) {
     // Log error but fall back to defaults so the admin UI keeps working
     console.error('Failed to load client settings', err)
@@ -81,7 +85,7 @@ router.put('/settings', async (req, res, next) => {
 
     const saved = await ClientSettings.findOneAndUpdate(
       {},
-      { clients: normalizedClients, updatedBy: payload.updatedBy },
+      { clients: normalizedClients, updatedBy: payload.updatedBy, enabled: payload.enabled ?? true },
       {
         new: true,
         upsert: true,
@@ -89,7 +93,14 @@ router.put('/settings', async (req, res, next) => {
       }
     )
 
-    return res.json(saved)
+    if (!saved) {
+      return res.status(500).json({ error: 'Failed to persist client settings' })
+    }
+
+    return res.json({
+      ...saved.toObject(),
+      enabled: saved.enabled ?? true,
+    })
   } catch (err) {
     return next(err)
   }

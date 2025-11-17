@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/hooks/use-toast'
 import { ClientsForm } from '@/components/clients/ClientsForm'
 import { getClientSettings, saveClientSettings, type ClientSettings } from '@/lib/clients-api'
+import { Switch } from '@/components/ui/switch'
 
 export default function ClientsPage() {
   const { toast } = useToast()
@@ -18,8 +19,19 @@ export default function ClientsPage() {
   })
 
   useEffect(() => {
-    if (settingsQuery.data) setSettings(settingsQuery.data)
+    if (settingsQuery.data) {
+      setSettings({
+        ...settingsQuery.data,
+        enabled: settingsQuery.data.enabled ?? true,
+      })
+    }
   }, [settingsQuery.data])
+
+  const isSectionEnabled = settings?.enabled ?? true
+
+  const handleToggle = (nextValue: boolean) => {
+    setSettings((prev) => (prev ? { ...prev, enabled: nextValue } : prev))
+  }
 
   const saveMutation = useMutation({
     mutationFn: async (payload: ClientSettings) => saveClientSettings(payload),
@@ -69,8 +81,27 @@ export default function ClientsPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Clients section</CardTitle>
+        <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-1">
+            <CardTitle>Clients section</CardTitle>
+            <CardDescription>Toggle the visibility of the Clients section on the public website.</CardDescription>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <p className="text-sm font-semibold tracking-tight">
+                {isSectionEnabled ? 'Section enabled' : 'Section hidden'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {isSectionEnabled ? 'Visible on site & navigation' : 'Hidden from site & navigation'}
+              </p>
+            </div>
+            <Switch
+              id="clients-enabled"
+              checked={isSectionEnabled}
+              onCheckedChange={handleToggle}
+              aria-label="Toggle clients section visibility"
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <ClientsForm value={settings} onChange={setSettings} />
