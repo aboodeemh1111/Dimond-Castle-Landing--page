@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export type Localization = { supportedLanguages?: ('en'|'ar')[]; defaultLanguage?: 'en'|'ar'; fallbackStrategy?: 'en_if_missing'|'ar_if_missing'|'hide_if_missing' }
 export type SEO = { titleSuffix?: string; descriptionEN?: string; descriptionAR?: string; ogImagePublicId?: string; robotsIndex?: boolean; indexDrafts?: boolean; canonicalDomain?: string }

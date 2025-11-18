@@ -79,7 +79,9 @@ export default function ContactUs() {
 
     setStatus({ type: "submitting" });
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const { apiGet } = await import("../lib/api");
+      // Use a custom fetch for POST since apiGet is for GET requests
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL;
       const res = await fetch(`${API_BASE}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -111,9 +113,9 @@ export default function ContactUs() {
   useEffect(() => {
     (async () => {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-        const res = await fetch(`${API_BASE}/api/contact/settings`, { cache: "no-store" });
-        if (res.ok) setSettings(await res.json());
+        const { apiGet } = await import("../lib/api");
+        const data = await apiGet("/api/contact/settings");
+        setSettings(data);
       } catch {}
     })();
   }, []);

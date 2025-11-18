@@ -76,18 +76,15 @@ export default function Vision() {
   useEffect(() => {
     (async () => {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-        const res = await fetch(`${API_BASE}/api/vision/settings`, { cache: "no-store" });
-        if (res.ok) {
-          const data = await res.json();
-          setContent({
-            headingEN: data.headingEN,
-            headingAR: data.headingAR,
-            preambleEN: data.preambleEN,
-            preambleAR: data.preambleAR,
-            cards: data.cards,
-          });
-        }
+        const { apiGet } = await import("../lib/api");
+        const data = await apiGet("/api/vision/settings");
+        setContent({
+          headingEN: data.headingEN,
+          headingAR: data.headingAR,
+          preambleEN: data.preambleEN,
+          preambleAR: data.preambleAR,
+          cards: data.cards,
+        });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to load vision settings", error);

@@ -30,9 +30,9 @@ export default function Footer() {
   useEffect(() => {
     (async () => {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-        const res = await fetch(`${API_BASE}/api/contact/settings`, { cache: "no-store" });
-        if (res.ok) setSettings(await res.json());
+        const { apiGet } = await import("../lib/api");
+        const data = await apiGet("/api/contact/settings");
+        setSettings(data);
       } catch {}
       finally {
         setIsLoaded(true);

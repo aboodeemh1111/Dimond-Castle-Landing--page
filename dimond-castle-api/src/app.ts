@@ -27,8 +27,8 @@ const app = express()
 app.use(helmet())
 // CORS configuration - allow all origins in development
 app.use(cors({
-  origin: true, // Allow all origins
-  credentials: false,
+  origin: env.FRONTEND_ORIGINS ? env.FRONTEND_ORIGINS.split(',') : true,
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }))
@@ -37,6 +37,9 @@ app.use(express.urlencoded({ extended: true }))
 app.use(compression())
 app.use(morgan('dev'))
 app.use(rateLimit({ windowMs: 60_000, max: 300 }))
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static(env.UPLOAD_DIR))
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
 

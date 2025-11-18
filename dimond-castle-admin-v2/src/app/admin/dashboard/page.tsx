@@ -144,7 +144,7 @@ function HealthRow({ label, ok }: { label: string; ok: boolean }) {
 }
 
 function MessagesPreview() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
   const query = useQuery({
     queryKey: ['dash-messages-preview'],
     queryFn: async () => {

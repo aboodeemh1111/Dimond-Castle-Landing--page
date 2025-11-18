@@ -94,16 +94,13 @@ export default function Values() {
   useEffect(() => {
     (async () => {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-        const res = await fetch(`${API_BASE}/api/values/settings`, { cache: "no-store" });
-        if (res.ok) {
-          const data = await res.json();
-          setContent({
-            headingEN: data.headingEN,
-            headingAR: data.headingAR,
-            items: data.items,
-          });
-        }
+        const { apiGet } = await import("../lib/api");
+        const data = await apiGet("/api/values/settings");
+        setContent({
+          headingEN: data.headingEN,
+          headingAR: data.headingAR,
+          items: data.items,
+        });
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to load values settings", error);

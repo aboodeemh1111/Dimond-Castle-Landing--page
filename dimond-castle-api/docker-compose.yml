@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: dimond-castle-api
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env.production
+    volumes:
+      # Mount uploads directory for persistent file storage
+      - ./uploads:/app/uploads
+    depends_on:
+      - mongo
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo:7
+    container_name: dimond-castle-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-password}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-dimondcastle}
+    volumes:
+      # Named volume for MongoDB data persistence
+      - mongo_data:/data/db
+      # Optional: Initialize database with scripts
+      - ./scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "27017:27017"
+    networks:
+      - app-network
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

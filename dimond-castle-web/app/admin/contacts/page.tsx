@@ -43,7 +43,7 @@ export default function ContactsPage() {
   // Settings mutation
   const saveSettings = useMutation({
     mutationFn: async (data: ContactSettings) => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/api/contact/settings`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact/settings`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

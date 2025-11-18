@@ -7,6 +7,8 @@ export const env = {
   PORT: Number(process.env.PORT || 4000),
   MONGODB_URI: process.env.MONGODB_URI || '',
   CLIENT_ORIGIN: process.env.CLIENT_ORIGIN || '*',
+  FRONTEND_ORIGINS: process.env.FRONTEND_ORIGINS || '',
+  UPLOAD_DIR: process.env.UPLOAD_DIR || './uploads',
   CLOUDINARY_URL: process.env.CLOUDINARY_URL || '',
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',

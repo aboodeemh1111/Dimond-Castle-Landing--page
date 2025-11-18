@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+const API_URL = process.env.NEXT_PUBLIC_API_URL
 
 export type BorderRadius = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
 export type SpacingScale = 'tight' | 'normal' | 'spacious'

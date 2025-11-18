@@ -43,11 +43,9 @@ export default function Hero() {
   useEffect(() => {
     (async () => {
       try {
-        const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-        const res = await fetch(`${API_BASE}/api/hero/settings`, { cache: "no-store" });
-        if (res.ok) {
-          setSettings(await res.json());
-        }
+        const { apiGet } = await import("../lib/api");
+        const data = await apiGet("/api/hero/settings");
+        setSettings(data);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to load hero settings", error);

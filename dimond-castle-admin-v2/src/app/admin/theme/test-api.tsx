@@ -10,7 +10,7 @@ export default function TestAPI() {
   const testAPI = async () => {
     setLoading(true)
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+      const API_URL = process.env.NEXT_PUBLIC_API_URL
       console.log('Testing API at:', `${API_URL}/api/theme`)
       
       const res = await fetch(`${API_URL}/api/theme`)
