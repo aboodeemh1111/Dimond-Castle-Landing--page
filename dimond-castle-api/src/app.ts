@@ -24,7 +24,11 @@ import clientsRouter from './routes/clients'
 
 const app = express()
 
-app.use(helmet())
+// Configure Helmet with relaxed cross-origin policies for images
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}))
+
 // CORS configuration - allow all origins in development
 app.use(cors({
   origin: env.FRONTEND_ORIGINS ? env.FRONTEND_ORIGINS.split(',') : true,
@@ -41,6 +45,7 @@ app.use(rateLimit({ windowMs: 60_000, max: 300 }))
 // Serve static files from uploads directory (allow embedding on other origins)
 app.use('/uploads', (req, res, next) => {
   res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+  res.setHeader('Access-Control-Allow-Origin', '*')
   next()
 }, express.static(env.UPLOAD_DIR))
 
