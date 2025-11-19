@@ -84,96 +84,76 @@ export default function Products() {
               return (
                 <article
                   key={product._id}
-                  className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[var(--dc-gray)]/80"
+                  className="group relative aspect-square bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[var(--dc-gray)]/80"
                 >
                   {/* Product Image */}
-                  <div className="relative aspect-square overflow-hidden bg-white p-4">
+                  <div className="absolute inset-0 flex items-center justify-center bg-white p-6">
                     <img
                       src={imageUrl}
                       alt={product[locale].name}
-                      className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105"
+                      className="max-h-full max-w-full object-contain transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
 
-                  {/* Product Info */}
-                  <div className="p-6">
-                    <h3
-                      className="text-xl font-semibold text-text mb-2"
-                      style={{ fontFamily: "Georgia, serif" }}
+                  {/* Overlay + Info */}
+                  <div className="absolute inset-0 flex flex-col justify-end">
+                    <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div
+                      className={`relative z-10 p-6 text-white ${
+                        dir === "rtl" ? "text-right" : "text-left"
+                      }`}
                     >
-                      {product[locale].name}
-                    </h3>
-                    <p className="text-text/80 text-sm mb-4 leading-relaxed">
-                      {product[locale].description}
-                    </p>
-
-                    {/* Origin */}
-                    {product[locale].origin && (
-                      <div
-                        className={`flex items-center gap-2 mb-3 ${
-                          dir === "rtl" ? "flex-row-reverse" : ""
-                        }`}
+                      <h3
+                        className="text-2xl font-semibold mb-2"
+                        style={{ fontFamily: "Georgia, serif" }}
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                          className="w-4 h-4 text-text/70"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <span className="text-sm text-text/70">
-                          {t("products.origin")} {" "}
-                          <span className="font-medium text-text">
+                        {product[locale].name}
+                      </h3>
+                      <p className="text-sm text-white/90 mb-3">
+                        {product[locale].description}
+                      </p>
+
+                      {product[locale].origin && (
+                        <p className="text-xs text-white/80 mb-3">
+                          {t("products.origin")}{" "}
+                          <span className="font-semibold text-white">
                             {product[locale].origin}
                           </span>
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Packaging Sizes */}
-                    {product.sizes && product.sizes.length > 0 && (
-                      <div className="mb-4">
-                        <p className="text-xs text-text/60 mb-2">
-                          {t("products.availableSizes")}
                         </p>
-                        <div className="flex flex-wrap gap-2">
+                      )}
+
+                      {product.sizes && product.sizes.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-4">
                           {product.sizes.map((size, idx) => (
                             <span
                               key={idx}
-                              className="px-3 py-1 bg-accent/40 text-text text-xs font-medium rounded-full"
+                              className="px-2 py-1 rounded-full bg-white/20 text-white text-xs"
                             >
                               {size}
                             </span>
                           ))}
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    {/* Learn More Button */}
-                    <a
-                      href={`/products/${product.slug}`}
-                      className="inline-flex items-center gap-2 text-[var(--green-500)] font-medium text-sm hover:gap-3 hover:underline underline-offset-4 transition-all duration-300 group/btn focus:outline-offset-2 focus:ring-2 focus:ring-[var(--gold-500)]"
-                    >
-                      {t("products.learnMore")}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="w-4 h-4 transition-transform group-hover/btn:translate-x-1"
+                      <a
+                        href={`/products/${product.slug}`}
+                        className="inline-flex items-center gap-2 text-sm font-semibold text-white px-4 py-2 rounded-full bg-[var(--green-500)]/90 hover:bg-[var(--green-500)] transition pointer-events-auto"
                       >
-                        <path
-                          fillRule="evenodd"
-                          d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </a>
+                        {t("products.learnMore")}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className="w-4 h-4"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </a>
+                    </div>
                   </div>
                 </article>
               );
