@@ -44,8 +44,10 @@ export default function Hero() {
     (async () => {
       try {
         const { apiGet } = await import("../lib/api");
-        const data = await apiGet("/api/hero/settings");
-        setSettings(data);
+        const data = await apiGet<HeroSettings | null>(
+          "/api/hero/settings"
+        );
+        setSettings(data ?? null);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to load hero settings", error);

@@ -95,12 +95,16 @@ export default function Values() {
     (async () => {
       try {
         const { apiGet } = await import("../lib/api");
-        const data = await apiGet("/api/values/settings");
-        setContent({
-          headingEN: data.headingEN,
-          headingAR: data.headingAR,
-          items: data.items,
-        });
+        const data = await apiGet<ValuesContent | null>(
+          "/api/values/settings"
+        );
+        if (data) {
+          setContent({
+            headingEN: data.headingEN,
+            headingAR: data.headingAR,
+            items: data.items,
+          });
+        }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to load values settings", error);

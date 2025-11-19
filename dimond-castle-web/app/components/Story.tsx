@@ -28,8 +28,10 @@ export default function Story() {
     (async () => {
       try {
         const { apiGet } = await import("../lib/api");
-        const data = await apiGet("/api/story/settings");
-        setSettings(data);
+        const data = await apiGet<StorySettings | null>(
+          "/api/story/settings"
+        );
+        setSettings(data ?? null);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to load story settings", error);

@@ -77,14 +77,18 @@ export default function Vision() {
     (async () => {
       try {
         const { apiGet } = await import("../lib/api");
-        const data = await apiGet("/api/vision/settings");
-        setContent({
-          headingEN: data.headingEN,
-          headingAR: data.headingAR,
-          preambleEN: data.preambleEN,
-          preambleAR: data.preambleAR,
-          cards: data.cards,
-        });
+        const data = await apiGet<VisionContent | null>(
+          "/api/vision/settings"
+        );
+        if (data) {
+          setContent({
+            headingEN: data.headingEN,
+            headingAR: data.headingAR,
+            preambleEN: data.preambleEN,
+            preambleAR: data.preambleAR,
+            cards: data.cards,
+          });
+        }
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error("Failed to load vision settings", error);
