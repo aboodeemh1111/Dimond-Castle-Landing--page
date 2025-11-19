@@ -37,3 +37,13 @@ export async function getPublicPageBySlug(slug: string): Promise<PublicPage | nu
     return null;
   }
 }
+
+export async function getPublishedPages(): Promise<PublicPage[]> {
+  try {
+    const data = await apiGet<{ items: PublicPage[] }>("/api/pages?status=published&limit=100");
+    return data.items || [];
+  } catch (e) {
+    console.error("Failed to fetch pages for sitemap", e);
+    return [];
+  }
+}
