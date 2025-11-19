@@ -287,7 +287,7 @@ export default function MediaLibraryPage() {
                     <video src={m.secure_url} className="h-full w-full object-cover" />
                   ) : (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={m.secure_url} alt={m.context?.custom?.alt || ""} className="h-full w-full object-cover" />
+                    <img src={m.secure_url} alt={m.public_id} className="h-full w-full object-cover" />
                   )}
                 </div>
                 <div className="space-y-2 p-2">
