@@ -20,6 +20,15 @@ export type MediaItem = {
 function normalizeUrl(url: string) {
   if (!url) return "";
   if (url.startsWith("http")) return url;
+  
+  // For local uploads, properly encode the filename part
+  // url format: /uploads/filename.ext
+  if (url.startsWith("/uploads/")) {
+    const filename = url.replace("/uploads/", "");
+    const encodedFilename = encodeURIComponent(filename);
+    return `${API_BASE_URL}/uploads/${encodedFilename}`;
+  }
+  
   return `${API_BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;
 }
 
