@@ -306,7 +306,7 @@ const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 const STORAGE_KEY = "app_language";
 
 export default function I18nProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<LanguageCode>("en");
+  const [language, setLanguageState] = useState<LanguageCode>("ar");
 
   useEffect(() => {
     try {
@@ -316,11 +316,8 @@ export default function I18nProvider({ children }: { children: React.ReactNode }
         return;
       }
     } catch {}
-
-    const browser = typeof navigator !== "undefined" ? navigator.language : "en";
-    if (browser.startsWith("ar")) {
-      setLanguageState("ar");
-    }
+    
+    // If no stored language, default is already "ar"
   }, []);
 
   useEffect(() => {

@@ -12,7 +12,7 @@ export default async function RootLayout({
 }) {
   const theme = await getTheme();
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ar" suppressHydrationWarning>
       <head>
         <ThemeHeadAssets theme={theme} />
       </head>
