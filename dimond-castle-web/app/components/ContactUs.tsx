@@ -114,8 +114,10 @@ export default function ContactUs() {
     (async () => {
       try {
         const { apiGet } = await import("../lib/api");
-        const data = await apiGet("/api/contact/settings");
-        setSettings(data);
+        const data = await apiGet<ContactSettings | null>(
+          "/api/contact/settings"
+        );
+        setSettings(data ?? null);
       } catch {}
     })();
   }, []);
