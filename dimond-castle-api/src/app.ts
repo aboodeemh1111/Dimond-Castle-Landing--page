@@ -38,8 +38,11 @@ app.use(compression())
 app.use(morgan('dev'))
 app.use(rateLimit({ windowMs: 60_000, max: 300 }))
 
-// Serve static files from uploads directory
-app.use('/uploads', express.static(env.UPLOAD_DIR))
+// Serve static files from uploads directory (allow embedding on other origins)
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
+  next()
+}, express.static(env.UPLOAD_DIR))
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
 
