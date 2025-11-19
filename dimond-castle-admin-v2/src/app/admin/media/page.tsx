@@ -278,56 +278,90 @@ export default function MediaLibraryPage() {
         ) : items.length === 0 ? (
           <div className="grid place-items-center py-16 text-sm text-muted-foreground">No media found.</div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {items.map((m) => (
-              <div key={m.asset_id} className="group overflow-hidden rounded-lg border bg-card">
-                <div className="aspect-square overflow-hidden bg-muted">
-                  {m.resource_type === "video" ? (
-                    // eslint-disable-next-line jsx-a11y/media-has-caption
-                    <video src={m.secure_url} className="h-full w-full object-cover" />
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={m.secure_url} alt={m.public_id} className="h-full w-full object-cover" />
-                  )}
-                </div>
-                <div className="space-y-2 p-2">
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center gap-2 text-xs">
-                      <input
-                        type="checkbox"
-                        checked={!!selected[m.public_id]}
-                        onChange={(e) => setSelected((s) => ({ ...s, [m.public_id]: e.target.checked }))}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+            {items.map((m) => {
+              // Decode the filename for display
+              const displayFilename = decodeURIComponent(m.asset_id);
+              const shortFilename = displayFilename.length > 20 
+                ? displayFilename.substring(0, 20) + '...' 
+                : displayFilename;
+              
+              return (
+                <div key={m.asset_id} className="group relative overflow-hidden rounded-lg border bg-card shadow-sm transition-all hover:shadow-md hover:scale-[1.02]">
+                  <div className="aspect-square overflow-hidden bg-muted relative">
+                    {m.resource_type === "video" ? (
+                      // eslint-disable-next-line jsx-a11y/media-has-caption
+                      <video 
+                        src={m.secure_url} 
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          console.error('Video load error:', m.secure_url);
+                          e.currentTarget.style.display = 'none';
+                        }}
                       />
-                      Select
-                    </label>
-                    <div className="truncate text-xs font-medium" title={m.public_id}>{m.public_id}</div>
+                    ) : (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img 
+                        src={m.secure_url} 
+                        alt={displayFilename}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                        onError={(e) => {
+                          console.error('Image load error:', m.secure_url);
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement!.innerHTML = `<div class="flex items-center justify-center h-full text-xs text-red-500 p-2">Failed to load</div>`;
+                        }}
+                      />
+                    )}
+                    {/* Overlay on hover */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
                   </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <Badge variant="secondary">{m.format || m.resource_type}</Badge>
-                    <span>{formatBytes(m.bytes)}</span>
-                  </div>
-                  <div className="flex items-center justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        navigator.clipboard.writeText(m.secure_url);
-                        toast.success("Copied URL");
-                      }}
-                    >Copy URL</Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={async () => {
-                        await deleteMedia(m.public_id);
-                        toast.success("Deleted");
-                        refresh();
-                      }}
-                    >Delete</Button>
+                  <div className="space-y-2 p-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <label className="flex items-center gap-2 text-xs cursor-pointer hover:text-primary">
+                        <input
+                          type="checkbox"
+                          checked={!!selected[m.public_id]}
+                          onChange={(e) => setSelected((s) => ({ ...s, [m.public_id]: e.target.checked }))}
+                          className="cursor-pointer"
+                        />
+                        Select
+                      </label>
+                      <div className="truncate text-xs font-medium" title={displayFilename}>
+                        {shortFilename}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <Badge variant="secondary" className="text-[10px]">
+                        {m.format?.toUpperCase() || m.resource_type}
+                      </Badge>
+                      <span className="text-[10px]">{formatBytes(m.bytes)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="flex-1 h-8 text-xs"
+                        onClick={() => {
+                          navigator.clipboard.writeText(m.secure_url);
+                          toast.success("Copied URL");
+                        }}
+                      >Copy URL</Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="h-8 text-xs"
+                        onClick={async () => {
+                          await deleteMedia(m.public_id);
+                          toast.success("Deleted");
+                          refresh();
+                        }}
+                      >Delete</Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
