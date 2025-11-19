@@ -24,7 +24,7 @@ export function MediaPickerModal({
   async function refresh() {
     setLoading(true)
     try {
-      const { items } = await listMedia({ q, type, max_results: 60 })
+      const { items } = await listMedia({ q, type, limit: 60 })
       setItems(items)
     } finally {
       setLoading(false)
@@ -43,7 +43,7 @@ export function MediaPickerModal({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="sr-only">
-            Browse the media library to pick an existing Cloudinary asset.
+            Browse the media library to pick an existing uploaded asset.
           </DialogDescription>
         </DialogHeader>
         <div className="flex items-center gap-2">

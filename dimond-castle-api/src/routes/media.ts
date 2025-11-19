@@ -100,9 +100,9 @@ router.get('/', async (req, res, next) => {
         filteredFiles.map(async (file) => {
           try {
             const stats = await fs.stat(path.join(env.UPLOAD_DIR, file))
-            return { file, createdAt: stats.birthtime || stats.mtime }
+            return { file, createdAt: stats.birthtime || stats.mtime, size: stats.size }
           } catch {
-            return { file, createdAt: new Date(0) }
+            return { file, createdAt: new Date(0), size: 0 }
           }
         })
       )
@@ -110,9 +110,10 @@ router.get('/', async (req, res, next) => {
       filesWithStats.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       const paginatedFiles = filesWithStats.slice(skip, skip + limitNum)
 
-      const items = paginatedFiles.map(({ file }) => ({
+      const items = paginatedFiles.map(({ file, size }) => ({
         filename: file,
         url: `/uploads/${file}`,
+        size,
         type: ['.jpg', '.jpeg', '.png', '.gif', '.webp'].some(ext =>
           file.toLowerCase().endsWith(ext)
         ) ? 'image' : 'video'

@@ -2,7 +2,28 @@
 // Replace 'demo' with your actual cloud name from the backend response
 // or set NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME in your .env.local
 
+import { API_BASE_URL } from "./api";
+
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || 'dsojmqc3o';
+
+function isLocal(publicId: string) {
+  if (!publicId) return false;
+  return (
+    publicId.startsWith("/uploads") ||
+    publicId.startsWith("uploads/") ||
+    publicId.startsWith("http://") ||
+    publicId.startsWith("https://")
+  );
+}
+
+function localUrl(publicId: string) {
+  if (!publicId) return '';
+  if (publicId.startsWith("http")) return publicId;
+  const normalized = publicId.startsWith("/uploads")
+    ? publicId
+    : `/uploads/${publicId.replace(/^uploads\//, "")}`;
+  return `${API_BASE_URL}${normalized}`;
+}
 
 type TransformOptions = {
   width?: number;
@@ -15,6 +36,9 @@ type TransformOptions = {
 
 export function getCloudinaryImageUrl(publicId: string, transformations?: string): string {
   if (!publicId) return '';
+  if (isLocal(publicId)) {
+    return localUrl(publicId);
+  }
   
   // Remove any file extension from publicId if present
   const cleanPublicId = publicId.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
@@ -27,6 +51,9 @@ export function getCloudinaryImageUrl(publicId: string, transformations?: string
 
 export function getCloudinaryVideoUrl(publicId: string, transformations?: string): string {
   if (!publicId) return '';
+  if (isLocal(publicId)) {
+    return localUrl(publicId);
+  }
   
   // Remove any file extension from publicId if present
   const cleanPublicId = publicId.replace(/\.(mp4|webm|mov)$/i, '');
@@ -46,6 +73,9 @@ export function getCloudinaryUrl(
   transformations?: string
 ): string {
   if (!publicId) return '';
+  if (isLocal(publicId)) {
+    return localUrl(publicId);
+  }
   
   // Handle object-based options (new signature)
   if (typeof optionsOrResourceType === 'object') {

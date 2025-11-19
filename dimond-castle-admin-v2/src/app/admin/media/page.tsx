@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { listMedia, type MediaItem, deleteMedia, getUploadSignature, getUsage } from "@/lib/media-api";
+import { listMedia, type MediaItem, deleteMedia, getUsage } from "@/lib/media-api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,8 +17,9 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { X, CheckCircle2, AlertCircle, Loader2, Upload, FolderOpen } from "lucide-react";
+import { X, CheckCircle2, AlertCircle, Loader2, Upload } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { API_BASE_URL, getAuthHeaders } from "@/lib/api";
 
 type UploadTask = {
   id: string;
@@ -27,24 +28,14 @@ type UploadTask = {
   progress: number;
   error?: string;
   result?: any;
-  targetFolder: string;
 };
 
-function getTargetFolder(baseFolder: string, file: File): string {
-  const base = (baseFolder || "").trim().replace(/\/+$/g, "");
-  const relPath = (file as any).webkitRelativePath as string | undefined;
-
-  if (relPath && relPath.length > 0) {
-    const normalized = relPath.replace(/\\/g, "/");
-    const segments = normalized.split("/");
-    // Remove file name
-    segments.pop();
-    const relFolder = segments.join("/");
-    const combined = [base, relFolder].filter(Boolean).join("/");
-    return combined.replace(/\/+/g, "/");
-  }
-
-  return base;
+function formatBytes(bytes: number) {
+  if (!bytes) return "0 B";
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  const value = bytes / Math.pow(1024, i);
+  return `${value.toFixed(1)} ${sizes[i]}`;
 }
 
 export default function MediaLibraryPage() {
@@ -54,18 +45,16 @@ export default function MediaLibraryPage() {
   const [loading, setLoading] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
   const [files, setFiles] = useState<FileList | null>(null);
-  const [folder, setFolder] = useState("dimond-castle/media");
   const [selected, setSelected] = useState<Record<string, boolean>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [usageSummary, setUsageSummary] = useState<string>("");
   const [uploadTasks, setUploadTasks] = useState<UploadTask[]>([]);
   const [managerOpen, setManagerOpen] = useState(false);
-  const [folderFiles, setFolderFiles] = useState<FileList | null>(null);
 
   async function refresh() {
     setLoading(true);
     try {
-      const { items } = await listMedia({ q, type, max_results: 60 });
+      const { items } = await listMedia({ q, type, limit: 60 });
       setItems(items);
     } catch (e: any) {
       toast.error("Failed to load media", { description: String(e?.message || e) });
@@ -86,16 +75,12 @@ export default function MediaLibraryPage() {
     }
 
     // Create upload tasks
-    const tasks: UploadTask[] = Array.from(files).map((file) => {
-      const targetFolder = getTargetFolder(folder, file);
-      return {
-        id: Math.random().toString(36).substring(7),
-        file,
-        status: "pending" as const,
-        progress: 0,
-        targetFolder,
-      };
-    });
+    const tasks: UploadTask[] = Array.from(files).map((file) => ({
+      id: Math.random().toString(36).substring(7),
+      file,
+      status: "pending",
+      progress: 0,
+    }));
 
     setUploadTasks(tasks);
     setManagerOpen(true);
@@ -119,22 +104,10 @@ export default function MediaLibraryPage() {
     );
 
     try {
-      const isVideo = task.file.type.startsWith("video/");
-      const sig = await getUploadSignature({
-        folder: task.targetFolder || folder,
-        resource_type: isVideo ? "video" : "image",
-      });
-      
+      const endpoint = `${API_BASE_URL}/api/media`;
       const formData = new FormData();
-      formData.append("file", task.file);
-      formData.append("api_key", sig.apiKey);
-      formData.append("timestamp", String(sig.timestamp));
-      formData.append("signature", sig.signature);
-      if (sig.folder) formData.append("folder", sig.folder);
+      formData.append("files", task.file);
 
-      const endpoint = `https://api.cloudinary.com/v1_1/${sig.cloudName}/${isVideo ? "video" : "image"}/upload`;
-
-      // Upload with progress tracking using XMLHttpRequest
       await new Promise<void>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
@@ -149,7 +122,10 @@ export default function MediaLibraryPage() {
 
         xhr.addEventListener("load", () => {
           if (xhr.status >= 200 && xhr.status < 300) {
-            const result = JSON.parse(xhr.responseText);
+            let result: any = undefined;
+            try {
+              result = JSON.parse(xhr.responseText);
+            } catch {}
             setUploadTasks((prev) =>
               prev.map((t) =>
                 t.id === task.id ? { ...t, status: "success", progress: 100, result } : t
@@ -170,6 +146,10 @@ export default function MediaLibraryPage() {
         xhr.addEventListener("abort", () => reject(new Error("Upload cancelled")));
 
         xhr.open("POST", endpoint);
+        const headers = getAuthHeaders();
+        Object.entries(headers).forEach(([key, value]) => {
+          if (value) xhr.setRequestHeader(key, value);
+        });
         xhr.send(formData);
       });
     } catch (e: any) {
@@ -216,7 +196,7 @@ export default function MediaLibraryPage() {
               <DialogHeader>
                 <DialogTitle>Upload media</DialogTitle>
                 <DialogDescription>
-                  Upload multiple images or videos, including entire folders and their contents.
+                  Upload multiple images or videos stored on your device.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-3">
@@ -234,48 +214,6 @@ export default function MediaLibraryPage() {
                       {files.length} file{files.length > 1 ? "s" : ""} selected
                     </p>
                   )}
-                </div>
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium">
-                    <FolderOpen className="h-4 w-4" />
-                    Folders (upload folder and all contents)
-                  </label>
-                  {/* Using native input here so we can attach `webkitdirectory` safely */}
-                  {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-                  <input
-                    type="file"
-                    multiple
-                    // @ts-ignore - non-standard but supported in modern browsers
-                    webkitdirectory="true"
-                    // @ts-ignore - non-standard directory attribute
-                    directory="true"
-                    accept="image/jpeg,image/png,image/webp,video/mp4"
-                    onChange={(e) => {
-                      const fl = e.target.files;
-                      setFolderFiles(fl);
-                      if (fl && fl.length > 0) {
-                        setFiles(fl);
-                      }
-                    }}
-                    className="mt-1 block w-full text-sm text-muted-foreground file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-primary-foreground hover:file:bg-primary/90"
-                  />
-                  {folderFiles && folderFiles.length > 0 && (
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {folderFiles.length} item{folderFiles.length > 1 ? "s" : ""} in selected folder(s)
-                    </p>
-                  )}
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    When you select a folder, its subfolders will be preserved in Cloudinary under the base folder below.
-                  </p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium">Folder (optional)</label>
-                  <Input
-                    placeholder="e.g. dimond-castle/blog"
-                    value={folder}
-                    onChange={(e) => setFolder(e.target.value)}
-                    className="mt-1"
-                  />
                 </div>
                 <p className="text-xs text-muted-foreground">Allowed: JPG, PNG, WEBP, MP4</p>
               </div>
@@ -365,8 +303,8 @@ export default function MediaLibraryPage() {
                     <div className="truncate text-xs font-medium" title={m.public_id}>{m.public_id}</div>
                   </div>
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <Badge variant="secondary">{m.format}</Badge>
-                    <span>{m.width ? `${m.width}×${m.height}` : null}</span>
+                    <Badge variant="secondary">{m.format || m.resource_type}</Badge>
+                    <span>{formatBytes(m.bytes)}</span>
                   </div>
                   <div className="flex items-center justify-end gap-2">
                     <Button

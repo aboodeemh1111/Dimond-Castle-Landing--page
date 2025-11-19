@@ -31,12 +31,12 @@ export function MediaPickerDialog({
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription className="sr-only">
-            Paste a Cloudinary public ID to link an existing asset.
+            Paste an existing media path (e.g. /uploads/hero.png) to link it manually.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3">
           <Input
-            placeholder="Cloudinary public_id (e.g. dimond-castle/blog/hero1)"
+            placeholder="/uploads/hero-image.png"
             value={publicId}
             onChange={(e) => setPublicId(e.target.value)}
           />
