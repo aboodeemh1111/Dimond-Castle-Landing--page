@@ -22,7 +22,7 @@ export default function ThemeHeadAssets({ theme }: { theme: Theme }) {
   const enLink = fontLinks[fontFamilyEN];
   const arLink = fontLinks[fontFamilyAR];
 
-  const faviconHref = faviconId ? getCloudinaryImageUrl(faviconId, "f_auto,q_auto,w_64") : null;
+  const faviconHref = faviconId ? getCloudinaryImageUrl(faviconId, "f_auto,q_auto,w_64") : "/images/logo/logo1.png";
   const socialPreviewHref = socialPreviewId ? getCloudinaryImageUrl(socialPreviewId, "f_auto,q_auto,w_1200") : null;
 
   return (
