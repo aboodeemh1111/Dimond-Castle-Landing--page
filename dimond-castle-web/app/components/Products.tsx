@@ -87,7 +87,7 @@ export default function Products() {
                   className="group relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-[var(--dc-gray)]/80"
                 >
                   {/* Product Image */}
-                  <div className="relative bg-accent/30 h-72 overflow-hidden">
+                  <div className="relative bg-accent/30 aspect-[4/5] overflow-hidden">
                     <img
                       src={imageUrl}
                       alt={product[locale].name}
