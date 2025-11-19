@@ -286,6 +286,13 @@ export default function MediaLibraryPage() {
                 ? displayFilename.substring(0, 20) + '...' 
                 : displayFilename;
               
+              // Use proxy for display to bypass CORS/CORP issues
+              // Only proxy if it's our own API URL
+              const isLocalUrl = m.secure_url.includes('api.diamondcastle.org') || m.secure_url.includes('localhost');
+              const displayUrl = isLocalUrl 
+                ? `/api/proxy-image?url=${encodeURIComponent(m.secure_url)}`
+                : m.secure_url;
+
               return (
                 <div key={m.asset_id} className="group relative overflow-hidden rounded-lg border bg-card shadow-sm transition-all hover:shadow-md hover:scale-[1.02]">
                   <div className="aspect-square overflow-hidden bg-muted relative">
@@ -294,20 +301,24 @@ export default function MediaLibraryPage() {
                       <video 
                         src={m.secure_url} 
                         className="h-full w-full object-cover"
+                        controls
                         onError={(e) => {
                           console.error('Video load error:', m.secure_url);
-                          e.currentTarget.style.display = 'none';
+                          // Fallback to proxy for video if direct load fails (though proxy doesn't support range requests well)
+                          if (isLocalUrl && e.currentTarget.src === m.secure_url) {
+                             e.currentTarget.src = `/api/proxy-image?url=${encodeURIComponent(m.secure_url)}`;
+                          }
                         }}
                       />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img 
-                        src={m.secure_url} 
+                        src={displayUrl} 
                         alt={displayFilename}
                         className="h-full w-full object-cover"
                         loading="lazy"
                         onError={(e) => {
-                          console.error('Image load error:', m.secure_url);
+                          console.error('Image load error:', displayUrl);
                           e.currentTarget.style.display = 'none';
                           e.currentTarget.parentElement!.innerHTML = `<div class="flex items-center justify-center h-full text-xs text-red-500 p-2">Failed to load</div>`;
                         }}
