@@ -16,6 +16,11 @@ export default function Products() {
   const [itemsPerSlide, setItemsPerSlide] = useState(3);
   const [isPaused, setIsPaused] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Touch state
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+  
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // For infinite loop, we need to know the total pages
@@ -190,6 +195,71 @@ export default function Products() {
     setCurrentSlide(prev => prev - 1);
   };
 
+  // Touch Handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      // In RTL, left swipe means previous logic, but usually swipe direction maps to visual movement.
+      // Swipe Left (dragging finger left) moves content left, revealing right content -> Next Slide.
+      // This is universal regardless of RTL usually, but let's check.
+      // If I drag left, I want to see the thing on the right. So Next Slide.
+      
+      // However, in RTL, 'next' items are on the left visually? No, in standard carousel, next is usually "forward".
+      // In RTL: [3] [2] [1] -> swipe left (drag content left) reveals [0]? No, usually RTL means sequence is right-to-left.
+      // Let's stick to: Swipe Left = Next Slide (visual movement)
+      
+      if (dir === 'rtl') {
+          // In RTL, items are ordered R to L. Next item is to the left.
+          // Dragging Left pulls content left, revealing what is on the Right? 
+          // Wait. If items are [3] [2] [1], and I drag left, I pull [3] to left, revealing [4] (if it was on right)? 
+          // But in RTL, [4] would be to the left of [3].
+          
+          // Let's keep it simple:
+          // LTR: [1] [2] [3]. Swipe Left (drag finger left) -> Content moves left -> Show [2] (Next). Correct.
+          // RTL: [1] [2] [3] but displayed as [3] [2] [1] ??
+          // If `dir=rtl`, standard flex-direction row-reverse or just direction: rtl.
+          // If direction: rtl, then first item is on right. Next item is to its left.
+          // To see next item (left), I need to drag content to the right?
+          // No, if I want to see what's on the left, I slide the current view to the right.
+          
+          // So in RTL: Swipe Right (drag finger right) -> Content moves right -> Reveals what is on the left (Next Item).
+          // Swipe Left (drag finger left) -> Content moves left -> Reveals what is on the right (Prev Item).
+          
+          prevSlide();
+      } else {
+          nextSlide();
+      }
+    }
+
+    if (isRightSwipe) {
+      // Swipe Right (dragging finger right).
+      // LTR: Content moves right -> Show Prev.
+      // RTL: Content moves right -> Show Next (item to the left).
+      
+      if (dir === 'rtl') {
+          nextSlide();
+      } else {
+          prevSlide();
+      }
+    }
+    
+    setTouchEnd(0);
+    setTouchStart(0);
+  };
+
   return (
     <section
       id="products"
@@ -239,6 +309,9 @@ export default function Products() {
             className="relative group/carousel mb-12"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
             <div className="overflow-hidden rounded-2xl -mx-4 px-4 py-8">
               <div 
@@ -366,13 +439,13 @@ export default function Products() {
               </div>
             </div>
             
-            {/* Navigation Buttons */}
+            {/* Navigation Buttons - Always visible on desktop, modified for mobile */}
             {products.length > itemsPerSlide && (
               <>
                 {/* Left Button */}
                 <button 
                   onClick={dir === 'rtl' ? nextSlide : prevSlide} 
-                  className="absolute top-1/2 -translate-y-1/2 z-20 left-0 -translate-x-1/2 bg-white/90 hover:bg-white text-[var(--green-500)] p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--green-500)] opacity-0 group-hover/carousel:opacity-100 group-hover/carousel:-translate-x-4"
+                  className="absolute top-1/2 -translate-y-1/2 z-20 left-0 -translate-x-1/2 bg-white/90 hover:bg-white text-[var(--green-500)] p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--green-500)] opacity-0 group-hover/carousel:opacity-100 group-hover/carousel:-translate-x-4 hidden md:block"
                   aria-label={dir === 'rtl' ? "Next slide" : "Previous slide"}
                 >
                   <ChevronLeft className="w-6 h-6 pointer-events-none" />
@@ -381,11 +454,13 @@ export default function Products() {
                 {/* Right Button */}
                 <button 
                   onClick={dir === 'rtl' ? prevSlide : nextSlide} 
-                  className="absolute top-1/2 -translate-y-1/2 z-20 right-0 translate-x-1/2 bg-white/90 hover:bg-white text-[var(--green-500)] p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--green-500)] opacity-0 group-hover/carousel:opacity-100 group-hover/carousel:translate-x-4"
+                  className="absolute top-1/2 -translate-y-1/2 z-20 right-0 translate-x-1/2 bg-white/90 hover:bg-white text-[var(--green-500)] p-3 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--green-500)] opacity-0 group-hover/carousel:opacity-100 group-hover/carousel:translate-x-4 hidden md:block"
                   aria-label={dir === 'rtl' ? "Previous slide" : "Next slide"}
                 >
                   <ChevronRight className="w-6 h-6 pointer-events-none" />
                 </button>
+                
+                {/* Mobile Indicators/Controls are simplified to dots below */}
               </>
             )}
 
@@ -398,8 +473,10 @@ export default function Products() {
                     // Handle negative modulo
                     const normalizedCurrentIndex = relativeCurrentIndex < 0 ? relativeCurrentIndex + products.length : relativeCurrentIndex;
                     
-                    // To avoid too many dots, maybe we just show a few or hide this?
-                    // With 12 products it might be okay.
+                    // Only show dots if total products is reasonable, or truncate? 
+                    // For mobile friendliness, if there are many products, dots might be too small.
+                    // But requested "mobile control friendly". Dots are hard to tap. Swipe is best.
+                    
                     return (
                     <button 
                        key={idx}
@@ -409,12 +486,14 @@ export default function Products() {
                            setIsTransitioning(true);
                            setCurrentSlide(itemsPerSlide + idx);
                        }}
-                       className={`h-1.5 rounded-full transition-all duration-300 ${
+                       className={`h-2 rounded-full transition-all duration-300 ${
                          normalizedCurrentIndex === idx 
-                           ? 'w-6 bg-[var(--green-500)]' 
-                           : 'w-1.5 bg-gray-300 hover:bg-gray-400'
+                           ? 'w-8 bg-[var(--green-500)]' 
+                           : 'w-2 bg-gray-300 hover:bg-gray-400'
                        }`}
                        aria-label={`Go to product ${idx + 1}`}
+                       // Increase touch target
+                       style={{ padding: '4px' }}
                     />
                   )})}
                </div>
