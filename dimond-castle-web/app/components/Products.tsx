@@ -245,7 +245,7 @@ export default function Products() {
                 className="flex ease-out"
                 style={{ 
                   transform: `translateX(${(dir === 'rtl' ? 1 : -1) * currentSlide * (100 / itemsPerSlide)}%)`,
-                  direction: 'ltr',
+                  direction: dir === 'rtl' ? 'rtl' : 'ltr',
                   transition: enableTransition ? 'transform 700ms ease-out' : 'none'
                 }}
                 onTransitionEnd={onTransitionEnd}
