@@ -8,6 +8,12 @@ import Products from "./components/Products";
 import Clients from "./components/Clients";
 import Services from "./components/Services";
 import Footer from "./components/Footer";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dimond Castle - Home",
+  description: "Welcome to Dimond Castle",
+};
 
 export default function Home() {
   return (

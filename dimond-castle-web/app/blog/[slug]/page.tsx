@@ -29,6 +29,13 @@ export default function BlogPostPage() {
     fetchPost();
   }, [slug]);
 
+  useEffect(() => {
+    if (post) {
+      const title = post[language].title;
+      document.title = `${title} | Dimond Castle`;
+    }
+  }, [post, language]);
+
   if (loading) {
     return (
       <>
