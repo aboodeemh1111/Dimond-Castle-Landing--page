@@ -4,99 +4,172 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const cloudinary_1 = require("../config/cloudinary");
+const multer_1 = __importDefault(require("multer"));
+const path_1 = __importDefault(require("path"));
+const promises_1 = __importDefault(require("fs/promises"));
 const env_1 = require("../config/env");
 const BlogPost_1 = __importDefault(require("../models/BlogPost"));
 const Page_1 = __importDefault(require("../models/Page"));
 const router = (0, express_1.Router)();
-// Count assets (images + videos)
-router.get('/count', async (_req, res, next) => {
-    try {
-        if (!cloudinary_1.cloudinary.config().cloud_name) {
-            return res.json({ count: 0 });
-        }
-        const result = await cloudinary_1.cloudinary.search
-            .expression('resource_type:image OR resource_type:video')
-            .max_results(1)
-            .execute();
-        res.json({ count: result.total_count || 0 });
-    }
-    catch (e) {
-        // Return 0 if Cloudinary is not configured
-        res.json({ count: 0 });
+// Configure multer storage
+const storage = multer_1.default.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, env_1.env.UPLOAD_DIR);
+    },
+    filename: (req, file, cb) => {
+        // Generate unique filename with timestamp
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path_1.default.extname(file.originalname);
+        const basename = path_1.default.basename(file.originalname, ext);
+        cb(null, `${basename}-${uniqueSuffix}${ext}`);
     }
 });
-// Get signed upload parameters
-router.post('/signature', async (req, res, next) => {
+// File filter for images and videos
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp|mp4|webm|mov/;
+    const extname = allowedTypes.test(path_1.default.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (mimetype && extname) {
+        return cb(null, true);
+    }
+    else {
+        cb(new Error('Only image and video files are allowed!'));
+    }
+};
+const upload = (0, multer_1.default)({
+    storage,
+    fileFilter,
+    limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB limit
+    }
+});
+// Upload files
+router.post('/', upload.array('files', 10), async (req, res, next) => {
     try {
-        const { folder = '', public_id, resource_type = 'auto', eager, tags } = req.body || {};
-        const timestamp = Math.floor(Date.now() / 1000);
-        const paramsToSign = {
-            timestamp,
-            folder,
-        };
-        if (public_id)
-            paramsToSign.public_id = public_id;
-        if (eager)
-            paramsToSign.eager = eager;
-        if (tags)
-            paramsToSign.tags = tags;
-        // Extract cloud name from config (supports both CLOUDINARY_URL and explicit vars)
-        let cloudName = env_1.env.CLOUDINARY_CLOUD_NAME;
-        let apiKey = env_1.env.CLOUDINARY_API_KEY;
-        let apiSecret = env_1.env.CLOUDINARY_API_SECRET;
-        if (!cloudName && env_1.env.CLOUDINARY_URL) {
-            // Parse cloudinary://API_KEY:API_SECRET@CLOUD_NAME
-            const match = env_1.env.CLOUDINARY_URL.match(/cloudinary:\/\/([^:]+):([^@]+)@(.+)/);
-            if (match) {
-                apiKey = match[1];
-                apiSecret = match[2];
-                cloudName = match[3];
-            }
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'No files uploaded' });
         }
-        const signature = cloudinary_1.cloudinary.utils.api_sign_request(paramsToSign, apiSecret);
-        res.json({
-            timestamp,
-            signature,
-            apiKey,
-            cloudName,
-            folder,
-            resource_type,
-        });
+        const files = req.files;
+        const uploadedFiles = files.map(file => ({
+            filename: file.filename,
+            originalName: file.originalname,
+            size: file.size,
+            url: `/uploads/${file.filename}`,
+            type: file.mimetype.startsWith('image/') ? 'image' : 'video'
+        }));
+        res.json({ files: uploadedFiles });
     }
     catch (e) {
         next(e);
     }
 });
-// Usage check for a given public_id
+// List uploaded files
+router.get('/', async (req, res, next) => {
+    try {
+        const { q = '', type = 'all', page = '1', limit = '30' } = req.query;
+        const pageNum = parseInt(page, 10) || 1;
+        const limitNum = parseInt(limit, 10) || 30;
+        const skip = (pageNum - 1) * limitNum;
+        try {
+            const files = await promises_1.default.readdir(env_1.env.UPLOAD_DIR);
+            let filteredFiles = files.filter(file => !file.startsWith('.'));
+            // Filter by type
+            if (type === 'image') {
+                const imageExts = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+                filteredFiles = filteredFiles.filter(file => imageExts.some(ext => file.toLowerCase().endsWith(ext)));
+            }
+            else if (type === 'video') {
+                const videoExts = ['.mp4', '.webm', '.mov'];
+                filteredFiles = filteredFiles.filter(file => videoExts.some(ext => file.toLowerCase().endsWith(ext)));
+            }
+            // Filter by query
+            if (q) {
+                filteredFiles = filteredFiles.filter(file => file.toLowerCase().includes(q.toLowerCase()));
+            }
+            // Sort by creation time (newest first)
+            const filesWithStats = await Promise.all(filteredFiles.map(async (file) => {
+                try {
+                    const stats = await promises_1.default.stat(path_1.default.join(env_1.env.UPLOAD_DIR, file));
+                    return { file, createdAt: stats.birthtime || stats.mtime, size: stats.size };
+                }
+                catch {
+                    return { file, createdAt: new Date(0), size: 0 };
+                }
+            }));
+            filesWithStats.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+            const paginatedFiles = filesWithStats.slice(skip, skip + limitNum);
+            const items = paginatedFiles.map(({ file, size }) => ({
+                filename: file,
+                url: `/uploads/${file}`,
+                size,
+                type: ['.jpg', '.jpeg', '.png', '.gif', '.webp'].some(ext => file.toLowerCase().endsWith(ext)) ? 'image' : 'video'
+            }));
+            res.json({
+                items,
+                total_count: filteredFiles.length,
+                page: pageNum,
+                limit: limitNum,
+                has_more: skip + limitNum < filteredFiles.length
+            });
+        }
+        catch (fsError) {
+            // If uploads directory doesn't exist or is empty, return empty results
+            res.json({ items: [], total_count: 0, page: pageNum, limit: limitNum, has_more: false });
+        }
+    }
+    catch (e) {
+        next(e);
+    }
+});
+// Count uploaded files
+router.get('/count', async (_req, res, next) => {
+    try {
+        try {
+            const files = await promises_1.default.readdir(env_1.env.UPLOAD_DIR);
+            const mediaFiles = files.filter(file => !file.startsWith('.') &&
+                (['.jpg', '.jpeg', '.png', '.gif', '.webp', '.mp4', '.webm', '.mov'].some(ext => file.toLowerCase().endsWith(ext))));
+            res.json({ count: mediaFiles.length });
+        }
+        catch {
+            res.json({ count: 0 });
+        }
+    }
+    catch (e) {
+        next(e);
+    }
+});
+// Check usage of a file by filename
 router.get('/usage', async (req, res, next) => {
     try {
-        const { publicId } = req.query;
-        if (!publicId)
-            return res.status(400).json({ error: 'publicId is required' });
-        const coverCount = await BlogPost_1.default.countDocuments({ coverPublicId: publicId });
+        const { filename } = req.query;
+        if (!filename)
+            return res.status(400).json({ error: 'filename is required' });
+        // For local files, we need to check relative URLs like /uploads/filename.jpg
+        const relativeUrl = `/uploads/${filename}`;
+        // Check blog posts for cover images and blocks
+        const coverCount = await BlogPost_1.default.countDocuments({ coverImage: relativeUrl });
         const blocksCount = await BlogPost_1.default.countDocuments({
             $or: [
-                { 'en.blocks': { $elemMatch: { publicId } } },
-                { 'ar.blocks': { $elemMatch: { publicId } } },
-                { 'en.blocks': { $elemMatch: { posterId: publicId } } },
-                { 'ar.blocks': { $elemMatch: { posterId: publicId } } },
+                { 'en.blocks': { $elemMatch: { imageUrl: relativeUrl } } },
+                { 'ar.blocks': { $elemMatch: { imageUrl: relativeUrl } } },
+                { 'en.blocks': { $elemMatch: { videoUrl: relativeUrl } } },
+                { 'ar.blocks': { $elemMatch: { videoUrl: relativeUrl } } },
             ],
         });
         const posts = await BlogPost_1.default.find({
             $or: [
-                { coverPublicId: publicId },
-                { 'en.blocks': { $elemMatch: { publicId } } },
-                { 'ar.blocks': { $elemMatch: { publicId } } },
-                { 'en.blocks': { $elemMatch: { posterId: publicId } } },
-                { 'ar.blocks': { $elemMatch: { posterId: publicId } } },
+                { coverImage: relativeUrl },
+                { 'en.blocks': { $elemMatch: { imageUrl: relativeUrl } } },
+                { 'ar.blocks': { $elemMatch: { imageUrl: relativeUrl } } },
+                { 'en.blocks': { $elemMatch: { videoUrl: relativeUrl } } },
+                { 'ar.blocks': { $elemMatch: { videoUrl: relativeUrl } } },
             ],
         }).select({ _id: 1, slug: 1, 'en.title': 1 }).limit(50);
-        // Basic pages usage check: look for ogImageId fields
+        // Check pages for ogImage fields
         const pagesCount = await Page_1.default.countDocuments({
             $or: [
-                { 'en.seo.ogImageId': publicId },
-                { 'ar.seo.ogImageId': publicId },
+                { 'en.seo.ogImage': relativeUrl },
+                { 'ar.seo.ogImage': relativeUrl },
             ],
         });
         res.json({
@@ -108,42 +181,21 @@ router.get('/usage', async (req, res, next) => {
         next(e);
     }
 });
-// List media (images/videos) via Cloudinary Search API
-router.get('/', async (req, res, next) => {
+// Delete a file by filename
+router.delete('/:filename', async (req, res, next) => {
     try {
-        const { q = '', type = 'all', page = '1', max_results = '30', folder } = req.query;
-        const expressions = [];
-        if (type === 'image')
-            expressions.push('resource_type:image');
-        if (type === 'video')
-            expressions.push('resource_type:video');
-        if (folder)
-            expressions.push(`folder:${folder}`);
-        if (q)
-            expressions.push(`public_id:${q}* OR tags=${q}* OR context.alt:${q}* OR context.caption:${q}*`);
-        const expression = expressions.length ? expressions.join(' AND ') : '';
-        const search = cloudinary_1.cloudinary.search
-            .expression(expression || 'resource_type:image OR resource_type:video')
-            .sort_by('created_at', 'desc')
-            .max_results(Number(max_results));
-        const result = await search.execute();
-        res.json({ items: result.resources, total_count: result.total_count, next_cursor: result.next_cursor });
-    }
-    catch (e) {
-        next(e);
-    }
-});
-// Delete a media asset by public_id
-router.delete('/:publicId', async (req, res, next) => {
-    try {
-        const { publicId } = req.params;
-        // Attempt to delete as image first, fallback to video
-        const img = await cloudinary_1.cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
-        if (img.result === 'not found') {
-            const vid = await cloudinary_1.cloudinary.uploader.destroy(publicId, { resource_type: 'video' });
-            return res.json(vid);
+        const { filename } = req.params;
+        const filePath = path_1.default.join(env_1.env.UPLOAD_DIR, filename);
+        try {
+            await promises_1.default.unlink(filePath);
+            res.json({ success: true, message: 'File deleted successfully' });
         }
-        res.json(img);
+        catch (fsError) {
+            if (fsError.code === 'ENOENT') {
+                return res.status(404).json({ error: 'File not found' });
+            }
+            throw fsError;
+        }
     }
     catch (e) {
         next(e);
