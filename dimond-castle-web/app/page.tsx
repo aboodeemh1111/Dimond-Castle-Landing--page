@@ -11,8 +11,14 @@ import Footer from "./components/Footer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dimond Castle - Home",
-  description: "Welcome to Dimond Castle",
+  title: "جوهرة الألماس | Dimond Castle",
+  description: "شركة قلعة الألماس للتجارة - الألماس الأبيض، النقاء والإرث والكمال. الخيار المفضل لمتذوقي الأرز الفاخر حول العالم.",
+  openGraph: {
+    title: "جوهرة الألماس | Dimond Castle",
+    description: "شركة قلعة الألماس للتجارة - الألماس الأبيض، النقاء والإرث والكمال. الخيار المفضل لمتذوقي الأرز الفاخر حول العالم.",
+    locale: "ar_SA",
+    type: "website",
+  },
 };
 
 export default function Home() {
