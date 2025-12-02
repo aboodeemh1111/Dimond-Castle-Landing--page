@@ -15,6 +15,7 @@ import {
   Sparkles,
   BookOpen,
   Handshake,
+  Search,
 } from "lucide-react";
 
 export type AdminNavItem = {
@@ -42,6 +43,7 @@ export const adminNav: AdminNavItem[] = [
   { label: { en: "Services", ar: "الخدمات" }, href: "/admin/services", icon: Truck },
   { label: { en: "Messages", ar: "الرسائل الواردة" }, href: "/admin/messages", icon: Mail },
   { label: { en: "Theme", ar: "السمة" }, href: "/admin/theme", icon: Palette },
+  { label: { en: "SEO / Google", ar: "محركات البحث" }, href: "/admin/seo", icon: Search },
   { label: { en: "Settings", ar: "الإعدادات" }, href: "/admin/settings", icon: SettingsIcon },
   { label: { en: "Contacts", ar: "الرسائل" }, href: "/admin/contact", icon: Inbox },
 ];

@@ -1,5 +1,6 @@
 import { getCloudinaryImageUrl } from "../lib/cloudinary";
 import type { Theme } from "../lib/theme-api";
+import type { SeoSettings } from "../lib/seo-api";
 
 const fontLinks: Record<string, string> = {
   "Inter": "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap",
@@ -15,18 +16,45 @@ const fontLinks: Record<string, string> = {
   "Noto Sans Arabic": "https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;500;600;700;800;900&display=swap",
 };
 
-export default function ThemeHeadAssets({ theme }: { theme: Theme }) {
+type Props = {
+  theme: Theme;
+  seoSettings?: SeoSettings;
+};
+
+export default function ThemeHeadAssets({ theme, seoSettings }: Props) {
   const { fontFamilyEN, fontFamilyAR } = theme.typography;
   const { faviconId, socialPreviewId } = theme.globalAssets || {};
 
   const enLink = fontLinks[fontFamilyEN];
   const arLink = fontLinks[fontFamilyAR];
 
-  const faviconHref = faviconId ? getCloudinaryImageUrl(faviconId, "f_auto,q_auto,w_64") : "/images/logo/logo1.png";
-  const faviconHref32 = faviconId ? getCloudinaryImageUrl(faviconId, "f_png,q_auto,w_32,h_32") : "/images/logo/logo1.png";
-  const faviconHref16 = faviconId ? getCloudinaryImageUrl(faviconId, "f_png,q_auto,w_16,h_16") : "/images/logo/logo1.png";
-  const appleTouchIcon = faviconId ? getCloudinaryImageUrl(faviconId, "f_png,q_auto,w_180,h_180") : "/images/logo/logo1.png";
-  const socialPreviewHref = socialPreviewId ? getCloudinaryImageUrl(socialPreviewId, "f_auto,q_auto,w_1200") : "/images/logo/logo1.png";
+  // Use SEO settings logo if available, otherwise fall back to theme favicon
+  const logoPath = seoSettings?.logoPublicId || faviconId;
+  const ogImagePath = seoSettings?.ogImagePublicId || socialPreviewId;
+
+  // Determine favicon URLs
+  const faviconHref = logoPath 
+    ? (logoPath.startsWith('/') ? logoPath : getCloudinaryImageUrl(logoPath, "f_auto,q_auto,w_64"))
+    : "/images/logo/logo1.png";
+  const faviconHref32 = logoPath
+    ? (logoPath.startsWith('/') ? logoPath : getCloudinaryImageUrl(logoPath, "f_png,q_auto,w_32,h_32"))
+    : "/images/logo/logo1.png";
+  const faviconHref16 = logoPath
+    ? (logoPath.startsWith('/') ? logoPath : getCloudinaryImageUrl(logoPath, "f_png,q_auto,w_16,h_16"))
+    : "/images/logo/logo1.png";
+  const appleTouchIcon = logoPath
+    ? (logoPath.startsWith('/') ? logoPath : getCloudinaryImageUrl(logoPath, "f_png,q_auto,w_180,h_180"))
+    : "/images/logo/logo1.png";
+  
+  // OG Image for social sharing
+  const socialPreviewHref = ogImagePath
+    ? (ogImagePath.startsWith('/') ? ogImagePath : getCloudinaryImageUrl(ogImagePath, "f_auto,q_auto,w_1200"))
+    : "/images/logo/logo1.png";
+
+  // Get keywords as comma-separated string
+  const keywordsEn = seoSettings?.en?.keywords?.join(', ') || '';
+  const keywordsAr = seoSettings?.ar?.keywords?.join(', ') || '';
+  const allKeywords = [keywordsEn, keywordsAr].filter(Boolean).join(', ');
 
   return (
     <>
@@ -34,18 +62,39 @@ export default function ThemeHeadAssets({ theme }: { theme: Theme }) {
       {enLink && <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />}
       {enLink && <link rel="stylesheet" href={enLink} />}
       {arLink && arLink !== enLink && <link rel="stylesheet" href={arLink} />}
+      
       {/* Favicon for browser tabs */}
       <link rel="icon" type="image/png" sizes="32x32" href={faviconHref32} />
       <link rel="icon" type="image/png" sizes="16x16" href={faviconHref16} />
       <link rel="icon" href={faviconHref} />
+      
       {/* Apple Touch Icon */}
       <link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon} />
+      
+      {/* Keywords meta tag */}
+      {allKeywords && <meta name="keywords" content={allKeywords} />}
+      
       {/* Open Graph / Social Media */}
+      <meta property="og:type" content="website" />
       <meta property="og:image" content={socialPreviewHref} />
-      <meta name="twitter:image" content={socialPreviewHref} />
+      <meta property="og:site_name" content={seoSettings?.siteName || 'White Diamond'} />
+      {seoSettings?.canonicalDomain && <meta property="og:url" content={seoSettings.canonicalDomain} />}
+      
+      {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:image" content={socialPreviewHref} />
+      {seoSettings?.twitterHandle && <meta name="twitter:site" content={seoSettings.twitterHandle} />}
+      
+      {/* Robots */}
+      {seoSettings && (
+        <meta 
+          name="robots" 
+          content={`${seoSettings.robotsIndex ? 'index' : 'noindex'}, ${seoSettings.robotsFollow ? 'follow' : 'nofollow'}`} 
+        />
+      )}
+      
+      {/* Canonical URL */}
+      {seoSettings?.canonicalDomain && <link rel="canonical" href={seoSettings.canonicalDomain} />}
     </>
   );
 }
-
-
