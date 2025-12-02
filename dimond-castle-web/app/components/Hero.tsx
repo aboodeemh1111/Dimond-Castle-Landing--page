@@ -111,6 +111,8 @@ export default function Hero() {
         <div className="glass-morphism bg-white/10 backdrop-blur-md rounded-2xl p-8 md:p-12 max-w-4xl mx-auto border border-white/20 shadow-2xl">
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 leading-tight">
             <span className="block text-[var(--color-accent)]">{leading}</span>
+            {/* Separator for SEO - ensures Google sees these as separate phrases */}
+            <span className="sr-only"> - </span>
             <span className="block text-white mt-4 sm:mt-6">{trailing}</span>
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-gray-100 mb-6 sm:mb-8 max-w-2xl mx-auto">{subtitle}</p>
