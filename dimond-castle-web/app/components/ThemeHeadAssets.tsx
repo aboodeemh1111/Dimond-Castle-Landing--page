@@ -23,7 +23,10 @@ export default function ThemeHeadAssets({ theme }: { theme: Theme }) {
   const arLink = fontLinks[fontFamilyAR];
 
   const faviconHref = faviconId ? getCloudinaryImageUrl(faviconId, "f_auto,q_auto,w_64") : "/images/logo/logo1.png";
-  const socialPreviewHref = socialPreviewId ? getCloudinaryImageUrl(socialPreviewId, "f_auto,q_auto,w_1200") : null;
+  const faviconHref32 = faviconId ? getCloudinaryImageUrl(faviconId, "f_png,q_auto,w_32,h_32") : "/images/logo/logo1.png";
+  const faviconHref16 = faviconId ? getCloudinaryImageUrl(faviconId, "f_png,q_auto,w_16,h_16") : "/images/logo/logo1.png";
+  const appleTouchIcon = faviconId ? getCloudinaryImageUrl(faviconId, "f_png,q_auto,w_180,h_180") : "/images/logo/logo1.png";
+  const socialPreviewHref = socialPreviewId ? getCloudinaryImageUrl(socialPreviewId, "f_auto,q_auto,w_1200") : "/images/logo/logo1.png";
 
   return (
     <>
@@ -31,13 +34,16 @@ export default function ThemeHeadAssets({ theme }: { theme: Theme }) {
       {enLink && <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />}
       {enLink && <link rel="stylesheet" href={enLink} />}
       {arLink && arLink !== enLink && <link rel="stylesheet" href={arLink} />}
-      {faviconHref && <link rel="icon" href={faviconHref} />}
-      {socialPreviewHref && (
-        <>
-          <meta property="og:image" content={socialPreviewHref} />
-          <meta name="twitter:image" content={socialPreviewHref} />
-        </>
-      )}
+      {/* Favicon for browser tabs */}
+      <link rel="icon" type="image/png" sizes="32x32" href={faviconHref32} />
+      <link rel="icon" type="image/png" sizes="16x16" href={faviconHref16} />
+      <link rel="icon" href={faviconHref} />
+      {/* Apple Touch Icon */}
+      <link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon} />
+      {/* Open Graph / Social Media */}
+      <meta property="og:image" content={socialPreviewHref} />
+      <meta name="twitter:image" content={socialPreviewHref} />
+      <meta name="twitter:card" content="summary_large_image" />
     </>
   );
 }

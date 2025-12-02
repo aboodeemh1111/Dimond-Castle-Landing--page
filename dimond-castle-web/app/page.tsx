@@ -11,13 +11,25 @@ import Footer from "./components/Footer";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "جوهرة الألماس | Dimond Castle",
+  title: "الألماس الأبيض | White Diamond",
   description: "شركة قلعة الألماس للتجارة - الألماس الأبيض، النقاء والإرث والكمال. الخيار المفضل لمتذوقي الأرز الفاخر حول العالم.",
+  icons: {
+    icon: "/images/logo/logo1.png",
+    apple: "/images/logo/logo1.png",
+  },
   openGraph: {
-    title: "جوهرة الألماس | Dimond Castle",
+    title: "الألماس الأبيض | White Diamond",
     description: "شركة قلعة الألماس للتجارة - الألماس الأبيض، النقاء والإرث والكمال. الخيار المفضل لمتذوقي الأرز الفاخر حول العالم.",
     locale: "ar_SA",
     type: "website",
+    images: [
+      {
+        url: "/images/logo/logo1.png",
+        width: 512,
+        height: 512,
+        alt: "الألماس الأبيض - White Diamond",
+      },
+    ],
   },
 };
 
