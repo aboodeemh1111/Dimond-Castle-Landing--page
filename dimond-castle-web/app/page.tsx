@@ -16,16 +16,17 @@ export async function generateMetadata(): Promise<Metadata> {
   
   const titleEn = seo.en.siteTitle || 'White Diamond';
   const titleAr = seo.ar.siteTitle || 'الألماس الأبيض';
-  const descAr = seo.ar.siteDescription || 'أرز فاخر عالي الجودة لعملائنا المميزين حول العالم.';
-  const descEn = seo.en.siteDescription || 'Premium quality rice for discerning customers worldwide.';
+  const descAr = seo.ar.siteDescription || 'الألماس الأبيض - جوهرة الأرز من شركة قلعة الألماس للتجارة. النقاء والإرث والكمال، الخيار المفضل لمتذوقي الأرز الفاخر حول العالم.';
   
+  // Clean title with proper spacing
   const fullTitle = `${titleAr} ${seo.titleSeparator || '|'} ${titleEn}`;
   const logoPath = seo.logoPublicId || '/images/logo/logo1.png';
   const ogImagePath = seo.ogImagePublicId || logoPath;
   
   return {
     title: fullTitle,
-    description: `${descAr} - ${descEn}`,
+    // Use only Arabic description for cleaner Google results
+    description: descAr,
     keywords: [...(seo.ar.keywords || []), ...(seo.en.keywords || [])],
     icons: {
       icon: logoPath,
@@ -37,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "ar_SA",
       alternateLocale: "en_US",
       type: "website",
-      siteName: seo.siteName || 'White Diamond',
+      siteName: seo.siteName || 'الألماس الأبيض | White Diamond',
       images: [
         {
           url: ogImagePath,

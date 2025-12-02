@@ -29,15 +29,15 @@ export type SeoSettings = {
 const defaultSeoSettings: SeoSettings = {
   en: {
     siteTitle: 'White Diamond',
-    siteDescription: 'Premium quality rice for discerning customers worldwide.',
-    keywords: [],
+    siteDescription: 'White Diamond Rice - Premium quality rice from Diamond Castle Trading. The preferred choice for rice connoisseurs worldwide.',
+    keywords: ['rice', 'white diamond', 'premium rice', 'diamond castle'],
   },
   ar: {
     siteTitle: 'الألماس الأبيض',
-    siteDescription: 'أرز فاخر عالي الجودة لعملائنا المميزين حول العالم.',
-    keywords: [],
+    siteDescription: 'الألماس الأبيض - جوهرة الأرز من شركة قلعة الألماس للتجارة. النقاء والإرث والكمال، الخيار المفضل لمتذوقي الأرز الفاخر حول العالم.',
+    keywords: ['أرز', 'الألماس الأبيض', 'أرز فاخر', 'قلعة الألماس'],
   },
-  siteName: 'White Diamond',
+  siteName: 'الألماس الأبيض | White Diamond',
   titleSeparator: '|',
   logoPublicId: '/images/logo/logo1.png',
   ogImagePublicId: '/images/logo/logo1.png',
