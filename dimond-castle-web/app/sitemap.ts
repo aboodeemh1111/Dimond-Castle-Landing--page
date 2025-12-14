@@ -3,6 +3,9 @@ import { getPublicProducts } from "./lib/products-api";
 import { getPublishedBlogs } from "./lib/public-blogs";
 import { getPublishedPages } from "./lib/public-pages";
 
+// Explicitly mark as dynamic to suppress build warnings
+export const dynamic = "force-dynamic";
+
 const BASE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://diamondcastle.org";
 const HAS_REMOTE_API = Boolean(process.env.NEXT_PUBLIC_API_URL);
