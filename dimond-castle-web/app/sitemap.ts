@@ -3,13 +3,17 @@ import { getPublicProducts } from "./lib/products-api";
 import { getPublishedBlogs } from "./lib/public-blogs";
 import { getPublishedPages } from "./lib/public-pages";
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://diamondcastle.org";
+const BASE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://diamondcastle.org";
 const HAS_REMOTE_API = Boolean(process.env.NEXT_PUBLIC_API_URL);
 const API_TIMEOUT = Number(process.env.SITEMAP_FETCH_TIMEOUT ?? 5000);
 
 function withTimeout<T>(promise: Promise<T>, label: string): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`${label} request timed out`)), API_TIMEOUT);
+    const timer = setTimeout(
+      () => reject(new Error(`${label} request timed out`)),
+      API_TIMEOUT
+    );
     promise
       .then((value) => {
         clearTimeout(timer);
@@ -43,8 +47,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return routes;
   }
 
+  // Fetch products with pagination (API limit is 100)
   const productPromise = withTimeout(
-    getPublicProducts({ limit: 1000 }),
+    getPublicProducts({ limit: 100, skip: 0 }),
     "Products sitemap fetch"
   );
   const blogPromise = withTimeout(getPublishedBlogs(), "Blogs sitemap fetch");
@@ -57,7 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   if (productsResult.status === "fulfilled") {
-    productsResult.value.products.forEach((product) => {
+    const firstPage = productsResult.value;
+    firstPage.products.forEach((product) => {
       routes.push({
         url: `${BASE_URL}/products/${product.slug}`,
         lastModified: new Date(product.updatedAt || new Date()),
@@ -65,8 +71,45 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       });
     });
+
+    // If there are more products, fetch additional pages sequentially
+    if (firstPage.pagination?.hasMore) {
+      let skip = 100;
+      let hasMore = true;
+
+      while (hasMore && skip < 500) {
+        // Limit to 500 products max for sitemap
+        try {
+          const nextPage = await withTimeout(
+            getPublicProducts({ limit: 100, skip }),
+            `Products sitemap fetch page ${skip / 100 + 1}`
+          );
+
+          nextPage.products.forEach((product) => {
+            routes.push({
+              url: `${BASE_URL}/products/${product.slug}`,
+              lastModified: new Date(product.updatedAt || new Date()),
+              changeFrequency: "weekly",
+              priority: 0.7,
+            });
+          });
+
+          hasMore = nextPage.pagination?.hasMore || false;
+          skip += 100;
+        } catch (error) {
+          console.error(
+            `Error fetching products page ${skip / 100 + 1}:`,
+            error
+          );
+          break;
+        }
+      }
+    }
   } else {
-    console.error("Error generating sitemap for products:", productsResult.reason);
+    console.error(
+      "Error generating sitemap for products:",
+      productsResult.reason
+    );
   }
 
   if (blogsResult.status === "fulfilled") {
