@@ -9,10 +9,12 @@ import { getCloudinaryImageUrl } from "../lib/cloudinary";
  * Extract social media handle from URL
  * @param url - The social media URL
  * @param platform - The platform name (twitter, linkedin, instagram, etc.)
- * @returns The handle/username (e.g., "@username" or "username")
+ * @returns The handle/username with @ at the beginning (e.g., "@username")
  */
 function extractSocialHandle(url: string, platform: string): string {
   if (!url) return "";
+
+  let handle = "";
 
   try {
     const urlObj = new URL(url);
@@ -27,51 +29,66 @@ function extractSocialHandle(url: string, platform: string): string {
       case "x":
         // Twitter/X: twitter.com/username or x.com/username
         const twitterHandle = parts[parts.length - 1];
-        return twitterHandle ? `@${twitterHandle}` : "";
+        handle = twitterHandle || "";
+        break;
 
       case "linkedin":
         // LinkedIn: linkedin.com/company/name or linkedin.com/in/name
         if (parts.length >= 2) {
-          return `@${parts[parts.length - 1]}`;
+          handle = parts[parts.length - 1];
+        } else {
+          handle = parts[0] || "";
         }
-        return parts[0] ? `@${parts[0]}` : "";
+        break;
 
       case "instagram":
         // Instagram: instagram.com/username
-        return parts[0] ? `@${parts[0]}` : "";
+        handle = parts[0] || "";
+        break;
 
       case "facebook":
         // Facebook: facebook.com/username or facebook.com/pages/name
         if (parts[0] === "pages" && parts.length > 1) {
-          return `@${parts[parts.length - 1]}`;
+          handle = parts[parts.length - 1];
+        } else {
+          handle = parts[0] || "";
         }
-        return parts[0] ? `@${parts[0]}` : "";
+        break;
 
       case "youtube":
         // YouTube: youtube.com/@channel or youtube.com/c/channel or youtube.com/user/username
         if (parts[0]?.startsWith("@")) {
-          return parts[0];
+          handle = parts[0].substring(1); // Remove @ from beginning
         } else if (parts[0] === "c" || parts[0] === "user") {
-          return parts[1] ? `@${parts[1]}` : "";
+          handle = parts[1] || "";
+        } else {
+          handle = parts[0] || "";
         }
-        return parts[0] ? `@${parts[0]}` : "";
+        break;
 
       case "tiktok":
         // TikTok: tiktok.com/@username
         if (parts[0]?.startsWith("@")) {
-          return parts[0];
+          handle = parts[0].substring(1); // Remove @ from beginning
+        } else {
+          handle = parts[0] || "";
         }
-        return parts[0] ? `@${parts[0]}` : "";
+        break;
 
       default:
         // Default: use the last part of the path
-        return parts[parts.length - 1] ? `@${parts[parts.length - 1]}` : "";
+        handle = parts[parts.length - 1] || "";
     }
   } catch {
     // If URL parsing fails, try to extract handle from string
     const match = url.match(/(?:@|com\/|in\/|company\/|pages\/)([^\/\?]+)/);
-    return match ? `@${match[1]}` : url;
+    handle = match ? match[1] : url;
   }
+
+  if (!handle) return "";
+
+  // Always place @ at the beginning for both LTR and RTL
+  return `@${handle}`;
 }
 
 export default function Footer() {
