@@ -22,7 +22,7 @@ export function getCloudinaryImageUrl(
   transformations?: string
 ): string {
   if (!publicId) return "";
-
+  
   // Ensure the path starts with /uploads/
   let imagePath = publicId.trim();
   if (!imagePath.startsWith("/")) {
@@ -47,7 +47,7 @@ export function getCloudinaryVideoUrl(
   transformations?: string
 ): string {
   if (!publicId) return "";
-
+  
   // Ensure the path starts with /uploads/
   let videoPath = publicId.trim();
   if (!videoPath.startsWith("/")) {
